@@ -350,6 +350,225 @@ las componentes del vector. Sin embargo, en nuestros tipo ``Person`` y
 ``Car``, no es tan obvio y nos beneficia mucho el uso de esta sintaxis.
 
 
+Parámetros de tipo
+------------------
+
+
+Un constructor de datos puede tomar algunos valores como parámetros y producir
+un nuevo valor. Por ejemplo, el constructor ``Car`` toma tres valores y
+produce un valor del tipo coche. De forma similar, un **constructor de tipos**
+puede tomar tipos como parámetros y producir nuevos tipos. Esto puede parecer
+un poco recursivo al principio, pero no es nada complicado. Si has utilizado
+las plantillas de *C++* te será familiar. Para obtener una imagen clara de
+como los parámetros de tipo funcionan en realidad, vamos a ver un ejemplo de
+como un tipo que ya conocemos es implementado. ::
+
+    data Maybe a = Nothing | Just a  
+
+.. image:: /images/yeti.png
+   :align: left
+   :alt: Yeti
+    
+La ``a`` es un parámetro de tipo. Debido a que hay un parámetro de tipo
+involucrado en esta definición, llamamos a ``Maybe`` un constructor de tipos.
+Dependiendo de lo que queramos que este tipo contenga cuando un valor no es
+``Nothing``, este tipo puede acabar produciendo tipos como ``Maybe Int``,
+``Maybe Car``, ``Maybe String``, etc. Ningún valor puede tener un tipo que sea
+simplemente ``Maybe``, ya que eso no es un tipo por si mismo, es un
+constructor de tipos. Para que sea un tipo real que algún valor pueda tener,
+tiene que tener todos los parámetros de tipo definidos.
+
+Si pasamos ``Char`` como parámetro de tipo a ``Maybe``, obtendremos el tipo
+``Maybe Char``. Por ejemplo, el valor ``Just 'a'`` tiene el tipo ``Maybe
+Char``.
+
+Puede que no lo sepas, pero utilizamos un tipo que tenía un parámetro de tipo
+antes de que empezáramos a utilizar el tipo ``Maybe``. Ese tipo es el tipo
+lista. Aunque hay un poco decoración sintáctica, el tipo lista toma un
+parámetro para producir un tipo concreto. Los valores pueden tener un tipo
+``[Int]``, un tipo ``[Char]``, ``[[String]]``, etc. pero no puede haber un
+valor cuyo tipo sea simplemente ``[]``.
+
+Vamos a jugar un poco con el tipo ``Maybe``. ::
+
+    ghci> Just "Haha"  
+    Just "Haha"  
+    ghci> Just 84  
+    Just 84  
+    ghci> :t Just "Haha"  
+    Just "Haha" :: Maybe [Char]  
+    ghci> :t Just 84  
+    Just 84 :: (Num t) => Maybe t  
+    ghci> :t Nothing  
+    Nothing :: Maybe a  
+    ghci> Just 10 :: Maybe Double  
+    Just 10.0
+
+Los parámetros de tipo son útiles ya que nos permiten crear diferentes tipos
+dependiendo del tipo que queramos almacenar en nuestros tipos de datos (valga
+la redundancia). Cuando hacemos ``:t Just "Haha"`` el motor de inferencia de
+tipos deduce que el tipo debe ser ``Maybe [Char]``, ya que la ``a`` en ``Just
+a`` es una cadena, luego el ``a`` en ``Maybe a`` debe ser también una cadena.
+
+Como habrás visto el tipo de ``Nothing`` es ``Maybe a``. Su tipo es
+polimórfico. Si una función requiere un ``Maybe Int`` como parámetro le
+podemos pasar  un ``Nothing`` ya que no contiene ningún valor. El tipo ``Maybe
+a`` puede comportarse como un ``Maybe Int``, de la misma forma que ``5`` puede
+comportarse como un ``Int`` o como un ``Double``. De forma similar el tipo de
+las listas vacías es ``[a]``. Una lista vacía puede comportarse como cualquier
+otra lista. Por eso podemos hacer cosas como ``[1,2,3] ++ []`` y
+``["ha","ha","ha"] ++ []``.
+
+El uso de parámetros de tipo nos puede beneficiar, pero solo en los casos que
+tenga sentido. Normalmente los utilizamos cuando nuestro tipo de dato
+funcionará igual sin importar el tipo de dato que contenga, justo como nuestro
+``Maybe a``. Si nuestro tipo es como una especie de caja, es un buen lugar
+para usar los parámetros de tipo. Podríamos cambiar nuestro tipo ``Car`` de:
+::
+
+    data Car = Car { company :: String  
+                   , model :: String  
+                   , year :: Int  
+                   } deriving (Show)
+
+A: ::
+
+    data Car a b c = Car { company :: a  
+                         , model :: b  
+                         , year :: c   
+                         } deriving (Show)
+
+Pero ¿Tiene algún beneficio? La respuesta es: probablemente no, ya que al
+final acabaremos escribiendo funciones que solo funcionen con el tipo ``Car
+String String Int``. Por ejemplo, dada la primera definición de ``Car``,
+podríamos crear una función que mostrara las propiedades de un coche con un
+pequeño texto: ::
+
+    tellCar :: Car -> String  
+    tellCar (Car {company = c, model = m, year = y}) = "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
+
+::
+
+    ghci> let stang = Car {company="Ford", model="Mustang", year=1967}  
+    ghci> tellCar stang  
+    "This Ford Mustang was made in 1967"  
+
+¡Una función muy bonita! La declaración de tipo es simple y funciona
+perfectamente. Ahora ¿Cómo sería si ``Car`` fuera en realidad ``Car a b c``?
+::
+
+    tellCar :: (Show a) => Car String String a -> String  
+    tellCar (Car {company = c, model = m, year = y}) = "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
+
+Tenemos que forzar a que la función tome un ``Car`` del tipo ``(Show a) => Car
+String String a``. Podemos ver como la definición de tipo es mucho más
+complicada y el único beneficio que hemos obtenido es que podamos usar
+cualquier tipo que sea una instancia de la clase de tipo ``Show`` como
+parámetro ``c``. ::
+
+    ghci> tellCar (Car "Ford" "Mustang" 1967)  
+    "This Ford Mustang was made in 1967"  
+    ghci> tellCar (Car "Ford" "Mustang" "nineteen sixty seven")  
+    "This Ford Mustang was made in \"nineteen sixty seven\""  
+    ghci> :t Car "Ford" "Mustang" 1967  
+    Car "Ford" "Mustang" 1967 :: (Num t) => Car [Char] [Char] t  
+    ghci> :t Car "Ford" "Mustang" "nineteen sixty seven"  
+    Car "Ford" "Mustang" "nineteen sixty seven" :: Car [Char] [Char] [Char]
+
+.. image:: /images/meekrat.png
+   :align: right
+   :alt: Suricato
+
+A la hora de la verdad, acabaríamos utilizando ``Car String String Int`` la
+mayor parte del tiempo y nos daríamos cuenta de que parametrizar el tipo
+``Car`` realmente no importa. Normalmente utilizamos los parámetros de tipo
+cuando el tipo que está contenido dentro del tipo de dato no es realmente
+importante a la hora de trabajar con éste. Una lista de cosas es una lista
+de cosas y no importa que sean esas cosas, funcionará igual. Si queremos sumar
+una lista de números, mas tarde podemos especificar en la propia función de
+suma de que queremos específicamente una lista de números. Lo mismo pasa con
+``Maybe``. ``Maybe`` representa la opción de tener o no tener un valor.
+Realmente no importa de que tipo sea ese valor.
+
+Otro ejemplo de un tipo parametrizado que ya conocemos es el tipo ``Map k v``
+de ``Data.Map``. ``k`` es el tipo para las claves del diccionario mientras que
+``v`` es el tipo de los valores. Este es un buen ejemplo en donde los
+parámetros de tipo son útiles. Al tener los diccionarios parametrizados nos
+permiten asociar cualquier tipo con cualquier otro tipo, siempre que la clave
+del tipo sea de la clase de tipo ``Ord``. Si estuviéramos definiendo el tipo
+diccionario podríamos añadir una restricción de clase en la definición: ::
+
+    data (Ord k) => Map k v = ...  
+
+Sin embargo, existe un consenso en el mundo Haskell de que **nunca debemos
+añadir restricciones de clase a las definiciones de tipo**. ¿Por qué? Bueno,
+porque no nos beneficia mucho, pero al final acabamos escribiendo más
+restricciones de clase, incluso aunque no las necesitemos. Si ponemos o no
+podemos la restricción de clase ``Ord k`` en la definición de tipo de ``Map k
+v``, tendremos que poner de todas formas la restricción de clase en las
+funciones que asuman que las claves son ordenables. Pero si no ponemos la
+restricción en la definición de tipo, no tenemos que poner ``(Ord k) =>`` en
+la declaración de tipo de las funciones que no les importe si la clave puede
+es ordenable o no. Un ejemplo de esto sería la función ``toList`` que
+simplemente convierte un diccionario en una lista de asociación. Su
+declaración de tipo es ``toList :: Map k a -> [(k, a)]``. Si ``Map k v``
+tuviera una restricción en su declaración, el tipo de ``toList`` debería haber
+sido ``toList :: (Ord k) => Map k a -> [(k, a)]`` aunque la función no 
+necesite comparar ninguna clave.
+
+Así que no pongas restricciones de clase en las declaraciones de tipos aunque
+tenga sentido, ya que al final las vas a tener que poner de todas formas en
+las declaraciones de tipo de las funciones.
+
+Vamos a implementar un tipo para vectores 3D y crear algunas operaciones con
+ellos. Vamos a usar un tipo parametrizado ya que, aunque normalmente contendrá
+números, queremos que soporte varios tipos de ellos. ::
+
+    data Vector a = Vector a a a deriving (Show)  
+  
+    vplus :: (Num t) => Vector t -> Vector t -> Vector t  
+    (Vector i j k) `vplus` (Vector l m n) = Vector (i+l) (j+m) (k+n)  
+  
+    vectMult :: (Num t) => Vector t -> t -> Vector t  
+    (Vector i j k) `vectMult` m = Vector (i*m) (j*m) (k*m)  
+  
+    scalarMult :: (Num t) => Vector t -> Vector t -> t  
+    (Vector i j k) `scalarMult` (Vector l m n) = i*l + j*m + k*n
+
+``vplus`` sirve para sumar dos vectores. Los vectores son sumados simplemente
+sumando sus correspondientes componentes. ``scalarMult`` calcula el producto
+escalar de dos vectores y ``vectMult`` calcula el producto de un vector y un
+escalar. Estas funciones pueden operar con tipos como ``Vector Int``,
+``Vector Integer``, ``Vector Float`` o cualquier otra cosa mientras ``a`` de
+``Vector a`` sea miembro de clase de tipo ``Num``. También, si miras la
+declaración de tipo de estas funciones, veras que solo pueden operar con
+vectores del mismo tipo y los números involucrados (como en ``vectMult``) 
+también deben ser del mismo tipo que el que contengan los vectores. Fíjate en
+que no hemos puesto una restricción de clase ``Num`` en la declaración del
+tipo ``Vector``, ya que deberíamos haberlo repetido también en las
+declaraciones de las funciones.
+
+Una vez más, es muy importante distinguir entre constructores de datos y
+constructores de tipo. Cuando declaramos un tipo de dato, la parte anterior al
+``=`` es el constructor de tipo, mientras que la parte que va después
+(posiblemente separado por ``|``) son los constructores de datos. Dar a una
+función el tipo ``Vector t t t -> Vector t t t -> t`` sería incorrecto ya que
+hemos usado tipos en la declaración y el constructor de tipo vector toma un
+solo parámetro, mientras que el constructor de datos toma tres. Vamos a jugar
+un poco con los vectores: ::
+
+    ghci> Vector 3 5 8 `vplus` Vector 9 2 8  
+    Vector 12 7 16  
+    ghci> Vector 3 5 8 `vplus` Vector 9 2 8 `vplus` Vector 0 2 3  
+    Vector 12 9 19  
+    ghci> Vector 3 9 7 `vectMult` 10  
+    Vector 30 90 70  
+    ghci> Vector 4 9 5 `scalarMult` Vector 9.0 2.0 4.0  
+    74.0  
+    ghci> Vector 2 9 3 `vectMult` (Vector 4 9 5 `scalarMult` Vector 9 2 4)  
+    Vector 148 666 222
+
+
 
  
 
