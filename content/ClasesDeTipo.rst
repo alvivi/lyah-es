@@ -569,6 +569,238 @@ un poco con los vectores: ::
     Vector 148 666 222
 
 
+Instancias derivadas
+--------------------
 
- 
+
+.. image:: /images/gob.png
+   :align: right
+   :alt: Gob
+
+En la sección :ref:`clases-de-tipo-1`, explicamos las bases de las clases de
+tipo. Dijimos que una clase de tipo es una especie de interfaz que define un
+comportamiento. Un tipo puede ser una **instancia** de esa clase si soporta
+ese comportamiento. Ejemplo: El tipo ``Int`` es una instancia de la clase
+``Eq``, ya que la clase de tipo ``Eq`` define el comportamiento de cosas que
+se pueden equiparar. Y como los enteros se pueden equiparar, ``Int`` es parte
+de la clase ``Eq``. La utilidad real está en las funciones que actúan como
+interfaz de ``Eq``, que son ``==`` y ``/=``. Si un tipo forma parte de la
+clase ``Eq``, podemos usar las funciones como ``==`` con valores de ese tipo.
+Por este motivo, expresiones como ``4 == 4`` y ``"foo" /= "bar"`` son
+correctas.
+
+Mencionamos también que las clases de tipo suelen ser confundidas con las
+clases de lenguajes como Java, Python, C++ y demás, cosa que más tarde
+desconcierta a la gente. En estos lenguajes, las clases son como un modelo del
+cual podemos crear objetos que contienen un estado y pueden hacer realizar
+algunas acciones. Las clases de tipo son más bien como las interfaces. No
+creamos instancias a partir de las interfaces. En su lugar, primero creamos
+nuestro tipo de dato y luego pensamos como qué puede comportarse. Si puede
+comportarse como algo que puede ser equiparado, hacemos que sea miembro de la
+clase ``Eq``. Si puede ser puesto en algún orden, hacemos que sea miembro de
+la clase ``Ord``.
+
+Más adelante veremos como podemos hacer manualmente que nuestros
+tipos sean una instancia de una clase de tipo implementando las funciones
+que esta define. Pero ahora, vamos a ver como Haskell puede automáticamente
+hacer que nuestros tipos pertenezcan a una de las siguientes clases: ``Eq``,
+``Ord``, ``Enum``, ``Bounded``, ``Show`` y ``Read``. Haskell puede derivar
+el comportamiento de nuestros tipos en estos contextos si usamos la palabra
+clave ``deriving`` cuando los definimos.
+
+Considera el siguiente tipo de dato: ::
+
+    data Person = Person { firstName :: String  
+                         , lastName :: String  
+                         , age :: Int  
+                         }
+                     
+Describe a una persona. Vamos a asumir que ninguna persona tiene la misma
+combinación de nombre, apellido y edad. Ahora, si tenemos registradas a dos
+personas ¿Tiene sentido saber si estos dos registros pertenecen a la misma
+persona? Parece que sí. Podemos compararlos por igualdad y ver si son iguales
+o no. Por esta razón tiene sentido que este tipo se miembro de la clase de
+tipo ``Eq``. Derivamos la instancia: ::
+
+    data Person = Person { firstName :: String  
+                         , lastName :: String  
+                         , age :: Int  
+                         } deriving (Eq)
+
+Cuando derivamos una instancia de ``Eq`` para un tipo y luego intentamos
+comparar dos valores de ese tipo usando ``==`` o ``/=``, Haskell comprobará
+si los constructores de tipo coinciden (aunque aquí solo hay un constructor
+de tipo) y luego comprobará si todos los campos de ese constructor coinciden
+utilizando el operador ``=`` para cada par de campos. Solo tenemos que tener
+en cuenta una cosa, todos los campos del tipo deben ser también miembros de la
+clase de tipo ``Eq``. Como ``String`` y ``Int`` ya son miembros, no hay ningún
+problema. Vamos a comprobar nuestra instancia ``Eq``. ::
+
+    ghci> let mikeD = Person {firstName = "Michael", lastName = "Diamond", age = 43}  
+    ghci> let adRock = Person {firstName = "Adam", lastName = "Horovitz", age = 41}  
+    ghci> let mca = Person {firstName = "Adam", lastName = "Yauch", age = 44}  
+    ghci> mca == adRock  
+    False  
+    ghci> mikeD == adRock  
+    False  
+    ghci> mikeD == mikeD  
+    True  
+    ghci> mikeD == Person {firstName = "Michael", lastName = "Diamond", age = 43}  
+    True
+
+Como ahora ``Person`` forma parte de la clase ``Eq``, podemos utilizarlo como
+``a`` en las funciones que tengan una restricción de clase del tipo ``Eq a``
+en su declaración, como ``elem``. ::
+
+    ghci> let beastieBoys = [mca, adRock, mikeD]  
+    ghci> mikeD `elem` beastieBoys  
+    True
+
+Las clases de tipo ``Show`` y ``Read`` son para cosas que pueden ser
+convertidas a o desde cadenas, respectivamente. Como pasaba con ``Eq``, si un
+constructor de tipo tiene campos, su tipo debe ser miembro de la clase`
+``Show`` o ``Read`` si queremos que también forme parte de estas clases. 
+
+Vamos a hacer que nuestro tipo de dato ``Person`` forme parte también de las
+clases ``Show`` y ``Read``. ::
+
+    data Person = Person { firstName :: String  
+                         , lastName :: String  
+                         , age :: Int  
+                         } deriving (Eq, Show, Read)
+                     
+Ahora podemos mostrar una persona por la terminal. ::
+
+    ghci> let mikeD = Person {firstName = "Michael", lastName = "Diamond", age = 43}  
+    ghci> mikeD  
+    Person {firstName = "Michael", lastName = "Diamond", age = 43}  
+    ghci> "mikeD is: " ++ show mikeD  
+    "mikeD is: Person {firstName = \"Michael\", lastName = \"Diamond\", age = 43}"  
+
+Si hubiésemos intentado mostrar en la terminal una persona antes de hacer que
+el tipo ``Person`` formara parte de la clase ``Show``, Haskell se hubiera
+quejado, diciéndonos que no sabe como representar una persona con una cadena.
+Pero ahora que hemos derivado la clase ``Show`` ya sabe como hacerlo.
+
+``Read`` es prácticamente la clase inversa de ``Show``. ``Show`` sirve para
+convertir nuestro tipo a una cadena, ``Read`` sirve para convertir una cadena
+a nuestro tipo. Aunque recuerda que cuando uses la función ``read`` hay que
+utilizar una anotación de tipo explícita para decirle a Haskell que tipo
+queremos como resultado. Si no ponemos el tipo que queremos como resultado
+explícitamente, Haskell no sabrá que tipo queremos. ::
+
+    ghci> read "Person {firstName =\"Michael\", lastName =\"Diamond\", age = 43}" :: Person  
+    Person {firstName = "Michael", lastName = "Diamond", age = 43}
+
+No hace falta utilizar una anotación de tipo explícita en caso de que usemos
+el resultado de la función ``read`` de forma que Haskell pueda inferir el
+tipo. ::
+
+    ghci> read "Person {firstName =\"Michael\", lastName =\"Diamond\", age = 43}" == mikeD  
+    True
+
+También podemos leer tipos parametrizados, pero tenemos que especificar todos
+los parámetros del tipo. Así que no podemos hacer
+``read "Just 't'" :: Maybe a``  pero si podemos hacer ``read "Just 't'" ::
+Maybe Char``.
+
+Podemos derivar instancias para la clase de tipo ``Ord``, la cual es para
+tipos cuyos valores puedan ser ordenados. Si comparamos dos valores del mismo
+tipo que fueron definidos usando diferentes constructores, el valor cuyo 
+constructor fuera definido primero es considerado menor que el otro. Por
+ejemplo, el tipo ``Bool`` puede tener valores ``False`` o ``True``. Con el
+objetivo de ver como se comporta cuando es comparado, podemos pensar que está
+implementado de esta forma: ::
+
+    data Bool = False | True deriving (Ord)  
+
+Como el valor ``False`` está definido primero y el valor ``True`` está
+definido después, podemos considerar que ``True`` es mayor que ``False``.
+
+    ghci> True `compare` False  
+    GT  
+    ghci> True > False  
+    True  
+    ghci> True < False  
+    False
+
+En el tipo ``Maybe a``, el constructor de datos ``Nothing`` esta definido
+antes que el constructor ``Just``, así que un valor ``Nothing`` es siempre más
+pequeño que cualquier valor ``Just algo``, incluso si ese algo es menos un
+billon de trillones. Pero si comparamos dos valores ``Just``, entonces se
+compara lo que hay dentro de él. ::
+
+    ghci> Nothing < Just 100  
+    True  
+    ghci> Nothing > Just (-49999)  
+    False  
+    ghci> Just 3 `compare` Just 2  
+    GT  
+    ghci> Just 100 > Just 50  
+    True
+
+No podemos hacer algo como ``Just (*3) > Just (*2)``, ya que ``(*3)`` y
+``(*2)`` son funciones, las cuales no tienen definida una instancia de
+``Ord``.
+
+Podemos usar fácilmente los tipos de dato algebraicos para crear
+enumeraciones, y las clases de tipo ``Enum`` y ``Bounded`` nos ayudarán a
+ello. Considera el siguiente tipo de dato: ::
+
+    data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday  
+
+Como ningún contructore de datos tiene argumentos, podemos hacerlo miembro de
+la clase de tipo ``Enum``. La clase ``Enum`` son para cosas que tinen un
+predecesor y sucesor. Tambien podemos hacerlo miembro de la clase de tipo
+``Bounded``, que es para cosas que tengan un valor mínimo posible y valor
+máximo posible. Ya que nos ponemos, vamos a hacer que este tipo tenga una
+instancia para todas las clases de tipo derivables que hemos visto y veremos
+que podemos hacer con él. ::
+
+    data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday   
+               deriving (Eq, Ord, Show, Read, Bounded, Enum)
+
+Como es parte de las clases de tipo ``Show`` y ``Read``, podemos convertir
+valores de est tipo a y desde cadenas. ::
+
+    ghci> Wednesday  
+    Wednesday  
+    ghci> show Wednesday  
+    "Wednesday"  
+    ghci> read "Saturday" :: Day  
+    Saturday
+
+Como es parte de las clases de tipo ``Eq`` y ``Ord``, podemos comparar o
+equiparar días. ::
+
+    ghci> Saturday == Sunday  
+    False  
+    ghci> Saturday == Saturday  
+    True  
+    ghci> Saturday > Friday  
+    True  
+    ghci> Monday `compare` Wednesday  
+    LT
+
+También forma parte de ``Bounded``, así que podemos obtener el día mas bajo
+o el día más alto. ::
+
+    ghci> minBound :: Day  
+    Monday  
+    ghci> maxBound :: Day  
+    Sunday
+
+También es una instancia de la clase ``Enum``. Podemos obtener el predecesor
+y el sucesor de un día e incluso podemos crear listas de rangos con ellos. ::
+
+    ghci> succ Monday  
+    Tuesday  
+    ghci> pred Saturday  
+    Friday  
+    ghci> [Thursday .. Sunday]  
+    [Thursday,Friday,Saturday,Sunday]  
+    ghci> [minBound .. maxBound] :: [Day]  
+    [Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday]
+
+Bastante impresionante.
 

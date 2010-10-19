@@ -188,6 +188,8 @@ tipos no tienen porque ser diferentes tipos. Simplemente representa que el
 primer componente y el valor que devuelve la función son del mismo tipo.
 
 
+.. _clases-de-tipo-1:
+
 Clases de tipo paso a paso (1ª parte)
 -------------------------------------
 

@@ -348,10 +348,10 @@ dependiendo del contexto. El filtro equivalente de aplicar varios predicados en
 una lista por comprensión es el mismo que aplicar varios filtrados o unir los
 predicados usando la función lógica ``&&``.
 
-¿Recuerdas nuestra función ``quicksort`` del anterior capítulo? Usamos listas
-por comprensión para filtrar los elementos que eran menores o iguales y mayores
-que el pivote. Podemos conseguir lo mismo de forma más legible usando`
-```filter``. ::
+¿Recuerdas nuestra función :ref:`quicksort <quicksort>` del capítulo anterior?
+Usamos listas por comprensión para filtrar los elementos que eran menores o
+iguales y mayores que el pivote. Podemos conseguir lo mismo de forma más
+legible usando ``filter``. ::
 
     quicksort :: (Ord a) => [a] -> [a]    
     quicksort [] = []    

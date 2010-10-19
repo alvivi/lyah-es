@@ -236,6 +236,7 @@ Bastante simple y previsible. Si la cabeza no es elemento que estamos buscando
 entonces buscamos en la cola. Si llegamos a una lista vacía, el resultado es
 falso.    
 
+.. _quicksort:
 
 ¡Quicksort!
 -----------
