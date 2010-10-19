@@ -573,7 +573,7 @@ interactiva. ::
     ghci> boot  
     <interactive>:1:0: Not in scope: `boot'
     
-Si las secciones ``let`` son tan interesantes ¿Porqué no usarlas siempre en
+Si las secciones ``let`` son tan interesantes ¿Por qué no usarlas siempre en
 lugar de las secciones ``where``? Bueno, como las secciones ``let`` son
 expresiones y son bastante locales en su ámbito, no pueden ser usadas entre
 guardas. Hay gente que prefiere las secciones ``where`` porque los nombres

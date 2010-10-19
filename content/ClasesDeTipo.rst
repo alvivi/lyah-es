@@ -804,3 +804,249 @@ y el sucesor de un día e incluso podemos crear listas de rangos con ellos. ::
 
 Bastante impresionante.
 
+
+Sinónimos de tipo
+-----------------
+
+
+Anteriormente mencionamos que los tipos ``[Char]`` y ``String`` eran 
+equivalentes e intercambiables. Esto está implementado con los **sinónimos de
+tipo**. Los sinónimos de tipo no hacen nada por si solo, simplemente dan a
+algún tipo un nombre diferente, de forma que obtenga algún significado para
+alguien que está leyendo nuestro código o documentación. Aquí tienes como
+define la librería estándar ``String`` como sinónimo de ``[Char]``. ::
+
+    type String = [Char]  
+
+.. image:: /images/chicken.png
+   :align: left
+   :alt: Gallina
+
+Acabamos de intrudir la palabra clave ``type``. Esta palabra clave podría
+inducir a errores a algunos, ya que en realidad no estamos haciendo haciendo
+nada nuevo (lo hacemos con la palabra clave ``data``). Simplemente estamos
+dando un sinónimos a un tipo que ya existe.
+
+Si hacemos una función que convierta una cadena a mayúscuals y la llamamos
+``toUpperString`` o algo parecido, podemos darle una declaración de tipo como
+``toUpperString :: [Char] -> [Char]`` o ``toUpperString :: String -> String``.
+Ambas son esecialmente lo mismo, solo que la última es más legible.
+
+Cuando estabamos hablando del módulo ``Data.Map``, primero presentamos una
+agenda de teléfonos representada con una lista de asociación para luego
+convertirla en un diccionario. Como ya sabemos, una lista de asociación no
+es más que una lista de duplas clave-valor. Vamos a volver a ver la lista que
+teníamos. ::
+
+    phoneBook :: [(String,String)]  
+    phoneBook =      
+        [("betty","555-2938")     
+        ,("bonnie","452-2928")     
+        ,("patsy","493-2928")     
+        ,("lucille","205-2928")     
+        ,("wendy","939-8282")     
+        ,("penny","853-2492")     
+        ]
+
+Vemos que el tipo de ``phoneBook`` es ``[(String,String)]``. Esto nos dice que
+es una lista de asociación que asocia cadenas con cadena, pero nada más. Vamos
+a crear un sinónimo de tipo para transmitir algo más de información en la
+declaración de tipo. ::
+
+    type PhoneBook = [(String,String)]  
+    
+Ahora la declaración de tipo de nuestra función ``phoneBook`` sería
+``phoneBook :: PhoneBook``. Vamos a hacer un sinónimo de tipo para las cadenas
+también. ::
+
+    type PhoneNumber = String  
+    type Name = String  
+    type PhoneBook = [(Name,PhoneNumber)]  
+
+Dar un sinónimo al tipo ``String`` es algo que suelen hacer los programadores
+de Haskell cuando quieren transmitir algo más de información acerca del
+cometido de las cadenas en sus funciones y que representan.
+
+Así que ahora, cuando implementemos una función que tome el nombre y el número
+de teléfono y busque si esa combinación está en nuestra agenda telefónica,
+podremos darle una declaración de tipo muy descriptiva: ::
+
+    inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool  
+    inPhoneBook name pnumber pbook = (name,pnumber) `elem` pbook
+
+Si decidimo no utilizar sinónimos de tipo, nuestra función tendría la
+declaración de tipo ``String -> String -> [(String,String)] -> Bool``. En
+este caso, la declaración de tipo que utiliza los sinónimos de tipo es mucho
+más clara y fácil de entender. Sin embargo, no debes abusar de ellos.
+Utilizamos los sinónimos de tipo o bien para indicar que representa un tipo
+que ya existe en nuestras funciones (y de esta forma nuestras delcaraciones
+de tipo se convierten en la mejor documentación) o bien cuando algo tiene
+un tipo muy largo que se repite mucho (como ``[(String,String)]``) y tiene
+un significado concreto para nosotros.
+
+Los sinónimos de tipo también pueden ser parametrizados. Si queremos un tipo
+que represente las listas de asociación pero también queremos que sea lo
+suficientemente general como para utilizar cualquier tipo de clave y valor,
+podemos utilizar esto: ::
+
+    type AssocList k v = [(k,v)]  
+    
+Con esto, una función que tomara un valor por clave en una lista de
+asociación puede tener el tipo ``(Eq k) => k -> AssocList k v -> Maybe v``.
+``AssocList`` es un constructor de tipo que toma dos tipos y produce un tipo
+concreto, como ``AssocList Int String`` por ejemplo. 
+
+.. note:: Cuando hablamos de tipos concretos nos referimos a tipos
+          completamente aplicados, como ``Map Int String``. A veces, los
+          chicos y yo decimos que ``Maybe`` es un tipo, pero no queremos
+          referirnos a eso, ya que cualquier idiota sabe que ``Maybe`` es un
+          constructor de tipo. Cuando aplico un tipo extra a ``Maybe``, como
+          ``Maybe String``, entonces tengo un tipo concreto. Ya sabes, los
+          valores solo pueden tener tipos que sean tipos concretos.
+          Concluyendo, vive rápido, quiere mucho y no dejes que nadie te
+          tome el pelo.
+          
+De la misma forma que podemos aplicar parcialmente funciones para obtener
+nuevas funciones, podemos aplicar parcialmente los parámetros de tipo y
+obtener nuevos constructores de tipo. De la misma forma que llamamos a la
+funciones con parámetros de menos para obtener nuevas funciones, podemos
+especificar un constructor de tipo con parámetros de menos y obtener un
+constructor de tipo parcialmente aplicado. Si queremos un tipo que represente
+un diccionario (de ``Data.Map``) que asocie enteros con cualquier otra cosa,
+podemos utilizar esto: :: 
+
+    type IntMap v = Map Int v  
+
+O bien esto otro: ::
+
+    type IntMap = Map Int  
+    
+De cualquier forma, el constructor de tipo ``IntMap`` tomará un parámetro
+y ese será el tipo con el que se asociarán los enteros.
+
+.. note:: Si vas a intentar implementar esto, seguramente imporatarás de forma
+          cualificada el módulo ``Data.Map``. Cuando realizas una importación
+          cualificada, los constructores de tipo también deben estar
+          precedidos con el nombre del módulo. Así que tienes que escribir
+          algo como ``type IntMap = Map.Map Int``.
+          
+Asegurate de que realmente entiendes la diferencia entre constructores de
+tipos y constructores de datos. Solo porque hayamos creado un sinónimo llamado
+``IntMap`` o ``AssocList`` no significa que podamos hacer cosas como 
+``AssocList [(1,2),(4,5),(7,9)]``. Lo único que significa es que podemos 
+referirnos a ese tipo usando nombres diferentes. Podemos hacer
+``[(1,2),(3,5),(8,9)] :: AssocList Int Int``, lo cual hará que los número de
+adentro asuman el tipo ``Int``, pero podemos seguir usando esta lista como
+si fuera una lista que albergara duplas de enteros. Lo sinónimos de tipo
+(y los tipos en general) solo pueden ser utlizados en la porción de Haskell
+dedicada a los tipos. Estaremos en esta porción de Haskell cuando estemos
+definiendo tipos nuevos (tanto en las declaraciones ``data`` como en las de
+``type``) o cuando nos situemos después de un ``::``. ``::`` se utiliza
+solo para las declaraciones o anotaciones de tipo. 
+
+Otro tipo de dato interesante que toma dos tipos como parámetro es el tipo
+``Either a b``. Así es como se define más o menos: ::
+
+    data Either a b = Left a | Right b deriving (Eq, Ord, Read, Show)  
+
+Tiene dos constructores de datos. Si se utiliza ``Left``, entonces contiene
+datos del tipo ``a`` y si se utiliza ``Right`` contiene datos del tipo ``b``.
+Podemos utilizar este tipo para encapsular un valor de un tipo u otro y así
+obtener un valor del tipo ``Either a b``. Normalmente utilizaremos un
+ajuste de patrones con ambos, ``Left`` y ``Right``, y nos diferenciaremos
+según sea uno u otro. ::
+
+    ghci> Right 20  
+    Right 20  
+    ghci> Left "w00t"  
+    Left "w00t"  
+    ghci> :t Right 'a'  
+    Right 'a' :: Either a Char  
+    ghci> :t Left True  
+    Left True :: Either Bool b  
+
+Hasta ahora hemos visto que ``Maybe a`` es utilizado para representar
+resultados de cálculos que podrían haber fallado o no. Pero a veces,
+``Maybe a`` no es suficientemente bueno ya que ``Nothing`` únicamente nos
+informa de que algo ha fallado. Esto esta bien para funciones que solo pueden
+fallar de una forma o si no nos interesa saber porque y como han fallado.
+Una búqueda en un ``Data.Map`` solo falla cuando la clave que estamos buscando
+no se encuentra en el diccionario, así que sabemos exacmente que ha pasado.
+Sin embargo, cuando estamos interesados en el cómo o el porqué a fallado algo,
+solemos utilizar como resultado el tipo ``Either a b``, donde ``a`` es alguna
+especie de tipo que pueda decirnos algo sobre un posible fallo, y ``b`` es
+el tipo de un cálculo satisfactorio. Por lo tanto, los errores usan el
+constructor de datos ``Left`` mientras que los resultado usan ``Right``.
+
+Un ejemplo: un instituto posee taquillas para que sus estudiantes tengan un
+lugar donde guardar sus posters de *Guns'n'Roses*. Cada taquilla tiene una
+combinación. Cuando un estudiante quiere una taquilla nueva, le dice al
+supervisor de las taquillas que número de taquilla quiere y él le da un
+código para esa taquilla. Sin embargo, si alguien ya está usando la taquilla,
+no le puede decir el código y tienen que elegir una taquilla diferente.
+Utilizaremos un diccionario de ``Data.Map`` para representar las taquillas. 
+Asociará el número de la taquilla con duplas que contengan si la taquilla está
+en uso o no y el código de la taquilla. ::
+
+    import qualified Data.Map as Map  
+  
+    data LockerState = Taken | Free deriving (Show, Eq)  
+  
+    type Code = String  
+  
+    type LockerMap = Map.Map Int (LockerState, Code)
+
+Bastante simple. Hemo creado un nuevo tipo de dato para representar si una
+taquilla esta libre o no, y hemos creado un sinónimo para representar el
+código de una taquilla. También creado otro sinónimo para el tipo que asocia
+los los números de las taquillas con las duplas de estado y código. Ahora,
+vamos a hacer una función que busque un número de taquilla en el diccionario.
+Vamos a usar el tipo ``Either String Code`` para representar el resultado,
+ya que nuestra búsqueda puede fallar de dos formas: la taquilla ya ha sido
+tomada, en cuyo caso decimos quien la posee o si el no hay ninguna taquilla
+con ese número. Si la búqueda falla, vamos a utilizar una cadena para obtener
+el por qué. ::
+
+    lockerLookup :: Int -> LockerMap -> Either String Code  
+    lockerLookup lockerNumber map =   
+        case Map.lookup lockerNumber map of   
+            Nothing -> Left $ "Locker number " ++ show lockerNumber ++ " doesn't exist!"  
+            Just (state, code) -> if state /= Taken   
+                                    then Right code  
+                                    else Left $ "Locker " ++ show lockerNumber ++ " is already taken!"
+
+Hacemos una búsqueda normal en un diccionario. Si obtenemos ``Nothing``,
+devolvemos un valor con el tipo ``Left String`` que diga que esa taquilla no
+existe. Si la encontramos, hacemos una comprobación adicional para ver si la
+taquilla está libre. Si no lo está, devolvemos un ``Left`` diciendo que la
+taquilla a sido tomada. Si lo está, devolvemos un valor del tipo ``Right
+Code``, el cual daremos al estudiante. En realidad es un ``Right String``,
+aunque hemos creado un sinónimo para añadir un poco más de información en
+la declaración de tipo. Aquí tienes un diccionario de ejemplo: ::
+
+    lockers :: LockerMap  
+    lockers = Map.fromList   
+        [(100,(Taken,"ZD39I"))  
+        ,(101,(Free,"JAH3I"))  
+        ,(103,(Free,"IQSA9"))  
+        ,(105,(Free,"QOTSA"))  
+        ,(109,(Taken,"893JJ"))  
+        ,(110,(Taken,"99292"))  
+        ]
+
+Vamos a buscar el código de unas cuantas taquillas: ::
+    
+    ghci> lockerLookup 101 lockers  
+    Right "JAH3I"  
+    ghci> lockerLookup 100 lockers  
+    Left "Locker 100 is already taken!"  
+    ghci> lockerLookup 102 lockers  
+    Left "Locker number 102 doesn't exist!"  
+    ghci> lockerLookup 110 lockers  
+    Left "Locker 110 is already taken!"  
+    ghci> lockerLookup 105 lockers  
+    Right "QOTSA"
+
+Podríamos haber utlizado el tipo ``Maybe a`` para representar el resultado
+pero entonces no sabríamos el motivo por el cual no podemos obtener el código.
+Ahora, tenemos información acerca del fallo en nuestro tipo del resultado.
