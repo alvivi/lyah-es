@@ -1,4 +1,4 @@
-Tipos y clases de tipo
+Tipos y clases de tipos
 =======================
 
 Cree en el tipo
@@ -190,18 +190,18 @@ primer componente y el valor que devuelve la función son del mismo tipo.
 
 .. _clases-de-tipo-1:
 
-Clases de tipo paso a paso (1ª parte)
--------------------------------------
+Clases de tipos paso a paso (1ª parte)
+--------------------------------------
 
 
 .. image:: /images/classes.png
    :align: right
    :alt: Clases
 
-Las clases de tipo son una especie de interfaz que define algún comportamiento.
-Si un tipo es parte de una clase de tipo, significa que ese tipo soporta e
-implementa el comportamiento que define la clase de tipo. Un montón de gente que
-viene de la POO se confunden con las clases de tipo porque piensan que son como
+Las clases de tipos son una especie de interfaz que define algún comportamiento.
+Si un tipo es parte de una clase de tipos, significa que ese tipo soporta e
+implementa el comportamiento que define la clase de tipos. Un montón de gente que
+viene de la POO se confunden con las clases de tipos porque piensan que son como
 las clases en los lenguajes orientados a objetos. Bien, pues no lo son. Si
 quieres puedes pensar que son como la interfaces de Java, solo que mejor.
 
@@ -225,7 +225,7 @@ tipo anterior como esto: La función de igualdad toma dos argumentos que son del
 mismo tipo y devuelve un ``Bool``. El tipo de estos dos argumentos debe ser
 miembro de la clase ``Eq`` (esto es la restricción de clase).
 
-La clase de tipo ``Eq`` proporciona una interfaz para pruebas de igualdad.
+La clase de tipos ``Eq`` proporciona una interfaz para pruebas de igualdad.
 Cualquier tipo que tenga sentido comparar dos valores de ese tipo por igualdad
 debe ser miembro de la clase ``Eq``. Todos los tipos estándar de Haskell excepto
 el tipo IO (un tipo para manejar la entrada/salida) y las funciones forman parte
@@ -281,7 +281,7 @@ Algunos tipos de clase básicos son:
 
  * Los miembros de ``Show`` pueden ser representados por cadenas. Todos los
    tipos que hemos visto excepto las funciones forman parte de ``Show``. la
-   función más usada que trabaja con la clase de tipos ``Show`` es la función
+   función más usada que trabaja con la clase de tiposs ``Show`` es la función
    ``show``. Esta toma un valor de un tipo que pertenezca a la clase ``Show`` y
    y lo representa como una cadena. ::
 
@@ -292,7 +292,7 @@ Algunos tipos de clase básicos son:
        ghci> show True
        "True"
 
- * ``Read`` es una especie de clase de tipos opuesta a ``Show``. La función
+ * ``Read`` es una especie de clase de tiposs opuesta a ``Show``. La función
    ``read`` toma una cadena y devuelve el tipo que es miembro de ``Show``. ::
 
        ghci> read "True" || False
@@ -305,7 +305,7 @@ Algunos tipos de clase básicos son:
        [1,2,3,4,3]
 
    Hasta aquí todo bien. Una vez más, todo los tipos que hemos visto excepto las
-   funciones forman parte de esta clase de tipos. Pero, ¿Qué pasa si simplemente
+   funciones forman parte de esta clase de tiposs. Pero, ¿Qué pasa si simplemente
    usamos ``read "4"``? ::
 
        ghci> read "4"
@@ -353,7 +353,7 @@ Algunos tipos de clase básicos son:
    expresión debe ser de este tipo en caso de que no sepas cual es".
 
  * Los miembros de la clase ``Enum`` son tipos secuencialmente ordenados, es
-   decir, pueden ser enumerados. La principal ventaja de la clase de tipos
+   decir, pueden ser enumerados. La principal ventaja de la clase de tiposs
    ``Enum`` es que podemos usarlos en las listas de rangos. También tienen
    definidos los sucesores y predecesores, por lo que podemos usar las funciones
    ``succ`` y ``pred``. Los tipos de esta clase son: ``()``, ``Bool``, ``Char``,
@@ -387,7 +387,7 @@ Algunos tipos de clase básicos son:
        ghci> maxBound :: (Bool, Int, Char)
        (True,2147483647,'\1114111')
 
- * ``Num`` es la clase de tipo numéricos. Sus miembros tienen la propiedad de
+ * ``Num`` es la clase de tipos numéricos. Sus miembros tienen la propiedad de
    poder comportarse como números. Vamos a examinar el tipo de un número. ::
 
        ghci> :t 20
@@ -418,7 +418,7 @@ Algunos tipos de clase básicos son:
 
    Para unirse a ``Num``, un tipo debe ser amigo de ``Show`` y ``Eq``.
 
- * ``Integral`` es también un clase de tipos numérica. ``Num`` incluye todos los
+ * ``Integral`` es también un clase de tiposs numérica. ``Num`` incluye todos los
    números, incluyendo números reales y enteros. ``Integral`` únicamente incluye
    números enteros. ``Int`` e ``Integer`` son miembros de esta clase.
 

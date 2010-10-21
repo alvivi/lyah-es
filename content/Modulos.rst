@@ -11,7 +11,7 @@ Cargando módulos
    :align: right
    :alt: Módulos
 
-Un módulo de Haskell es una colección de funciones, tipos y clases de tipo
+Un módulo de Haskell es una colección de funciones, tipos y clases de tipos
 relacionadas entre si. Un programa Haskell es una colección de módulos donde
 el módulo principal carga otros módulos y utiliza las funciones definidas
 en ellos para realizar algo. Tener el código divido en módulos tiene bastantes
@@ -26,7 +26,7 @@ La librería estándar de Haskell está dividida en varios módulos, cada uno de
 ellos está formado por funciones y tipos que de alguna forma están
 relacionados y sirven para propósito común. Existe un módulo para manipular
 listas, un módulos para la programación concurrente, un módulo para trabajar
-con números complejos, etc. Todas las funciones, tipos y clases de tipo con
+con números complejos, etc. Todas las funciones, tipos y clases de tipos con
 las que hemos trabajado hasta ahora son parte del módulo ``Prelude``, el cual
 es importado por defecto. En este capítulo vamos a ver unos cuantos módulos
 útiles y sus respectivas funciones. Pero primero, vamos a ver como se importan
@@ -317,7 +317,7 @@ conocido.
    que satisfaga el predicado.
    
  * ``sort`` simplemente ordena una lista. El tipo de elementos que contenga
-   la lista tiene que ser miembro de clase de tipo ``Ord``, ya que si los
+   la lista tiene que ser miembro de clase de tipos ``Ord``, ya que si los
    elementos de la lista no se pueden poner en algún tipo de orden, la lista
    no se puede ordenar. ::
    
@@ -594,7 +594,7 @@ conocido.
 Lo que ``length``, ``take``, ``drop``, ``splitAt``, ``!!`` y ``replicate``
 tienen en común es que toman un ``Int`` como parámetro (o lo devulen),
 incluso aunque estas funciones podrían ser más genéricas y útiles si
-simplemente tomaran cualquier tipo que fuera parte de las clases de tipo
+simplemente tomaran cualquier tipo que fuera parte de las clases de tipos
 ``Integral`` o ``Num`` (dependiendo de las funciones). Lo hacen por mótivos
 hístoricos. Probablemente si arreglaran esto dejaría de funcionar mucho código
 ya existente. Este es el motivo por el que ``Data.List`` tiene sus propias
@@ -659,7 +659,7 @@ si un elemento es mayor, igual o menor que otro. El tipo de ``sortBy`` es
 ``sortBy :: (a -> a -> Ordering) -> [a] -> [a]``. Si recuerdas, el tipo
 ``Ordering`` puede tomar los valores ``GT``, ``EQ`` y ``LT``. ``sort`` es
 equivalente a ``sort compare``, ya que ``comapare`` simplemente toma dos
-elementos cuyos tipos esten en la clase de tipo ``Ord`` y devuelve su relación
+elementos cuyos tipos esten en la clase de tipos ``Ord`` y devuelve su relación
 de orden.
 
 Las listas pueden ser comparadas por orden lexicográfico ¿Y si tenemos una
@@ -796,7 +796,7 @@ poco con esta función. ::
     ghci> map generalCategory " \t\nA9?|"  
     [Space,Control,Control,UppercaseLetter,DecimalNumber,OtherPunctuation,MathSymbol]
 
-Como ``GeneralCategory`` forma parte de la clase de tipo ``Eq`` podemos hacer
+Como ``GeneralCategory`` forma parte de la clase de tipos ``Eq`` podemos hacer
 cosas como ``generalCategory c == Space``.
 
 Para terminar, aquí tienes unas cuantas funciones que convierten caracteres:
@@ -997,13 +997,13 @@ resumen básico de las funciones.
    Dice que toma una lista de duplas ``k`` y ``v`` y devuelve un diccionario
    que asocia las claves ``k`` con los valores ``v``. Fíjate que cuando
    creábamos listas de asociación con listas normales, las claves solo tenían
-   que ser igualables (su tipo pertenecía a la clase de tipo ``Eq``) pero
+   que ser igualables (su tipo pertenecía a la clase de tipos ``Eq``) pero
    ahora tienen que ser ordenables. Esto es básicamente una restricción del
    módulo ``Data.Map``. Necesita que las claves sean ordenables para que pueda
    organizarlas en un árbol.  
    
    Debes utilizar siempre el módulo ``Data.Map`` para las asociaciones
-   clave-valor a no ser que las claves son sean de la clase de tipo ``Ord``.
+   clave-valor a no ser que las claves son sean de la clase de tipos ``Ord``.
    
  * ``empty`` representa un diccionario vacío. No toma ningún argumento,
    simplemente devuelve un diccionario vacío. ::
@@ -1269,7 +1269,7 @@ La función ``nub`` de ``Data.List`` ya realiza esta tarea, pero si estas
 eliminando duplicados de un gran lista es mucho más eficiente si insertar los
 elementos en un conjunto y luego convertirlo en una lista en lugar de utilizar
 ``nub``.  Pero ``nub`` solo requiere que los elemento de la lista sean de la
-clase de tipo ``Eq``, mientras que los elementos de los conjuntos deben ser
+clase de tipos ``Eq``, mientras que los elementos de los conjuntos deben ser
 de la clase ``Ord``. ::
 
     ghci> let setNub xs = Set.toList $ Set.fromList xs  

@@ -1,10 +1,10 @@
 
 
-Creando nuestros propios tipos y clases de tipo
-===============================================
+Creando nuestros propios tipos y clases de tipos
+================================================
 
 
-En capítulos anteriores vimos algunos tipos y clases de tipo de Haskell. ¡En
+En capítulos anteriores vimos algunos tipos y clases de tipos de Haskell. ¡En
 este capítulo vamos a ver como crearlos nosotros mismos! ¿A qué no te lo
 esperabas?
 
@@ -109,7 +109,7 @@ de tipo ``Show`` hacemos esto: ::
 
 No vamos a preocuparnos ahora mismo acerca de derivar. Simplemente diremos que
 si añadimos ``deriving (Show)`` al final de una declaración de tipo,
-automáticamente Haskell hace que ese tipo forme parte de la clase de tipo
+automáticamente Haskell hace que ese tipo forme parte de la clase de tipos
 ``Show``. Así que ahora ya podemos hacer esto: ::
 
     ghci> Circle 10 20 5  
@@ -463,7 +463,7 @@ perfectamente. Ahora ¿Cómo sería si ``Car`` fuera en realidad ``Car a b c``?
 Tenemos que forzar a que la función tome un ``Car`` del tipo ``(Show a) => Car
 String String a``. Podemos ver como la definición de tipo es mucho más
 complicada y el único beneficio que hemos obtenido es que podamos usar
-cualquier tipo que sea una instancia de la clase de tipo ``Show`` como
+cualquier tipo que sea una instancia de la clase de tipos ``Show`` como
 parámetro ``c``. ::
 
     ghci> tellCar (Car "Ford" "Mustang" 1967)  
@@ -495,7 +495,7 @@ de ``Data.Map``. ``k`` es el tipo para las claves del diccionario mientras que
 ``v`` es el tipo de los valores. Este es un buen ejemplo en donde los
 parámetros de tipo son útiles. Al tener los diccionarios parametrizados nos
 permiten asociar cualquier tipo con cualquier otro tipo, siempre que la clave
-del tipo sea de la clase de tipo ``Ord``. Si estuviéramos definiendo el tipo
+del tipo sea de la clase de tipos ``Ord``. Si estuviéramos definiendo el tipo
 diccionario podríamos añadir una restricción de clase en la definición: ::
 
     data (Ord k) => Map k v = ...  
@@ -540,7 +540,7 @@ sumando sus correspondientes componentes. ``scalarMult`` calcula el producto
 escalar de dos vectores y ``vectMult`` calcula el producto de un vector y un
 escalar. Estas funciones pueden operar con tipos como ``Vector Int``,
 ``Vector Integer``, ``Vector Float`` o cualquier otra cosa mientras ``a`` de
-``Vector a`` sea miembro de clase de tipo ``Num``. También, si miras la
+``Vector a`` sea miembro de clase de tipos ``Num``. También, si miras la
 declaración de tipo de estas funciones, veras que solo pueden operar con
 vectores del mismo tipo y los números involucrados (como en ``vectMult``) 
 también deben ser del mismo tipo que el que contengan los vectores. Fíjate en
@@ -578,10 +578,10 @@ Instancias derivadas
    :alt: Gob
 
 En la sección :ref:`clases-de-tipo-1`, explicamos las bases de las clases de
-tipo. Dijimos que una clase de tipo es una especie de interfaz que define un
+tipo. Dijimos que una clase de tipos es una especie de interfaz que define un
 comportamiento. Un tipo puede ser una **instancia** de esa clase si soporta
 ese comportamiento. Ejemplo: El tipo ``Int`` es una instancia de la clase
-``Eq``, ya que la clase de tipo ``Eq`` define el comportamiento de cosas que
+``Eq``, ya que la clase de tipos ``Eq`` define el comportamiento de cosas que
 se pueden equiparar. Y como los enteros se pueden equiparar, ``Int`` es parte
 de la clase ``Eq``. La utilidad real está en las funciones que actúan como
 interfaz de ``Eq``, que son ``==`` y ``/=``. Si un tipo forma parte de la
@@ -589,11 +589,11 @@ clase ``Eq``, podemos usar las funciones como ``==`` con valores de ese tipo.
 Por este motivo, expresiones como ``4 == 4`` y ``"foo" /= "bar"`` son
 correctas.
 
-Mencionamos también que las clases de tipo suelen ser confundidas con las
+Mencionamos también que las clases de tipos suelen ser confundidas con las
 clases de lenguajes como Java, Python, C++ y demás, cosa que más tarde
 desconcierta a la gente. En estos lenguajes, las clases son como un modelo del
 cual podemos crear objetos que contienen un estado y pueden hacer realizar
-algunas acciones. Las clases de tipo son más bien como las interfaces. No
+algunas acciones. Las clases de tipos son más bien como las interfaces. No
 creamos instancias a partir de las interfaces. En su lugar, primero creamos
 nuestro tipo de dato y luego pensamos como qué puede comportarse. Si puede
 comportarse como algo que puede ser equiparado, hacemos que sea miembro de la
@@ -601,7 +601,7 @@ clase ``Eq``. Si puede ser puesto en algún orden, hacemos que sea miembro de
 la clase ``Ord``.
 
 Más adelante veremos como podemos hacer manualmente que nuestros
-tipos sean una instancia de una clase de tipo implementando las funciones
+tipos sean una instancia de una clase de tipos implementando las funciones
 que esta define. Pero ahora, vamos a ver como Haskell puede automáticamente
 hacer que nuestros tipos pertenezcan a una de las siguientes clases: ``Eq``,
 ``Ord``, ``Enum``, ``Bounded``, ``Show`` y ``Read``. Haskell puede derivar
@@ -633,7 +633,7 @@ si los constructores de tipo coinciden (aunque aquí solo hay un constructor
 de tipo) y luego comprobará si todos los campos de ese constructor coinciden
 utilizando el operador ``=`` para cada par de campos. Solo tenemos que tener
 en cuenta una cosa, todos los campos del tipo deben ser también miembros de la
-clase de tipo ``Eq``. Como ``String`` y ``Int`` ya son miembros, no hay ningún
+clase de tipos ``Eq``. Como ``String`` y ``Int`` ya son miembros, no hay ningún
 problema. Vamos a comprobar nuestra instancia ``Eq``. ::
 
     ghci> let mikeD = Person {firstName = "Michael", lastName = "Diamond", age = 43}  
@@ -656,7 +656,7 @@ en su declaración, como ``elem``. ::
     ghci> mikeD `elem` beastieBoys  
     True
 
-Las clases de tipo ``Show`` y ``Read`` son para cosas que pueden ser
+Las clases de tipos ``Show`` y ``Read`` son para cosas que pueden ser
 convertidas a o desde cadenas, respectivamente. Como pasaba con ``Eq``, si un
 constructor de tipo tiene campos, su tipo debe ser miembro de la clase`
 ``Show`` o ``Read`` si queremos que también forme parte de estas clases. 
@@ -704,7 +704,7 @@ los parámetros del tipo. Así que no podemos hacer
 ``read "Just 't'" :: Maybe a``  pero si podemos hacer ``read "Just 't'" ::
 Maybe Char``.
 
-Podemos derivar instancias para la clase de tipo ``Ord``, la cual es para
+Podemos derivar instancias para la clase de tipos ``Ord``, la cual es para
 tipos cuyos valores puedan ser ordenados. Si comparamos dos valores del mismo
 tipo que fueron definidos usando diferentes constructores, el valor cuyo 
 constructor fuera definido primero es considerado menor que el otro. Por
@@ -744,23 +744,23 @@ No podemos hacer algo como ``Just (*3) > Just (*2)``, ya que ``(*3)`` y
 ``Ord``.
 
 Podemos usar fácilmente los tipos de dato algebraicos para crear
-enumeraciones, y las clases de tipo ``Enum`` y ``Bounded`` nos ayudarán a
+enumeraciones, y las clases de tipos ``Enum`` y ``Bounded`` nos ayudarán a
 ello. Considera el siguiente tipo de dato: ::
 
     data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday  
 
 Como ningún contructore de datos tiene argumentos, podemos hacerlo miembro de
-la clase de tipo ``Enum``. La clase ``Enum`` son para cosas que tinen un
-predecesor y sucesor. Tambien podemos hacerlo miembro de la clase de tipo
+la clase de tipos ``Enum``. La clase ``Enum`` son para cosas que tinen un
+predecesor y sucesor. Tambien podemos hacerlo miembro de la clase de tipos
 ``Bounded``, que es para cosas que tengan un valor mínimo posible y valor
 máximo posible. Ya que nos ponemos, vamos a hacer que este tipo tenga una
-instancia para todas las clases de tipo derivables que hemos visto y veremos
+instancia para todas las clases de tipos derivables que hemos visto y veremos
 que podemos hacer con él. ::
 
     data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday   
                deriving (Eq, Ord, Show, Read, Bounded, Enum)
 
-Como es parte de las clases de tipo ``Show`` y ``Read``, podemos convertir
+Como es parte de las clases de tipos ``Show`` y ``Read``, podemos convertir
 valores de est tipo a y desde cadenas. ::
 
     ghci> Wednesday  
@@ -770,7 +770,7 @@ valores de est tipo a y desde cadenas. ::
     ghci> read "Saturday" :: Day  
     Saturday
 
-Como es parte de las clases de tipo ``Eq`` y ``Ord``, podemos comparar o
+Como es parte de las clases de tipos ``Eq`` y ``Ord``, podemos comparar o
 equiparar días. ::
 
     ghci> Saturday == Sunday  
@@ -1050,3 +1050,283 @@ Vamos a buscar el código de unas cuantas taquillas: ::
 Podríamos haber utlizado el tipo ``Maybe a`` para representar el resultado
 pero entonces no sabríamos el motivo por el cual no podemos obtener el código.
 Ahora, tenemos información acerca del fallo en nuestro tipo del resultado.
+
+
+Estructuras de datos recursivas
+-------------------------------
+
+
+.. image:: /images/thefonz.png
+   :align: left
+   :alt: Hombre cool
+
+Como ya hemos visto, un costructor de un tipo de dato algebraico puede tener
+(o no tener) varios campos y cada uno de estos debe ser un tipo concreto.
+Teniendo esto en cuenta, podemos crear tipos cuyos campos de constructor sean
+el propio tipo. De esta forma, podemos crear estructuras de datos recursivas,
+en el que un valor de un cierto tipo contenga valores de ese mismo tipo, el
+cual seguirá conteniendo valores del mismo tipo y así sucesivamente.
+
+Piensa en la lista ``[5]``. Es lo mismo que ``5:[]``. A la izquierda del ``:``
+hay un valore, y a la derecha hay una lista. En este caso, una lista vacía. 
+¿Qué pasaría con la lista ``[4,5]``? Bueno, es lo mismo que ``4:(5:[])``. Si
+miramos el primer ``:``, vemos que también tiene un elemento a su izquierda y
+una lista a su derecha ``(5:[])``.  Lo mismo sucede para la lista
+``3:(4:(5:6:[]))``, que también podría escribirse como ``3:4:5:6:[]`` (ya que
+``:`` es asociativo por la derecha) o ``[3,4,5,6]``. 
+
+Podemos decir que una lista es o bien una lista vacia o bien un elemento 
+unido con un ``:`` a otra lista (que puede ser una lista vacía o no).
+
+¡Vamos a usar los tipod de datos algebraicos para implementar nuestra propia
+lista! ::
+
+    data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)  
+
+Se lee de la misma forma que se leía nuestra definición de lista en un
+párrafo anterior. Es o bien una lista vacía o bien una combinación de un
+elemento y otra lista. Si estás confundido con esto, quizás te sea más fácil
+entenderlo con la sintaxis de registro: ::
+
+    data List a = Empty | Cons { listHead :: a, listTail :: List a} deriving (Show, Read, Eq, Ord)  
+    
+Puede que también estes confundido con el constructor ``Cons``. ``Cons`` es
+otra forma de decir ``:``. En realidad, en las listas, ``:`` es un constructor
+que toma un valor y otra lista y devuleve una lista. En otras palabras, tiene
+dos campos. Uno es del tipo ``a`` y otro es del tipo ``[a]``. ::
+
+    ghci> Empty  
+    Empty  
+    ghci> 5 `Cons` Empty  
+    Cons 5 Empty  
+    ghci> 4 `Cons` (5 `Cons` Empty)  
+    Cons 4 (Cons 5 Empty)  
+    ghci> 3 `Cons` (4 `Cons` (5 `Cons` Empty))  
+    Cons 3 (Cons 4 (Cons 5 Empty))
+
+Si hubiésemos llamado a nuestro constructor de forma infija podrías ver mejor
+como es simplemente ``:``. ``Empty`` es como ``[]`` y ``4 `Cons` (5 `Cons`
+Empty)`` es como ``4:(5:[])``.
+
+Podemos definir funciones que automáticamente sean infijas si las nombramos
+únicamente con caracteres especiales. Podemos hacer lo mismo con los
+constructores, ya que son simplemente funciones que devuelve un tipo de dato
+concreto. Mira esto: ::
+
+    infixr 5 :-:  
+    data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
+
+Antes de nada, vemos que hay una nueva construcción sintáctica, una
+declaración infija. Cuando definimos funciones como operadores, podemos usar
+esta cosntrucción para darles un determinado comportamiento (aunque no estamos
+obligados a hacerlo). De esta forma definimos el orden de precedencia de un
+operador y si asociativo por la izquierda o por la derecha. Por ejemplo, ``*``
+es ``infixl 7 *`` y ``+`` es ``infixl 6 +``. Esto siginifica que ambos son
+asociativos por la izquierda de forma que ``(4 * 3 * 2)`` es ``(4 * 3) * 2)``
+pero ``*`` tiene un orden de precedencia mayor que ``+``, por lo que 
+``5 * 4 + 3`` es equivalente a ``(5 * 4) + 3``.
+
+De qualquier modo, al final acabamos escribiendo ``a :-: (List a)`` en lugar
+de `` Cons a (List a)``. Ahora podemos escribir las listas así: ::
+
+    ghci> 3 :-: 4 :-: 5 :-: Empty  
+    (:-:) 3 ((:-:) 4 ((:-:) 5 Empty))  
+    ghci> let a = 3 :-: 4 :-: 5 :-: Empty  
+    ghci> 100 :-: a  
+    (:-:) 100 ((:-:) 3 ((:-:) 4 ((:-:) 5 Empty)))
+
+Haskell serguirá mostrando el cosntructor como una función prefija cuando
+derivemos ``Show``, por este motivo aparecen los poréntesis alrededor del
+constructor (recuerda que ``4 + 3`` es igual que ``(+) 4 3``).
+
+Vamos a crear una función que una dos de nuestras listas. Así es como está
+definida la función ``++`` para listas normales: ::
+
+    infixr 5  ++ 
+    (++) :: [a] -> [a] -> [a]  
+    []     ++ ys = ys  
+    (x:xs) ++ ys = x : (xs ++ ys)  
+
+Así que copiamos esta definición y la aplicamos a nuestras listas: ::
+
+    infixr 5  .++  
+    (.++) :: List a -> List a -> List a   
+    Empty .++ ys = ys  
+    (x :-: xs) .++ ys = x :-: (xs .++ ys)
+
+Y así es como funciona: ::
+
+    ghci> let a = 3 :-: 4 :-: 5 :-: Empty  
+    ghci> let b = 6 :-: 7 :-: Empty  
+    ghci> a .++ b  
+    (:-:) 3 ((:-:) 4 ((:-:) 5 ((:-:) 6 ((:-:) 7 Empty))))
+
+Bien. Si te apetece puedes implementar todas las funciones que operan con
+listas con nuestro tipo de listas.
+
+Fíjate que hemos utilizado un ajuste de patrón ``(x :-: xs)``. Esto función
+ya que el ajuste de patrones en realidad funciona ajustando constructores.
+Podemos ajustar un patrón ``:-:`` porque es un constructor de nuesto tipo de
+la misma forma que ``:`` es un constructor de las listas estándar. Lo mismo
+sucede para ``[]``. Ya que el ajuste de patrones funciona (solo) con
+constructores de datos, podemos ajustar patrones como los constructores
+prefijos normales, constructores infijos o cosas como ``8`` o ``'a'``, que
+al fin y al cabo son constructores de tipos númericos y caracteres. 
+
+.. image:: /images/binarytree.png
+   :align: left
+   :alt: Árbol binario
+   
+Vamos a implementar un árbol binario de búsqueda. Si no estás familiarizado
+con los árboles binarios de búsqueda de otros lenguajes como *C*, aquí tienes
+una expliación de lo que son: un elemento apunta a otros dos elementeos, uno
+esta a la izquierda y otro a la derecha. El elemento a la izquierda es más
+pequeño y el segundo es más grande. Cada uno de estos dos elementos puede
+apuntar a otros dos elementos (o a uno o a ninguno). En efecto, cada elemento
+tienen sus propios sub-árboles. Lo bueno de los árboles binarios de búsqueda
+es que sabemos que todos los elementos que están en el sub-árbol de la
+iquierda de, 5, por ejemplo, son menores que 5. Lo elementos que están en el
+sub-árbol de la derecha son mayores. Así que si estamos buscando el elemento
+8 en nuestro árbol, emepezamos comparándolo con 5, como vemos que es menor que
+5, nos vamos al sub-árbol de la derecha. Ahora estaríamos en 7, como es menor
+que 8 continuaríamos hacia la derecha. De esta formá encontraríamos el
+elemento en tres pasos. Si estuvieramos usando una lista (o un árbol no
+balanceado), nos hubiera costado unos 7 pasos encontrar el 8.
+
+Los conjuntos y diccionario de ``Data.Set`` y ``Data.Map`` están
+implementandos utilizando árboles, solo que en lugar de árboles binarios
+de búsqueda, utilizan árboles binarios de búsqueda balanceados, de forma que
+estén siempre balanceados. Ahora implementaremos simplemente árboles binarios
+de búsqueda normales.
+
+Vamos a decir que: un árbol es o bien un árbol vacío o bien un elemento
+que contiene un elemento y otros dos árboles. Tiene pinta de que va a encajar
+perfectamente con los tipos de datos algebraicos. ::
+
+    data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)  
+
+Vale. En lugar de construir manualmente un árbol, vamos a crear una función
+que tome un elemento y un árbol e inserte dicho elemento en su posición
+adecuada dentro del árbol. Hacemos esto comparando el elemento que queremos
+insertar con la raíz del árbol y si es menor, vamos a la izquierda y si no
+a la derecha. Hacemos lo mismo para coda nodo siguiente hasta que alcanzemos
+un árbol vacío. Cuando lo hagamos simplemente insertamos el elmento en
+lugar del árbol vacío. 
+
+En lenguajes como *C*, realizamos esta tarea modificando los punteros y
+valores del árbol. En Haskell, no podemos modificar nuestro árboles, así que
+tenemos que crear un nuevo sub-árbol cada vez que decidamos si vamos a la
+derecha o a la izquierda y al final la función de inserción devolver un
+árbol complentamente nuevo, ya que Haskell no tiene el concepto de puntero.
+Así pues la declaración de tipo de nuestra función será alfgo como ``a ->
+Tree a - > Tree a``. Toma un elemento y un árbol y devuelve un nuevo árbol que
+posee en su interior dicho elemento. Puede parecer ineficienciente pero la
+evaluación perezosa de Hasekell ya se encarga de ello.
+
+Aqui tienes dos funciones. Una de ellas es una función auxiliar para crear un
+árbol unitario (que solo contiene un elemento) y la otra es una función que
+inserta elementos en un árbol. ::
+
+    singleton :: a -> Tree a  
+    singleton x = Node x EmptyTree EmptyTree  
+  
+    treeInsert :: (Ord a) => a -> Tree a -> Tree a  
+    treeInsert x EmptyTree = singleton x  
+    treeInsert x (Node a left right)   
+        | x == a = Node x left right  
+        | x < a  = Node a (treeInsert x left) right  
+        | x > a  = Node a left (treeInsert x right)
+
+La función ``singleton`` es forma rápida de crear un árbol que contenga un
+elemento y dos sub-árboles vacios. En la función de inserción, tenemos como
+primer patrón el caso base. Si hemos alcanzado un sub-árbol vacio, esto
+significa que estamos donde queríamos y en lugar de un árbol vacío, queremos
+un árbol unitario que contenga el elemento a insertar. Si no estamos
+insertando el elemento en un árbol vacío tenemos que comprobar varias cosas.
+Primero, si el elemento que vamos a insertar es el mismo que la raíz del 
+sub-árbol, simplemente devolvemos el árbol como estaba. Si es menor,
+devolvemos un árbol que tenga la misma raíz, el mimso sub-árbol derecho pero
+en lugar de su sub-árbol izquierdo, ponemos el árbol que va a contener dicho
+elemento. Lo mismo ocurre (pero en sentido contrario) para los valores que
+son mayores que el elemento raíz.
+
+A continuación vamos a crear una función que compruebe si un elemento pertence
+a un árbol. Primero vamos a definir el caso base. Si estamos buscando un
+elemento en un árbol vacío, obviamente el elemento no está ahí. Vale, fíjate
+que esto es básicamente lo mismo que el caso base de la búsqueda en listas: si
+estamos buscando un elemento en una lista vacía, obviamente el elemento no 
+está ahí. De todos modos, si no estamos buscando el elemento en un árbol
+vacío, entonces tenemos que hacer varias comprobaciones. Si el elemento que
+estamos buscando es el elemento raíz ¡Genial! ¿Y si no lo es? Bueno, tenemos
+la ventaja de que sabemos que todos los elementos menores que la raíz están
+en el sub-árbol izquierdo. Así que si el elemento que estamos buscando es
+menor que la raiz, comprobamos si el elemento está en el sub-árbol izquierdo.
+Si es mayor, comprobamos el sub-árbol derecho. ::
+
+    treeElem :: (Ord a) => a -> Tree a -> Bool  
+    treeElem x EmptyTree = False  
+    treeElem x (Node a left right)  
+        | x == a = True  
+        | x < a  = treeElem x left  
+        | x > a  = treeElem x right
+
+¡Vamos a divertirnos con nuestro árboles! En lugar de contruir manualmente un
+árbol (aunque podríamos), usaremos un pliegue para construir un árbol a partir
+de una lista. Recuerda, casi cualquier cosa que recorra una lista elemento a
+elemento y devuelve alguna especie de valor puede ser implementado con un
+pliegue. Empezaremos con un árbol vacío y luego recorreremos la lista desde
+la derecha e iremos insertando elementos a nuestro árbol acumulador. ::
+
+    ghci> let nums = [8,6,4,1,7,3,5]  
+    ghci> let numsTree = foldr treeInsert EmptyTree nums  
+    ghci> numsTree  
+    Node 5 (Node 3 (Node 1 EmptyTree EmptyTree) (Node 4 EmptyTree EmptyTree)) (Node 7 (Node 6 EmptyTree EmptyTree) (Node 8 EmptyTree EmptyTree))  
+
+En este ``foldr``, ``treeInsert`` es la función de pliegue (toma un árbol y
+un elemento de la lista y produce un nuevo árbol) y ``EmptyTree`` es el 
+valor inicial. Por supuesto, ``nums`` es la lista que estamos plegando.
+
+No es muy legible el árbol que se muestra por la consola, pero si lo
+intentamos, podemos descifrar su estructura. Vemos que el nodo raíz es 5 y
+luego tiene dos sub-árboles, uno que tiene como elemento raíz a 3, y otro a 7.
+::
+
+    ghci> 8 `treeElem` numsTree  
+    True  
+    ghci> 100 `treeElem` numsTree  
+    False  
+    ghci> 1 `treeElem` numsTree  
+    True  
+    ghci> 10 `treeElem` numsTree  
+    False
+
+Vamos que comprobar la pertencia de un elemento a un árbol funciona
+perfectamente. Genial.
+
+Como puede ver los tipos de datos algebraicos en Hasekll son un concepto muy
+intersante a la vez que pontentes. Podemos utilizarlos desde para representar
+valores booleanos hasta enumeraciónes de los días de la semana, e incluso 
+árboles binarios de búsquedas.
+
+
+Clases de tipos paso a paso (2ª parte)
+--------------------------------------
+
+
+.. image:: /images/trafficlight.png
+   :align: right
+   :alt: Semáforo
+
+
+La clase de tipos Yes-No
+------------------------
+
+
+La clase de tipos functor
+-------------------------
+
+
+¿kinds?
+-------
+
+

@@ -100,7 +100,7 @@ del lado derecho de la ecuación. Ahora vamos a pensar que devuelve`
 La declaración de tipo permanece igual ya que ``compare 100`` devuelve una
 función. ``compare`` tiene el tipo ``(Ord a) => a -> (a -> Ordering)`` y
 llamarla con 100 devuelve ``(Num a, Ord a) => a -> Ordering``. La restricción
-de clase adicional se añade porque 100 es parte también de la clase de tipo
+de clase adicional se añade porque 100 es parte también de la clase de tipos
 ``Num``. 
 
 .. note:: ¡Asegúrate de que realmente sabes como funcionan las funciones
@@ -141,7 +141,7 @@ darle un nombre con un ``let`` o pasarlo a otra función? ::
 
 GHCi nos esta diciendo que expresión producida es una función del tipo
 ``a -> a`` pero no sabe como mostrarlo por pantalla. Las funciones no son 
-miembros de la clase de tipos ``Show``, así que no podemos obtener una cadena
+miembros de la clase de tiposs ``Show``, así que no podemos obtener una cadena
 con la representación de una función. Si hacemos algo como ``1 + 1`` en GHCi,
 primero calcula que eso es ``2``, y luego llama a ``show`` en ``2`` para tener
 una representación textual de ese número. Y una representación textual de ``2``

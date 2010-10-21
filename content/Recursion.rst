@@ -48,7 +48,7 @@ El impresionante maximum
 
 
 La función ``maximum`` toma una lista de cosas que pueden ser ordenadas (es
-decir instancias de la clase de tipo ``Ord``) y devuelve la más grande. Piensa
+decir instancias de la clase de tipos ``Ord``) y devuelve la más grande. Piensa
 en como implementarías esto de forma imperativa. Probablemente crearías una
 variable para mantener el valor máximo hasta el momento y luego recorrerías los
 elementos de la lista de forma que si un elemento es mayor que el actual valor
@@ -247,7 +247,7 @@ falso.
    :alt: Quickman
 
 Tenemos una lista de elemento que pueden ser ordenados. Su tipo es miembro de la
-clase de tipos ``Ord``. Y ahora, queremos ordenarlos. Existe un algoritmo muy
+clase de tiposs ``Ord``. Y ahora, queremos ordenarlos. Existe un algoritmo muy
 interesante para ordenarlos llamado quicksort. Es una forma muy inteligente de
 ordenar elementos. Mientras en algunos lenguajes imperativos puede tomar hasta
 10 líneas de código para implementar quicksort, en Haskell la implementación es
