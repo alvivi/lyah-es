@@ -12,5 +12,5 @@
    content/Recursion
    content/OrdenSuperior
    content/Modulos
-   content/ClasesDeTipo
+   content/ClasesDeTipos
    

@@ -1317,16 +1317,248 @@ Clases de tipos paso a paso (2ª parte)
    :align: right
    :alt: Semáforo
 
+Hasta ahora hemos aprendido a utilizar algunas clases de tipos estándar de
+Haskell y hemos visto que tipos son miembros de ellas. También hemos aprendido
+a crear automáticamente instancias de nuestros tipos para las clases de tipos
+estándar, pidiéndole a Haskell que las derive por nostros. En esta sección
+vamos a ver como podemos crear nuestras propias clases de tipo y a como crear
+instancias de tipos para ellas a mano.
 
+Un pequeño recordatorio acerca de las clases de tipos: las clases de tipos
+son como las interfaces. Una clase de tipos define un comportamiento (como
+comparar por igualdad, comparar por orden, una enumeración, etc.) y luego
+ciertos tipos pueden comportarse de forma a la instancia de esa clase de
+tipos. El comportamiento de una clase de tipos se consigue definiendo
+funciones o simplemente definiendo tipos que luego implementaremos. Así que
+cuando digamos que un tipo es una instancia de un clase de tipos, estamos
+diciendo que podemos usar las funciones de esa clase de tipos con ese tipo.
+
+Las clases de tipos no tienen nada que ver con las clases de *Java* o
+*Pyhton*. Esto suele confundir a mucha gente, así que me gustaría que
+olvidaras ahora mismo todo lo que sabes sobre las clases en los lenguajes
+imperativos. 
+
+Por ejemplo, la clase de tipos ``Eq`` es para cosas que pueden ser
+equiparadas. Define las funciones ``==`` y ``/=``. Si tenemos un tipo
+(digamos, ``Car``) y el comparar dos coches con la función ``==`` tiene
+sentido, entonces tiene sentido que ``Car`` sea una instancia de ``Eq``.
+
+Así es como está defina la clase ``Eq`` en ``Prelude``: ::
+
+    class Eq a where  
+        (==) :: a -> a -> Bool  
+        (/=) :: a -> a -> Bool  
+        x == y = not (x /= y)  
+        x /= y = not (x == y)  
+
+¡Alto, alto, atlo! ¡Hay mucha sintaxis y palabras raras ahí! No te preocupes,
+estará todo claro en un segundo. Lo primero de todo, cuando escribimos 
+``class Eq a where`` significa que estamos definiendo una clase de tipos nueva
+y que se va a llamar ``Eq``. La ``a`` es la variable de tipo y significa que
+``a`` representará el tipo que dentro de poco hagamos instancia de ``Eq``. 
+No tiene porque llamarse ``a``, de hecho no tiene ni que ser de una sola
+letra, solo debe ser una palabra en minúsculas. Luego definimos varias
+funciones. No es obligatorio implementar los cuerpos de las funciones, solo
+debemos especificar las declaraciones de tipo de las funciones.
+
+.. note:: Hay gente que entederá esto mejor si escribimos algo como 
+          ``class Eq equiparable where`` y luego definimos el tipo de las
+          funciones como ``(==) :: equiparable -> equiparable -> Bool``.
+         
+De todos modos, hemos implementado el cuerpo de las funciones que define
+``Eq``, solo que las hemos implementado en terminos de recursión mutua.
+Decimos que dos instancias de la clase ``Eq`` son iguales si no son desiguales
+y son desiguales y no son iguales. En realidad no teníamos porque haberlo 
+echo, pero pronto veremos de que forma nos ayuda.
+
+.. note:: Si tenemos un ``class Eq a where`` y definimos una declaración
+          de tipo dentro de la clase como ``(==) :: a -> -a -> Bool``, luego,
+          cuando examinemos el tipo de esa función obtendremos
+          ``(Eq a) => a -> a -> Bool``.
+
+Así que ya tenemos una clase ¿Qué podemos hacer con ella? Bueno, no mucho.
+Pero una vez empezemos a declarar instancias para esa clase, empezaremos a
+obtener algun funcionalidad útil. Mira este tipo: ::
+
+    data TrafficLight = Red | Yellow | Green  
+
+Define los estados de un semáforo. Fijate que no hemos derivado ninguna
+instancia, ya que vamos a escribirlas a mano, aunque podríamos haberlas
+derivado para las clases ``Eq`` y ``Show``. Aquí tienes como creamos la
+instancia para la clase ``Eq``. ::
+
+    instance Eq TrafficLight where  
+        Red == Red = True  
+        Green == Green = True  
+        Yellow == Yellow = True  
+        _ == _ = False
+
+Lo hicimos utilizando la palabra clave ``instance``. Así que ``class`` es
+para definir nuevas clases de tipos y ``instance`` para hacer que nuestros
+tipos tengan una instancia para cierta clase de tipos. Cuando estabamos
+definiendo ``Eq`` escribimos ``class Eq a where`` y dijimos que ``a``
+representaría el tipo que hiciéramos instancia después. Lo podemos ver
+claramente ahora, ya que cuando estamos escribiendo una instancia, escribrimos
+``instance Eq TrafficLight where``. Hemo remplazado la ``a`` por el tipo
+actual.
+
+Como ``==`` fue definido en la definición de clase en términos de ``/=`` y
+viceversa, solo tenemos que sobreescribir una de ellas en la delcaración de
+instancia. A esto se le llama la definición completa mínima de una clase de
+tipos, o dicho de otra forma, el mínimo número de funciones que tenemos que
+implementar para que nuestro tipo pertenezca a una determinada clase de tipos.
+Para rellenar la definición completa mínima de ``Eq``, tenemos que
+sobreescribir o bien ``==`` o ``/=``. Si ``Eq`` hubiese sido definido como: ::
+
+    class Eq a where  
+        (==) :: a -> a -> Bool  
+        (/=) :: a -> a -> Bool
+
+Tendríamos que haber implementado ambas funciones a la hora de crear una
+instancia, ya que Hasekell sabría como estan relacionadas esas funciones.
+De esta forma, la definición completa mínima serían ambas, ``==`` y ``/=``.
+
+Como has visto hemos implementado ``==`` usando ajuste de patrones. Como hay
+muchos más casos donde dos semáforos no están en el mismo estado,
+especificamos para cuales son iguales y luego utilizamos un patrón que se
+ajuste a cualquier caso que no sea ninguno de los anteriores para decir que no
+son iguales.
+
+Vamos a crear también una instancia para ``Show``. Para satisfacer la
+definición completa mínima de ``Show``, solo tenemos que implementar la
+función ``show``, la cual toma un valor y lo convierte a una cadena. ::
+
+    instance Show TrafficLight where  
+        show Red = "Red light"  
+        show Yellow = "Yellow light"  
+        show Green = "Green light"
+
+Una vez más hemos utilizado el ajuste de patrones para conseguir nuestros
+objetivos. Vamos a verlo en acción: ::
+
+    ghci> Red == Red  
+    True  
+    ghci> Red == Yellow  
+    False  
+    ghci> Red `elem` [Red, Yellow, Green]  
+    True  
+    ghci> [Red, Yellow, Green]  
+    [Red light,Yellow light,Green light]
+
+Perfecto. Podríamos haber derivado ``Eq`` y hubiera tenido el mismo efecto.
+Sin embargo, derivar ``Show`` hubiera representando directamente los
+constructores como cadenas. Pero si queremos que las luces aparezcan
+como ``"Red light"`` tenemos que crear esta instancia a mano.
+
+También podemos crear clases de tipos que sean subclases de otras clases de
+tipos. La declaración de la clase ``Num`` es un poco larga, pero aquí tienes
+el principio: ::
+
+    class (Eq a) => Num a where  
+       ...
+
+Como ya hemos mencionado anteriormente, hay un montón de sitios donde podemos
+poner restriciones de clases. Esto es lo mismo que escribir ``class Num a
+where``, solo que decimos que nuestro tipo ``a`` debe ser una instancia de
+``Eq``. Basicamente decimos que hay que crear la instancia ``Eq`` de un tipo
+antes de que éste forme parte forme parte de la clase ``Num``. Antes de que un
+tipo se pueda considerar un número, tiene sentido que podamos determinar si
+los valores de un tipo puede sen equiparados o no. Esto es todo lo que hay que
+saber de las subclases ya que simplemente son restriscciones de clase dentro
+de la definición de una clase. Cuando definamos funciones en la declaración
+de una clase o en la definición de una instancia, podemos asumir que ``a`` es
+parte de la clase ``Eq`` así que podemos usar ``==`` con los valores de ese
+tipo.
+
+¿Pero cómo son creadas las instancias del tipo ``Maybe`` o de las listas? Lo
+que hace diferente a ``Maybe`` de, digamos, ``TrafficLight`` es que ``Maybe``
+no es por si mismo un tipo concreto, es un constructor de tipo que toma un
+parámetro (como ``Char`` o cualquier otra cosa) para producir un tipo
+concreto. Vamos a echar un vistazo a la clase ``Eq`` de nuevo: ::
+
+    class Eq a where  
+        (==) :: a -> a -> Bool  
+        (/=) :: a -> a -> Bool  
+        x == y = not (x /= y)  
+        x /= y = not (x == y)
+
+A partir de la declaración de tipo, podemos observar que ``a`` es utilizado
+como un tipo concreto ya que todos los tipos que aparecer en una función deben
+deben ser concretos (Recuerda, no puedes tener una función con el tipo
+``a -> Maybe`` pero si una función ``a -> Maybe a`` o ``Maybe Int -> Maybe
+String``). Por este motivo no podemos hacer cosas como: ::
+
+    instance Eq Maybe where  
+        ...
+
+Ya que como hemos visto, ``a`` debe ser un tipo concreto pero ``Maybe`` no lo
+es. Es un constructor de tipo que toma un parámetro y produce un tipo
+concreto. Sería algo pesado tener que escribir ``instance Eq (Maybe Int)`
+where``, ``instance Eq (Maybe Char) where``, etc. para cada tipo. Así que
+podemos escribirlo así: ::
+
+    instance Eq (Maybe m) where  
+        Just x == Just y = x == y  
+        Nothing == Nothing = True  
+        _ == _ = False
+
+Esto es como decir que queremos hacer una instancia de ``Eq`` para todos los
+tipos ``Maybe algo``. De hecho, podríamos haber escrito ``Maybe algo``, pero
+preferimos elegir nombres con una sola letra para ser fieles al estilo de
+Haskell. Aquí, ``(Maybe m)`` hace el papel de ``a`` en ``class Eq a where``. 
+Mientras que ``Maybe`` no es un tipo concreto, ``Maybe m`` sí. Al utilizar un
+parámetro tipo (``m``, que está en minúsculas), decimos que queremos todos los
+tipos que sean de la forma ``Maybe m``, donde ``m`` es cualquier tipo que
+forme parte de la clase ``Eq``. 
+
+Sin embargo, hay un problema con esto ¿Puedes averiguarlo? Utilizamos ``==``
+sobre los contenidos de ``Maybe`` pero nadie nos asegura de que lo que
+contiene ``Maybe`` forme parte de la clase ``Eq``. Por este motivo tenemos que
+modificar nuestra declaración de instancia: ::
+
+    instance (Eq m) => Eq (Maybe m) where  
+        Just x == Just y = x == y  
+        Nothing == Nothing = True  
+        _ == _ = False  
+
+Hemos añadido una restricción de clase. Con esta instancia estamos diciendo:
+Queremos que todos los tipos con la forma ``Maybe m`` sean miembros de la
+clase de tipos ``Eq``, pero solo aquellos tipos donde ``m`` (lo que está
+contenido dentro de ``Maybe``) sean miembros también de ``Eq``. En realidad
+así sería como Haskell derivaría esta instancia.
+
+La mayoría de las veces, las restricciones de clase en las *declaraciones de
+clases* son utilizadas para crear una clases de tipos que sean subclases de
+otras clases de tipos mientras que las restricciones de clase en las 
+*declaraciones de instancias* son utilizadas para expresar los requisitos de
+algún tipo. Por ejemplo, ahora hemos expresado que el contenido de ``Maybe``
+debe formar parte de la clase de tipos ``Eq``.
+
+Cuando creas una instancia, si ves que un tipo es utilizado como un tipo
+concreto en la declaración de tipos (como ``a`` en ``a -> a -> Bool``), debes
+añadir los parámetros de tipos correspondientes y rodearlo con paréntesis de
+forma que acabes teniendo un tipo concreto. 
+
+.. note:: Ten en cuenta que el tipo para el cual estás trantando de hacer una
+          instancia remplazará el parámetro de la declaración de clase. La
+          ``a`` de ``class Eq a where`` será remplazada con un tipo real
+          cuando crees una instancia, así que trata mentalmente de poner el
+          tipo en la declaración de tipo de las funiones. 
+          ``(==) :: Maybe -> Maybe -> Bool`` no tiene mucho sentido, pero
+          ``(==) :: (Eq m) => Maybe m -> Maybe m -> Boo`` sí. Pero esto es
+          simplemente una forma de ver las cosas, ya que ``==`` simpre tendrá
+          el tipo ``(==) :: (Eq a) => a -> a -> Bool``, sin importar las
+          instancias que hagamos.
+          
+Oh, una cosa más. Si quieres ver las instancias que existen de una clase de
+tipos, simplemente haz ``:info YourTypeClass`` en GHCi. Así que si utilizamos
+``:info Num`` nos mostrará que funciones están definidas en la clase de tipos
+y nos mostrará también una lista con los tipos que forman parte de esta clase.
+``:info`` también funciona con tipos y constructores de tipo. Si hacemos
+``:info Maybe`` veremos todas las clases de tipos de las que éste forma parte.
+``:info`` también te muestra el tipo de una función. Bastante útil.
+
+     
 La clase de tipos Yes-No
 ------------------------
-
-
-La clase de tipos functor
--------------------------
-
-
-¿kinds?
--------
-
 
