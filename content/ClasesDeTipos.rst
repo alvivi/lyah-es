@@ -1562,3 +1562,138 @@ y nos mostrará también una lista con los tipos que forman parte de esta clase.
 La clase de tipos Yes-No
 ------------------------
 
+
+.. image:: /images/yesno.png
+   :align: left
+   :alt: Sí y no
+
+En JavaScript y otros lenguajes débilmente tipados, puedes poner casi
+cualquier cosa dentro de una expresión. Por ejemplo, puedes hacer todo lo 
+siguiente: ``if (0) alert("YEAH!") else alert("NO!")``, ``if ("") alert
+("YEAH!") else alert("NO!")``, ``if (false) alert("YEAH") else alert("NO!)``,
+etc. Y todos estos mostrarán un mensaje diciendo ``NO!``. Si hacemos
+``if ("WHAT") alert ("YEAH") else alert("NO!")`` mostrará ``"YEAH!"`` ya que
+en JavaScript las cadenas no vacías son consideradas valores verdaderos. 
+
+Aunque el uso estricto de ``Bool`` para la semántica de booleanos funciona
+mejor en Haskell, vamos a intentar implementar este comportamiento de
+JavaScript ¡Solo para divertirnos! Empecemos con la declaración de clase. ::
+
+    class YesNo a where  
+        yesno :: a -> Bool
+        
+Muy simple. La clase de tipos ``YesNo`` define una función. Esta función toma
+un valor de un tipo cualquiera que puede expresar algún valor de verdad y nos
+dice si es verdadero o no. Fíjate en la forma que usamos ``a`` en la función,
+``a`` tiene que ser un tipo concreto. 
+
+Lo siguiente es definir algunas instancias. Para los números, asumimos que
+(como en JavaScript) cualquier número que no sea 0 es verdadero y 0 es falso.
+::
+
+    instance YesNo Int where  
+        yesno 0 = False  
+        yesno _ = True
+
+La listas vacías (y por extensión las cadenas) son valores falsos, mientras
+que las listas no vacías tienen un valor verdadero. ::
+
+    instance YesNo [a] where  
+        yesno [] = False  
+        yesno _ = True
+
+Fíjate como hemos puesto un parámetro de tipo dentro para hacer de la lista un
+tipo concreto, aunque no suponemos nada acerca de lo que contiene la lista. 
+Qué más... Mmmm... ¡Ya se! ``Bool`` también puede contener valores verdaderos
+y falos y es bastante obvio cual es cual. ::
+
+    instance YesNo Bool where  
+        yesno = id
+
+¿Eh? ¿Qué es ``id``? Simplemente es una función de la librería estándar que
+toma un parámetro y devuelve lo mismo, lo cual es lo mismo que tendríamos que
+escribir aquí.
+
+Vamos a hacer también una instancia para ``Maybe a``. ::
+
+    instance YesNo (Maybe a) where  
+        yesno (Just _) = True  
+        yesno Nothing = False
+        
+No necesitamos una restricción de clase ya que no suponemos nada acerca de los
+contenidos de ``Maybe``. Simplemente decimos que es verdadero si es un valor
+``Just`` y falso si es ``Nothing``. Seguimos teniendo que escribir
+``(Maybe a)`` en lugar de solo ``Maybe`` ya que, si lo piensas un poco, una
+función ``Maybe -> Bool`` no puede existir (ya que ``Maybe`` no es un tipo
+concreto), mientras que ``Maybe a -> Bool`` es correcto. Aún así, sigue siendo
+genial ya que ahora, cualquier tipo ``Maybe algo`` es parte de la clase`
+``YesNo`` y no importa lo que sea ``algo``.
+
+Antes definimos un tipo ``Tree a`` para representar la búsqueda binaria. 
+Podemos decir que un árbol vacío tiene un valor falso mientras cualquier otra
+cosa tiene un valor verdadero. ::
+
+    instance YesNo (Tree a) where  
+        yesno EmptyTree = False  
+        yesno _ = True
+
+¿Puede ser el estado de un semáforo un valor verdadero o falso? Claro. Si
+está rojo, paras. Si está verde, continuas. ¿Si está ámbar? Ehh... normalmente
+suelo acelerar ya que vivo por y para la adrenalina. ::
+
+    instance YesNo TrafficLight where  
+        yesno Red = False  
+        yesno _ = True
+        
+Genial, ahora tenemos unas cuantas instancias, vamos a jugar con ellas: ::
+
+    hci> yesno $ length []  
+    False  
+    ghci> yesno "haha"  
+    True  
+    ghci> yesno ""  
+    False  
+    ghci> yesno $ Just 0  
+    True  
+    ghci> yesno True  
+    True  
+    ghci> yesno EmptyTree  
+    False  
+    ghci> yesno []  
+    False  
+    ghci> yesno [0,0,0]  
+    True  
+    ghci> :t yesno  
+    yesno :: (YesNo a) => a -> Bool
+
+Bien ¡Funciona! Vamos a hacer una función que imite el comportamiento de una
+sentencia ``if``, pero que funcione con valores ``YesNo``. ::
+
+    yesnoIf :: (YesNo y) => y -> a -> a -> a  
+    yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noResult
+
+Bastante simple. Toma un valor con un grado de verdad y otros dos valores más.
+Si el primer valor es verdadero, devuelve el primer valor de los otros dos,
+de otro modo, devuelve el segundo. ::
+
+    ghci> yesnoIf [] "YEAH!" "NO!"  
+    "NO!"  
+    ghci> yesnoIf [2,3,4] "YEAH!" "NO!"  
+    "YEAH!"  
+    ghci> yesnoIf True "YEAH!" "NO!"  
+    "YEAH!"  
+    ghci> yesnoIf (Just 500) "YEAH!" "NO!"  
+    "YEAH!"  
+    ghci> yesnoIf Nothing "YEAH!" "NO!"  
+    "NO!"
+
+
+La clase de tipos functor
+-------------------------
+
+
+
+
+
+
+
