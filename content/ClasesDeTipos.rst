@@ -1692,8 +1692,200 @@ La clase de tipos functor
 -------------------------
 
 
+Hasta ahora, nos hemos encontrado con un montón de clases de tipos de la
+librería estándar. Hemos jugado con ``Ord``, la cual es para cosas que pueden
+ser ordenadas. Hemos visto ``Eq``, que es para cosas que pueden ser
+equiparadas. Vimos también ``Show``, la cual sirve como interfaz para los
+tipos cuyos valores pueden ser representados como cadenas. Nuestro buen amigo
+``Read`` estará aquí siempre que necesitemos convertir una cadena a un valor
+de algún tipo. Y ahora, vamos a echar un vistazo a la clase de tipos
+``Functor``, la cual es básicamente para cosas que se pueden mapear.
+Seguramente ahora mismo estés pensando en listas, ya que mapear una lista es
+algún muy común en Haskell. Y estás en lo cierto, el tipo lista es miembro de
+la clase de tipos ``Functor``.
+
+¿Qué mejor forma de conocer la clase de tipos ``Functor`` que ver como está
+implementada? Vamos a echar una ojeada. ::
+
+    class Functor f where  
+        fmap :: (a -> b) -> f a -> f b
 
 
+.. image:: /images/functor.png
+   :align: right
+   :alt: Functor
+   
+De acuerdo. Hemos visto que define una función, ``fmap``, y no proporciona
+ninguna implementación por defecto para ella. El tipo de ``fmap`` es
+interesante. En las definiciones de clases de tipos que hemos visto hasta
+ahora, la variable de tipo que ha tenido un papel importante en la clase de
+tipos ha sido un tipo concreto, como ``a`` en ``(==) :: (Eq a) => a -> a ->
+Bool``. Pero ahora, ``f`` no es un tipo concreto (un tipo que puede tener
+un valor, como ``Int``, ``Bool`` o ``Maybe String``), sino un constructor de
+tipos que toma un tipo como parámetro. Un ejemplo rápido para recordar: 
+``Maybe Int`` es un tipo concreto, pero ``Maybe`` es un constructor de tipos
+que toma un tipo como parámetro. De cualquier modo, hemo visto que ``fmap``
+toma una función de un tipo a otro y un functor aplicado a un tipo y devuelve
+otro functor aplicado con el otor tipo.
 
+Si esto te suena un poco confuso, no te preocupes. Lo verás todo más claro
+ahora cuando mostremos un cuantos ejemplos. Mmm... esta declaración de tipo
+me recuerda a algo. Si no sabes cual es el tipo de ``map``, es este: ``map ::
+(a -> b) -> [a] -> [b]``.
 
+¡Interesante! Toma una función de un tipo a otro y una lista de un tipo y
+devuelve una lista del otro tipo. Amigos, creo que acabamos de descubir un
+functor. De hecho, ``map`` es ``fmap`` pero solo funciona con listas. Aquí
+tienes como las listas tienen una instancia para la clase ``Functor``. ::
 
+    instance Functor [] where  
+        fmap = map
+
+¡Eso es! Fíjate que no hemos escrito ``instance Functor [a] where``, ya que
+a partir de ``fmap :: (a -> b) -> f a -> f b`` vemos que ``f`` tiene que ser
+un cosntructor de tipos que toma un parámetro. ``[a]`` ya es un tipo concreto
+(un lista con cualquier tipo dentro), mientras que ``[]`` es un constructor
+de tipos que toma un parámetro y produce cosas como ``[Int]``, ``[String]`` o
+incluso ``[[String]]``.
+
+Como para las listas, ``fmap`` es simplemente ``map``, obtenemos el mismo
+resultado cuando las usamos con listas. ::
+
+    map :: (a -> b) -> [a] -> [b]  
+    ghci> fmap (*2) [1..3]  
+    [2,4,6]  
+    ghci> map (*2) [1..3]  
+    [2,4,6]
+    
+¿Qué pasa cuando realizamos ``map`` o ``fmap`` sobre listas vacías? Bien,
+desde luego obenemos una lista vacía. Simplemente convierte una lista vacía
+con el tipo ``[a]`` a una lista vacía con el tipo ``[b]``.
+
+Los tipos que pueden actuar como una caja pueden ser functores. Puede pensar
+en una lista como una caja que tiene un número ilimitado de pequeños
+compartimientos y puden estar todos vacíos, o pueden estár algunos llenos.
+Asi que, ¿Qué más tiene la propiedad de comportarse como una caja? Por
+ejemplo, el tipo ``Maybe a``. De algún modo, es como una caja que puede o bien
+no contener nada, en cuyo caso su valor será ``Nothing``, o puede contener
+algo, como ``"HAHA"``, en cuyo caso su valor ser`á ``Just "HAHA"``. Aquí
+tienes como ``Maybe`` es un functor: ::
+
+    instance Functor Maybe where  
+        fmap f (Just x) = Just (f x)  
+        fmap f Nothing = Nothing
+        
+De nuevo, fíjate que hemos escrito ``instance Functor Maybe where`` en lugar
+de ``instance Functor (Maybe m) where``, como hicimos cuando utilizamos la
+clase ``YesNo`` junto con ``Maybe``. ``Functor`` quiere un constructor de
+tipos que tome un tipo y no un tipo concreto. Si mentalemente remplazas las
+``f`` con ``Maybe``, ``fmap`` actua como ``(a -> b) -> Maybe a -> Maybe b``
+para este tipo en particular, lo cual se ve bien. Pero si remplazas ``f`` con
+``(Maybe m)``, entonces parecerá que actua como ``(a -> b) -> Maybe m a ->
+Maybe m b``, lo cual no tiene ningún maldito sentido ya que ``Maybe`` toma un
+solo parámetro.
+
+De cualquier forma, la implementación de ``fmap`` es muy simple. Si es un
+valor vacío o ``Nothing``, entonces simplemente devolvemos ``Nothing``. Si
+mapeamos una caja vacía obtenemos una caja vacía. Tiene sentido. De la misma
+forma que si mapeamos una lista vacía obtenemos un lista vacía. Si no es un
+valor vacío, sino más bien un único valor envuelto por ``Just``, entonces
+aplicamos la función al contenido de ``Just``. ::
+
+    ghci> fmap (++ " HEY GUYS IM INSIDE THE JUST") (Just "Something serious.")  
+    Just "Something serious. HEY GUYS IM INSIDE THE JUST"  
+    ghci> fmap (++ " HEY GUYS IM INSIDE THE JUST") Nothing  
+    Nothing  
+    ghci> fmap (*2) (Just 200)  
+    Just 400  
+    ghci> fmap (*2) Nothing  
+    Nothing
+
+Otra cosa que puede ser mapeada y por tanto puede tener una instancia de
+``Functor`` es nuestro tipo ``Tree a``. También puede ser visto como una caja
+(contiene varios o ningún valor) y el constructor de tipos ``Tree`` toma
+exactamente un parámetro de tipo. Si vemos la función ``fmap`` como si fuera
+una función hecha exclusivamente para ``Tree``, su declaración de tipo sería
+como ``(a -> b) -> Tree a -> Tree b``. Vamos a utilizar la recursión con éste.
+Mapear un árbol vacío poducirá un árbol vacío. Mapear un árbol no vacío 
+producirá un árbol en el que la función será aplicada al elemento raíz
+y sus sub-árboles derechos e izquierdos serán los mismos sub-árboles, solo
+que serán mapeado con la función. ::
+
+    instance Functor Tree where  
+        fmap f EmptyTree = EmptyTree  
+        fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
+        
+::
+
+    ghci> fmap (*2) EmptyTree  
+    EmptyTree  
+    ghci> fmap (*4) (foldr treeInsert EmptyTree [5,7,3,2,1,7])  
+    Node 28 (Node 4 EmptyTree (Node 8 EmptyTree (Node 12 EmptyTree (Node 20 EmptyTree EmptyTree)))) EmptyTree
+    
+¡Bien! ¿Qué pasa con ``Either a b``? ¿Puede ser un functor? La clase de tipos
+``Functor`` quiere constructores de tipos que tomen un solo parámetro de tipo
+pero ``Either`` toma dos. Mmm... ¡Ya se! aplicaremos parcialmente ``Either``
+suministrando un solo parámetro de forma que solo tenga un parámetro libre.
+Aquí tienes como el tipo ``Either a`` es un functor en las librerías estándar.
+::
+
+    instance Functor (Either a) where  
+        fmap f (Right x) = Right (f x)  
+        fmap f (Left x) = Left x
+
+Bueno, bueno ¿Qué hemos hecho aquí? Pudes ver como hemos creado una instancia
+para ``Either a`` en lugar de para solo ``Either``. Esto es así porque`
+``Either a`` es un constructor de tipos que toma un parámetro, mientras que
+``Either`` toma dos. Si ``fmap`` fuese específicamente para ``Either a``
+entonces su declaración de tipo sería ``(b -> c) -> Either a b -> Either a c``
+ya que es lo mismo que ``b -> c) -> (Either a) b -> (Either a) c``. En la
+implementación, mapeamos en el caso del constructor de tipos ``Right``, pero
+no lo hacemos para el caso de ``Left``. ¿Por qué? Bueno, si volvemos atrás 
+para ver como se define el tipo ``Either a b``, varíamos algo como: ::
+
+    data Either a b = Left a | Right b  
+
+Bueno, si quisieramos mapear una función sobre ambos, ``a`` y ``b`` deberían
+tener el mimso tipo. Quiero decir, si quisieramos mapear una función que
+toma una cadena y devuelve otra cadena y ``b`` fuese una cadena pero ``a``
+fuese un número, ésto no funcionaria. También, viendo ``fmap`` si operara solo
+con valores de ``Either``, veríamos que el primer parámetro tiene que
+permanecer igual mientras que el segundo puede variar y el primer parámetro 
+está asociado al constructor de datos ``Left``. 
+
+Esto también encaja con nuestra analogía de las cajas si pensamos en ``Left``
+como una especie de caja vacía con un mensaje de error escrito en un lado
+diciendonos porque la caja está vacía.
+
+Los diccionarios de ``Data.Map`` también son functores ya que pueden contener
+(o no) valores. En el caso de ``Map k v``, ``fmap`` mapearía una función 
+``v -> v'`` sobre un diccionario ``Map k v`` y devolvería un diccionario con
+el tipo ``Map k v'``.
+
+.. note:: Fíjate que ``'`` no tiene ningún significado especial en los tipos
+          de la misma forma que no tienen ningún significado especial a la
+          hora de nombrar valores. Se suele utilizar para referirse a cosas
+          que son similares, solo que un poco cambiadas.
+          
+¡Trata de imaginarte como se crea la instancia de ``Map k`` para ``Functor``
+tú mismo!
+
+Con la clase de tipos ``Functor`` hemos visto como las clases de tipos puden
+representar conceptos de orden superior interesantes. También hemos tenido un
+poco de práctica aplicando parcialmente tipos y creando instancias. En uno de
+los siguientes capítulos veremos algunas de las leyes que se aplican
+a los functores. 
+
+.. note:: Los functores deben obedecer algunas leyes de forma que tengan unas
+          propiedades de las que podamos depender para no tener que pensar
+          mucho luego. Si usamos ``fmap (+1)`` sobre un la lista ``[1,2,3,4]``
+          esperemamos obtener ``[2,3,4,5]`` y no su inversa, ``[5,4,3,2]``. Si
+          usamos ``fmap (\a -> a)`` (la función identidad, que simplemente
+          devuelve su parámetro) sobre un lista, esperamos obtener la misma
+          lista como resultado. Por ejemplo, si le damos una instancia erronea
+          a nuestro tipo ``Tree``, al usar ``fmap`` en un árbol donde el
+          sub-árbol izquierdo de un nodo solo contenga elementos menores que
+          el nodo y el sub-árbol derecho solo contenga elementos mayores que
+          el nodo podría producir un árbol donde no se cumpliera esto. Veremos
+          la leyes de los functores con más detalle en un próximo capítulo.
+ 

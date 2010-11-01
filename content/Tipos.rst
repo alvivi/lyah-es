@@ -235,9 +235,9 @@ La función ``elem`` tiene el tipo ``(Eq a) => a -> [a] -> Bool`` porque usa
 ``==`` sobre los elementos de la lista para saber si existe el elemento
 indicado dentro de la lista.
 
-Algunos tipos de clase básicos son:
+Algunas clases de tipos básicas son:
 
- * ``Eq`` es utilizado por los tipos que soportan pruebas de igualdad. Los
+ * ``Eq`` es utilizada por los tipos que soportan pruebas de igualdad. Los
    miembros de esta clase implementan las funciones ``==`` o ``/=`` en algún
    dentro de la definición. Todos los tipos que mencionamos anteriormente forman
    parte de la clase ``Eq`` exceptuando las funciones, así que podemos hacer
@@ -319,7 +319,7 @@ Algunos tipos de clase básicos son:
    algo luego con su resultado. De esta forma, GHCi podía inferir el tipo del
    resultado de la función ``read``. Si usamos la función como un booleano, él
    sabe que tiene que devolver un booleano. Pero ahora, lo único que sabe es que
-   queremos un tipo de clase ``Read``, pero no cuál. Vamos a echar un vistazo a
+   queremos un tipo de la clase ``Read``, pero no cuál. Vamos a echar un vistazo a
    la declaración de tipo de la función ``read``. ::
 
        ghci> :t read
