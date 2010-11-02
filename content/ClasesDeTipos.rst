@@ -1889,3 +1889,215 @@ a los functores.
           el nodo podría producir un árbol donde no se cumpliera esto. Veremos
           la leyes de los functores con más detalle en un próximo capítulo.
  
+ 
+Familias y artes marciales
+--------------------------
+ 
+
+.. image:: /images/typefoo.png
+   :align: right
+   :alt: Typefoo
+
+Los constructores de tipos toman otros tipos como parámetros y terminan
+produciendo tipos concretos. Esto me recuerda a las funciones, las cuales
+toman valores como parámetros y producen valores. Hemos visto que los
+constructores de tipos pueden ser parcialmente aplicados (``Either String`` es
+un constructor de tipos que toma un tipo y devuelve un tipo concreto, como
+``Either String Int``), al igual que la funciones. Muy interesante. En esta
+sección, definiremos formalmente como los tipos son aplicados a los
+constructores de tipos, de la misma definiremos formalmente como los valores
+son aplicados a las funciones utilizando declaraciones de tipo. **No
+necesitas leer esta sección para continuar con tu búsqueda de la sabiduría
+sobre Haskell** y no consigues entenderlo, no te preocupes. Sin embargo,
+si lo haces conseguiras un conocimiento profundo del sistema de tipos.
+
+Así que, valores como ``3``, ``"YEAH"`` o ``takeWhile`` (las funciones
+también son valores ya que podemos usarlas como parámetros) tienen sus
+correspondientes tipos. Los tipos son una pequeña etiqueta que llevan los
+valores de forma que nos permitan razonar sobre estos. Pero los tipos tienen
+sus propias pequeñas etiquetas, llamadas **familias**. Una familia es más o
+menos el tipo de un tipo. Puede sonar un poco enrevesado y confuso, pero
+en realidad es un concepto muy intersante.
+
+¿Qué son las familias y para que son útiles? Bueno, vamos a examinar la
+familia de un tipo utilizando el comando ``:k`` en GHCi. ::
+
+    ghci> :k Int  
+    Int :: *
+    
+¿Una estrella? Intrigante... ¿Qué significa? Una ``*`` significa que el tipo
+es un tipo concreto. Un tipo concreto es un tipo que no toma ningún parámetro
+de tipo y valores solo pueden tener tipos que sean tipos concretos. Si tuviera
+que leer ``*`` en voz alta (hasta ahora no he tenido que hacerlo), diría 
+*estrella* o simplemente *tipo*.
+
+Vale, ahora vamos a ver cual es la familia de ``Maybe``. ::
+
+    ghci> :k Maybe  
+    Maybe :: * -> *
+
+El constructor de tipos ``Maybe`` toma un tipo concreto (como ``Int``) y luego
+devuelve un tipo concreto como ``Maybe Int``. Y esto es lo que la familia nos
+está diciendo. De la misma forma que ``Int -> Int`` representa una función que
+toma un ``Int`` y devuelve un ``Int``, ``* -> *`` representa un constructor de
+tipos que toma un tipo concreto y devuelve otro tipo concreto. Vamos a aplicar
+el parámetro de tipo a ``Maybe`` y ver cual es su familia. ::
+
+    ghci> :k Maybe Int  
+    Maybe Int :: *
+
+¡Justo como esperaba! Hemo pasado un parámetro de tipo a ``Maybe`` y hemos
+obtenido un tipo concreto (esto es lo que significa ``* -> *``). Un símil 
+(aunque no equivalente, los tipos y las familias son dos cosas distintas)
+sería si hicieramos ``:t isUpper`` y ``:t isUpper 'A'``. ``isUpper`` tiene el
+tipo ``Char -> Bool`` y ``isUpper 'A'`` tiene el tipo ``Bool`` ya que su valor
+es básicamente ``True``. 
+
+Utilizamos ``:k`` con un tipo para obtener su familia, de la misma forma que
+utilizamos ``:t`` con un valor para obtener su tipo. Como ya hemos dicho, los
+tipos son las etiquetas de los valores y las familias son las etiquetas de los
+tipos y hay similitudes entre ambos. 
+
+Vamos a ver otra familia. ::
+
+    ghci> :k Either  
+    Either :: * -> * -> *
+
+¡Aha! Esto nos dice que ``Either`` toma dos tipos concretos como parámetros
+de tipo y produce un tipo concreto. También se parece a una declaracion de
+tipo de una función que toma dos valores y devuelve algo. Los construcotores
+de tipos están currificados (como las funciones), así que podemos aplicarlos
+parcialmente. ::
+
+    ghci> :k Either String  
+    Either String :: * -> *  
+    ghci> :k Either String Int  
+    Either String Int :: *
+
+Cuando quisimos que ``Either`` formara parte de la clase de tipos ``Functor``,
+tuvimos que aplicarlo parcialmente ya que ``Functor`` quiere tipos que tomen
+un solo parámetro`,` mientras que ``Either`` toma dos. En otras palabras, 
+``Functor`` quiere tipos de la familia ``* -> *`` y por eso tuvimos que 
+aplicar parcialmente ``Either`` para obtener una familia ``* -> *`` en lugar
+de su familia original ``* -> * -> *``. Si vemos la definición de ``Functor``
+otra vez ::
+
+    class Functor f where   
+        fmap :: (a -> b) -> f a -> f b
+        
+veremos que la variable de tipo ``f`` es utiliza como un tipo que que toma un
+tipo y produce un tipo concreto. Sabemos que produce un tipo concreto porque
+es utilizada como el tipo de un valor en una función. Podemos deducir que los
+tipos que quieren amigables con ``Functor`` debe ser de la familia ``* -> *``.
+
+Ahora vamos a practicar un poco de artes marciales. Echa un vistazo a la clase
+de tipos que voy a utilizar: ::
+
+    class Tofu t where  
+        tofu :: j a -> t a j
+
+Parece complicado ¿Cómo podríamos crear un tipo que tuviera una instancia para
+esta clase de tipos estraña? Bueno, vamos a ver que familia tiene que tener.
+Como ``j a`` es utilizado como el tipo del valor que la función ``tofu`` toma
+como parámetro, ``j a`` debe tener la familia ``*``. Asumimos ``*`` para ``a``
+de forma que podemos inferir que ``j`` pertenece a la familia ``* -> *``. 
+Vemos que ``t`` también tiene que producir un tipo concreto y toma dos tipos.
+Sabiendo que ``a`` es de la familia ``*`` y ``j`` de ``* -> *``, podemos
+inferir que ``t`` es de la familia ``* -> (* -> *) -> *``. Así que toma un
+tipo concreto (``a``), un constructor de tipos (``j``)  que toma un tipo
+concreto y devuelve un tipo concreto. Wau.
+
+Vale, vamos a crear un tipo con una familia ``* -> (* -> *) -> *``. Aquí
+tienes una posible solución. ::
+
+    data Frank a b  = Frank {frankField :: b a} deriving (Show)  
+    
+¿Cómo sabemos que este tipo pertenece a la familia ``* -> (* -> *) -> *``?
+Bueno, los campos de un TDA (tipos de datos algebraicos, *ADT* en inglés)
+sirven para contener valores, así que obviamente pertenecen a la familia
+``*``. Asumimos ``*`` para ``a``, lo que significa que ``b`` toma un parámetro
+de tipo y por lo tanto pertenece a la familia ``* -> *``. Ahora que sabemos
+las familia de ``a`` y ``b`` ya que son parámetros de ``Frank``, vemos que
+``Frank`` pertenece a la familia ``* -> (* -> *) -> *``. El primer ``*``
+representa ``a`` y ``(* -> *)`` representa ``b``. Vamos a crear algunos
+valores de ``Frank`` y comprobar sus tipos. ::
+
+    ghci> :t Frank {frankField = Just "HAHA"}  
+    Frank {frankField = Just "HAHA"} :: Frank [Char] Maybe  
+    ghci> :t Frank {frankField = Node 'a' EmptyTree EmptyTree}  
+    Frank {frankField = Node 'a' EmptyTree EmptyTree} :: Frank Char Tree  
+    ghci> :t Frank {frankField = "YES"}  
+    Frank {frankField = "YES"} :: Frank Char []
+
+Mmm... Como ``frankField`` tiene el tipo en forma de ``a b``, sus valores
+deben tener tipos de forma similar. Puede ser como ``Just "HAHA"``, el cual
+tiene el tipo ``Maybe [Char]`` o puede ser como ``['Y','E','S']`` que tiene
+el tipo ``[Char]`` (si usaramos nuestro tipo de listas que creamos
+anteriormente, sería ``List Char``). Y vemos que los tipos de los valores de
+``Frank`` se corresponden con la familia de ``Frank``. ``[Char]`` pertenece a
+la familia ``*`` y ``Maybe`` pertenece a ``* -> *``. Como para poder tener
+valores un tipo tiene que ser un tipo concreto y por lo tanto debe ser
+completamente aplicado, cada valor de ``Frank bla blaaa`` pertenece a la
+familia ``*``.
+
+Crear la instancia de ``Frank`` para ``Tofu`` es bastante simple. Hemos visto
+que ``tofu`` toma un ``j a`` (que por ejemplo podría ser ``Maybe Int``) y
+devuelve un ``t j a``. Así que si remplazamos ``j`` por ``Frank``, el tipo del
+resultado sería ``Frank Int Maybe``. ::
+
+    instance Tofu Frank where  
+        tofu x = Frank x
+
+::
+
+    ghci> tofu (Just 'a') :: Frank Char Maybe  
+    Frank {frankField = Just 'a'}  
+    ghci> tofu ["HELLO"] :: Frank [Char] []  
+    Frank {frankField = ["HELLO"]}
+
+No es muy útil, pero hemos calentado. Vamos a continuar haciedo artes
+marciales. Tenemos este tipo: ::
+
+    data Barry t k p = Barry { yabba :: p, dabba :: t k }  
+    
+Y ahora queremos crear una instancia para la clase ``Functor``. ``Functor``
+requiere tipos cuya familia sea ``* -> *`` pero ``Barry`` no parece que
+pertenezca a esa familia. ¿Cúal es la familia de ``Barry``? Bueno, vemos que
+toma tres parámetros de tipo, así que va ser algo como ``algo -> algo -> algo
+-> *``. Esta claro que ``p`` es un tipo concreto y por lo tanto pertenece a la
+familia ``*``. Para ``k`` asumimos ``*`` y por extensión, ``t`` pertenece a
+``* -> *``. Ahora solo tenemos que remplazar estas familia por los *algos* que
+hemos utilizado y veremos que el tipo pertenece a la familia ``(* -> *) -> *`
+`-> * -> *``. Vamos a comprobarlo con GHCi. ::
+
+    ghci> :k Barry  
+    Barry :: (* -> *) -> * -> * -> *
+    
+Ah, teníamos razón. Ahora, para hacer que este tipo forme parte de la clase
+``Functor`` tenemos que aplicar parcialmente los dos primeros parámetros de
+tipo de forma que nos quedemos con ``* -> *``. Esto significa que comenzaremos
+con nuestra declaración de instancia así: ``instance Functor (Barry a b)
+where``. Si vemos ``fmap`` como si estuviese hecho exclusivamente para`
+``Barry``, tendría un tipo ``fmap :: (a -> b) -> Barry c d a -> Barry c d b``,
+ya que simplemente hemos remplazado la ``f`` de ``Functor`` por ``Barry c d``.
+El tercer parámetro de tipo de ``Barry`` tendría que cambiar y de esta forma
+tendríamos: ::
+
+    instance Functor (Barry a b) where  
+        fmap f (Barry {yabba = x, dabba = y}) = Barry {yabba = f x, dabba = y}
+        
+¡Ahí lo tienes! Simplemente hemos aplicado ``f`` sobre el primer campo.
+
+En esta sección, hemos dado un buen vistazo a como funcionan los parámetros de
+tipos y como se formalizan con la familias, de la misma forma que formalizamos
+los parámetros de las funciones con las declaraciones de tipo. Hemos visto que
+hay similitudes entre las funciones y los constructores de tipos. De todas
+formas, son cosas totalmente distintas. Cuando trabajamos con Haskell, 
+normalmente no debes preocuparte por la familias ni inferir mentalmente las
+familias como hemos hecho aquí. Lo normal es que tengas que aplicar
+parcialmente tu tipo a ``* -> *`` o ``*`` cuando creamos una instancia para
+alguna clase de la librería estándar, pero está bien saber como funciona
+realmente. Es interesante saber que los tipos tienen sus propios pequeños
+tipos también. De nuevo, no tienes porque entender todo lo que acabamos de
+hacer aquí, pero si entiendes como funcionan las familias, tienes más
+posibilidades de entender correctamente el sistema de tipos de Haskell.
