@@ -13,4 +13,5 @@
    content/OrdenSuperior
    content/Modulos
    content/ClasesDeTipos
+   content/EntradaSalida
    
