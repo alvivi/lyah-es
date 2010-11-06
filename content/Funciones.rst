@@ -471,8 +471,11 @@ función y definir algunas funciones auxiliares en la sección ``where`` y luego
 definir otras funciones auxiliares dentro de cada uno de ellas.
 
 
+.. _leitbe:
+
 Let it be
 ---------
+
 
 Muy similar a las secciones ``where`` son las secciones ``let``. Las secciones
 ``where`` son una construcción sintáctica que te dejan ligar variables al final

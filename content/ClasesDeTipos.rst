@@ -90,7 +90,7 @@ realidad todo el tiempo) cuando ajustamos valores como ``[]``, ``False``,
 ``5``, solo que esos valores no tienen campos. Simplemente escribimos el 
 constructor y luego ligamos sus campos a nombres. Como estamos interesados en
 el radio, realmente no nos importan los dos primeros valores que nos dicen
-donde esta el círculo. ::
+donde está el círculo. ::
 
     ghci> surface $ Circle 10 20 10  
     314.15927  
@@ -997,7 +997,7 @@ en uso o no y el código de la taquilla. ::
     type LockerMap = Map.Map Int (LockerState, Code)
 
 Bastante simple. Hemo creado un nuevo tipo de dato para representar si una
-taquilla esta libre o no, y hemos creado un sinónimo para representar el
+taquilla está libre o no, y hemos creado un sinónimo para representar el
 código de una taquilla. También creado otro sinónimo para el tipo que asocia
 los los números de las taquillas con las duplas de estado y código. Ahora,
 vamos a hacer una función que busque un número de taquilla en el diccionario.
@@ -1005,7 +1005,7 @@ Vamos a usar el tipo ``Either String Code`` para representar el resultado,
 ya que nuestra búsqueda puede fallar de dos formas: la taquilla ya ha sido
 tomada, en cuyo caso decimos quien la posee o si el no hay ninguna taquilla
 con ese número. Si la búqueda falla, vamos a utilizar una cadena para obtener
-el por qué. ::
+el porqué. ::
 
     lockerLookup :: Int -> LockerMap -> Either String Code  
     lockerLookup lockerNumber map =   
@@ -1415,7 +1415,7 @@ sobreescribir o bien ``==`` o ``/=``. Si ``Eq`` hubiese sido definido como: ::
         (/=) :: a -> a -> Bool
 
 Tendríamos que haber implementado ambas funciones a la hora de crear una
-instancia, ya que Hasekell sabría como estan relacionadas esas funciones.
+instancia, ya que Hasekell sabría como están relacionadas esas funciones.
 De esta forma, la definición completa mínima serían ambas, ``==`` y ``/=``.
 
 Como has visto hemos implementado ``==`` usando ajuste de patrones. Como hay

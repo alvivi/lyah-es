@@ -305,7 +305,7 @@ Algunas clases de tipos básicas son:
        [1,2,3,4,3]
 
    Hasta aquí todo bien. Una vez más, todo los tipos que hemos visto excepto las
-   funciones forman parte de esta clase de tiposs. Pero, ¿Qué pasa si simplemente
+   funciones forman parte de esta clase de tipos. Pero, ¿Qué pasa si simplemente
    usamos ``read "4"``? ::
 
        ghci> read "4"
@@ -414,7 +414,7 @@ Algunas clases de tipos básicas son:
    Toma dos números del mismo tipo y devuelve un número del mismo tipo. Esa es la
    razón por la que ``(5 :: Int) * (6 :: Integer)`` lanzará un error mientras que
    ``5 * (6 :: Integer)`` funcionará correctamente y producirá un ``Interger``
-   por que ``5`` puede actuar como un ``Integer`` o un ``Int``.
+   porque ``5`` puede actuar como un ``Integer`` o un ``Int``.
 
    Para unirse a ``Num``, un tipo debe ser amigo de ``Show`` y ``Eq``.
 

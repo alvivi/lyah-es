@@ -117,7 +117,7 @@ extremadamente trivial sería: ::
     divideByTen = (/10)
 
 Llamar a, digamos, ``divideByTen 200`` es equivalente a hacer ``200/10`` o
-``(/10) 200``. Una función que comprueba si un carácter está esta en mayúsculas
+``(/10) 200``. Una función que comprueba si un carácter está en mayúsculas
 sería: ::
 
     isUpperAlphanum :: Char -> Bool  
@@ -139,7 +139,7 @@ darle un nombre con un ``let`` o pasarlo a otra función? ::
         In the expression: print it  
         In a 'do' expression: print it
 
-GHCi nos esta diciendo que expresión producida es una función del tipo
+GHCi nos está diciendo que expresión producida es una función del tipo
 ``a -> a`` pero no sabe como mostrarlo por pantalla. Las funciones no son 
 miembros de la clase de tiposs ``Show``, así que no podemos obtener una cadena
 con la representación de una función. Si hacemos algo como ``1 + 1`` en GHCi,
@@ -765,7 +765,7 @@ a implementar un puñado de funciones estándar usando pliegues: ::
 
 ``head`` es mejor implementarla con ajuste de patrones, pero de esta forma
 puedes ver que incluso se puede implementar con pliegues. Nuestra función
-``reverse'`` esta bastante clara, creo. Tomamos como valor de inicio la lista
+``reverse'`` está bastante clara, creo. Tomamos como valor de inicio la lista
 vacía y luego recorremos la lista desde la izquierda y simplemente vamos
 añadiendo elementos a nuestro acumulador. Al final tenemos la lista al revés. 
 ``\acc x -> x : acc`` se parece a la función ``:`` solo que los parámetros están
@@ -855,7 +855,7 @@ aplicación de funciones con el espacio es asociativa a izquierdas (así que
 ``f a b c`` es lo mismo que ``((f a) b) c``), la aplicación de funciones con
 ``$`` es asociativa a derechas.
 
-Eso esta muy bien, pero ¿De qué nos sirve esto? Básicamente es una función de
+Eso está muy bien, pero ¿De qué nos sirve esto? Básicamente es una función de
 conveniencia que utilizamos para no tener que escribir muchos paréntesis. 
 Considera la expresión sum ``(map sqrt [1..130])``. Gracias a que ``$`` tiene
 un bajo orden de precedencia podemos escribir es misma expresión como

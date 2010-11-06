@@ -73,7 +73,7 @@ Haskell. ::
 Como puedes ver el ajuste de patrones funcionan genial con la recursión. Muchos
 lenguajes imperativos no tienen patrones así que hay que utilizar muchos
 ``if``/``else`` para implementar los casos base. El primer caso base dice que si
-una lista esta vacía, ¡Error! Tiene sentido porque ¿Cuál es el máximo de una
+una lista está vacía, ¡Error! Tiene sentido porque ¿Cuál es el máximo de una
 lista vacía? No tengo ni idea. El segundo patrón también representa un caso
 base. Dice que si nos dan una lista unitaria simplemente devolvemos el único
 elemento.
@@ -294,7 +294,7 @@ lista este completamente ordenada, el número ``5`` permanecerá en la cuarta
 posición ya que hay tres números menores y tres números mayores que él. Ahora
 si ordenamos ``[1,4,3]`` y ``[9,6,7]`` ¡tendremos una lista ordenada! Ordenamos
 estas dos listas utilizando la misma función. Al final llegaremos a un punto en
-el que alcanzaremos listas vacías y las listas vacías ya esta están ordenadas
+el que alcanzaremos listas vacías y las listas vacías ya están ordenadas
 de alguna forma. Aquí tienes una ilustración:
 
 .. image:: /images/quicksort.png
@@ -336,7 +336,7 @@ utilizamos árboles los casos base son normalmente los nodos que no tienen hijos
 Es similar cuando tratamos con números. Normalmente hacemos algo con un número
 y luego aplicamos la función a ese número modificado. Ya hicimos funciones 
 recursivas de este tipo como el del factorial de un número, la cual no tiene
-sentido con cero, ya que el factorial solo esta definido para enteros positivos.
+sentido con cero, ya que el factorial solo está definido para enteros positivos.
 A menudo el caso base resulta ser la identidad. La identidad de la
 multiplicación es 1 ya que si multiplicas algo por 1 obtienes el mismo
 resultado. También cuando realizamos sumatorios de listas, definimos como 0 al

@@ -20,7 +20,7 @@ con un saldo como este. ::
     Loading package base ... linking ... done.
     Prelude>
 
-¡Enhorabuena, estas dentro de GHCi! El prompt aquí es ``Prelude>`` pero debido a
+¡Enhorabuena, estás dentro de GHCi! El prompt aquí es ``Prelude>`` pero debido a
 que éste puede hacerse más largo cuando cargas cosas dentro de la sesión,
 nosotros vamos a usar ``ghci>``. Si quieres tener el mismo prompt, simplemente
 teclea ``:set prompt "ghci> "``.
@@ -275,7 +275,7 @@ es un carácter válido para la funciones, podemos hacer cosas como esta. ::
 
 Hay dos cosas que destacar aquí. La primera es que en esta función no
 capitalizamos el nombre de Conan. Esto es porque las funciones no pueden empezar
-con una letra en mayúsculas. Veremos el por que un poco más tarde. La segunda es
+con una letra en mayúsculas. Veremos el porqué un poco más tarde. La segunda es
 que esta función no toma ningún parámetro, normalmente lo llamamos una
 definición (o un nombre). Como no podemos cambiar los nombres (y las funciones) 
 después de que las hayamos definido, ``conanO'Brien`` y la cadena ``"It's a-me,
@@ -545,7 +545,7 @@ larga manualmente es estúpido. ::
     ghci> ['K'..'Z']  				       	 
     "KLMNOPQRSTUVWXYZ"   			       	  
 
-Los rangos son guays porque también podemos especificar un paso. ¿Qué pasa si
+Los rangos son buenos porque también podemos especificar un paso. ¿Qué pasa si
 queremos todos los números pares desde el 1 hasta el 20, o cada tercer número? ::
 
     ghci> [2,4..20]  
@@ -734,7 +734,7 @@ eliminar los números impares sin aplanar la lista: ::
     ghci> [ [ x | x <- xs, even x ] | xs <- xxs]  
     [[2,2,4],[2,4,6,8],[2,4,2,6,2,6]]  
     
-Puedes escribir listas por comprensión en varias líneas. Así que si no estas
+Puedes escribir listas por comprensión en varias líneas. Así que si no estás
 en GHCi, es mejor dividir las listas por comprensión en varias líneas,
 especialmente si están anidadas.
  

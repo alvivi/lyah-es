@@ -48,7 +48,7 @@ nos diga cuantos elementos únicos hay en una lista. ::
 
 Cuando realizamos ``import Data.List``, todas las funciones que ``Data.List``
 exporta están disponibles en el espacio de nombres global. Esto significa que
-podemos acceder a todas esta funciones desde nuestro script. ``nub`` es una
+podemos acceder a todas estas funciones desde nuestro script. ``nub`` es una
 función que está definida en ``Data.List`` la cual toma una lista y devuelve
 otra sin elementos duplicados. Componer ``length`` y ``nub`` haciendo
 ``length . nub`` produce una función equivalente a ``\xs -> length (nub xs)``.
@@ -700,9 +700,9 @@ es verdadera o falsa. Aquí los tienes:
  * ``isSpace`` comprueba si un carácter es uno de los caracteres de espacio
    en blanco. Eso incluye espacios, tabuladores, saltos de línea, etc.
  
- * ``isLower`` comprueba si un carácter esta en minúsculas.
+ * ``isLower`` comprueba si un carácter está en minúsculas.
  
- * ``isUpper`` comprueba si un carácter esta en mayúsculas.
+ * ``isUpper`` comprueba si un carácter está en mayúsculas.
  
  * ``isAlpha`` comprueba si un carácter es una letra.
  
@@ -864,7 +864,7 @@ Para terminar, aquí tienes unas cuantas funciones que convierten caracteres:
        ghci> encode 5 "Marry Christmas! Ho ho ho!"  
        "Rfww~%Hmwnxyrfx&%Mt%mt%mt&"
    
-   Parece que esta bien cifrado. Descifrar un mensaje es básicamente volver a
+   Parece que está bien cifrado. Descifrar un mensaje es básicamente volver a
    poner los caracteres desplazados en su lugar. ::
    
        decode :: Int -> String -> String  
