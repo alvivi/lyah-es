@@ -910,30 +910,37 @@ tipo que devuelve ``f``. La expresión ``negate . (-3)`` devuelve una función q
 toma un número, lo multiplica por tres y luego lo niega. 
 
 Uno de los usos de la composición de funciones es el de crear funciones al vuelo
-para ser pasadas a otras funciones. Claro, puedes usar lambdas para eso, pero
-muchas veces la composición de funciones es más concisa y clara. Digamos que
-tenemos una lista de números y queremos convertirlos todos en negativo. Una
+para ser pasadas a otras funciones. Claro, puedes usar lambdas pero
+muchas veces la composición de funciones es más clara y concisa. Digamos que
+tenemos una lista de números y queremos convertirlos todos en negativos. Una
 forma de hacerlo sería obteniendo primero el número absoluto y luego negándolo,
-algo así: ::
+algo así:
+
+.. code-block:: console
 
     ghci> map (\x -> negate (abs x)) [5,-3,-6,7,-3,2,-19,24]  
     [-5,-3,-6,-7,-3,-2,-19,-24]
     
 Fíjate que la función lambda se parece a la definición de composición de
-funciones. Usando la composición de funciones quedaría así: ::
+funciones. Usando la composición de funciones quedaría así:
+
+.. code-block:: console
 
     ghci> map (negate . abs) [5,-3,-6,7,-3,2,-19,24]  
     [-5,-3,-6,-7,-3,-2,-19,-24]
     
 ¡Genial! La composición de funciones es asociativa a derechas, así que podemos
 componer varias funciones al mismo tiempo. La expresión ``f (g (z x))`` es
-equivalente a ``(f . g . z) x``. Teniendo esto en cuenta, podemos convertir
-esto: ::
+equivalente a ``(f . g . z) x``. Teniendo esto en cuenta, podemos convertir:
+
+.. code-block:: console
 
     ghci> map (\xs -> negate (sum (tail xs))) [[1..5],[3..6],[1..7]]  
     [-14,-15,-27]
     
-En esto: ::
+En esto: 
+
+.. code-block:: console
 
     ghci> map (negate . sum . tail) [[1..5],[3..6],[1..7]]  
     [-14,-15,-27]
@@ -958,16 +965,27 @@ map (*3) . zipWith max [1,2,3,4,5] $ [4,5,6,7,8]``. Si una expresión termina co
 composiciones de funciones. 
 
 Otro uso común de la composición de funciones es la definición de funciones en
-el llamado estilo libre de valores (*point-free style* o *pointless style* en
-inglés). Echa un vistazo a esta función que escribimos anteriormente: ::
+el llamado estilo libre de puntos. Echa un vistazo a esta función que
+escribimos anteriormente: ::
 
     sum' :: (Num a) => [a] -> a     
     sum' xs = foldl (+) 0 xs
 
+.. note:: El término *estilo libre de puntos* (*point-free style* o 
+          *pointless style* en inglés) se originó en 
+          `topología <http://es.wikipedia.org/wiki/Topología>`_, una rama de
+          las matemáticas que trabaja con espacios compuestos de puntos y
+          funciones entre estos espacios. Así que una función en estilo libre
+          de puntos es una función que no menciona explícitamente los
+          puntos (valores) del espacio sobre los que actua. Este término puede
+          confundir a la gente ya que normalmente el estilo libre de puntos
+          implica utilizar el operador de composición de funciones, el cual se
+          representa con un punto en Haskell.
+
 ``xs`` está expuesta en ambos lados de la ecuación. Podemos eliminar ``xs`` de
 ambos lados gracias a la currificación, ya que ``foldl (+) 0`` es una función
 que toma una lista. Escribir la función anterior como ``sum' = foldl (+) 0`` se
-llama estilo libre de valores. ¿Cómo escribimos esto en estilo libre de valores?
+llama estilo libre de puntos. ¿Cómo escribimos esto en estilo libre de punto?
 ::
 
     fn x = ceiling (negate (tan (cos (max 50 x))))  
@@ -984,7 +1002,7 @@ legible, ya que te hace pensar en funciones y como se pasan los parámetros entr
 ellas en lugar de pensar en los datos y como estos son transformados. Puedes
 utilizar funciones simples con la composición de funciones para crear funciones
 mucho más complejas. Sin embargo, muchas veces, escribir una función en estilo 
-libre de valores pude ser menos legible si la función es muy compleja. Es por
+libre de puntos pude ser menos legible si la función es muy compleja. Es por
 eso que se desaconseja el uso de la composición de funciones para cadenas de
 funciones muy largas. El estilo recomendable para estos casos es usar secciones
 ``let`` para dar nombres a resultados intermedios, dividiendo el problema en

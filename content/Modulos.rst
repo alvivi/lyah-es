@@ -34,7 +34,7 @@ los módulos.
 
 La sintaxis para importar módulos en un script de Haskell es ``import <module
 name>``. Debe aparecer antes de que definamos cualquier función, así que las
-importaciones de módulos suelen estar al principio de los archivos. Un script
+importaciones de módulos suelen estar al principio de los ficheros. Un script
 puede, obviamente, importar varios módulos. Simplemente hay que poner cada
 ``import`` en líneas separadas. Vamos a importar el módulo ``Data.List``, el
 cual contiene un puñado de útiles funciones para trabajar con listas, y
@@ -497,8 +497,8 @@ conocido.
        ghci> lines "first line\nsecond line\nthird line"  
        ["first line","second line","third line"]
      
-   ``'\n'`` es el carácter que representa el salto de línea unix. Las
-   contrabarras tienen un significado especial en las cadenas y caracteres de
+   ``'\n'`` es el carácter que representa el salto de línea unix. Las barras
+   invertidas tienen un significado especial en las cadenas y caracteres de
    Haskell.
    
  * ``unlines`` es la función inversa de ``lines``. Toma una lista de cadenas
@@ -1284,7 +1284,7 @@ lista mientras que ``setNub`` no.
 
 
 Creando nuestros propios módulos
---------------------------------
+-------------------------------- 
 
 
 .. image:: /images/making_modules.png
@@ -1293,14 +1293,14 @@ Creando nuestros propios módulos
 
 Hasta ahora hemos visto unos cuantos módulos interesantes, pero ¿Cómo creamos
 nuestros propios módulos? Casi todo lenguaje de programación te permite que
-dividas tu código en varios archivos y Haskell no es diferente. Cuando creamos
+dividas tu código en varios ficheros y Haskell no es diferente. Cuando creamos
 programas, es una buena práctica que las funciones y tipos que de alguna forma
 están relacionados estén en el mismo módulo. De esta forma, podemos fácilmente
 reutilizar esas funciones en otros programas importando esos módulos.
 
 Vamos a ver como podemos crear nuestro propio módulo haciendo un pequeño
 módulo que exporte funciones que nos permitan calcular el volumen y el área de
-unos cuantos objetos geométricos. Empezaremos creando un archivo llamado
+unos cuantos objetos geométricos. Empezaremos creando un fichero llamado
 ``Geometry.hs``.
 
 Decimos que un módulo exporta unas funciones. Lo que significa que cuando
@@ -1309,7 +1309,7 @@ Puede definir funciones que son llamadas internamente, pero solo podemos ver
 las funciones que exporta.
 
 Especificamos el nombre de un módulo al principio del módulo. Si hemos llamado
-al archivo ``Geometry.hs`` debemos darle el nombre de ``Geomtry`` a nuestro
+al fichero ``Geometry.hs`` debemos darle el nombre de ``Geomtry`` a nuestro
 módulo. Luego, especificamos la funciones que se exportan, y luego comenzamos
 a definir dichas funciones. Así que empezamos con esto. ::
 
@@ -1387,8 +1387,8 @@ número de submódulos. Vamos a dividir las funciones del módulo ``Geometry`` e
 tres submódulos de forma de cada objeto tenga su propio módulo.
 
 Primero creamos un directorio llamado ``Geometry``. Mantén la G en mayúsculas.
-Dentro de él crearemos los archivos ``sphere.hs``, ``cuboid.hs``, y
-``cube.hs``. Este será el contenido de los archivos:
+Dentro de él crearemos los ficheros ``sphere.hs``, ``cuboid.hs``, y
+``cube.hs``. Este será el contenido de los ficheros:
 
 ``sphere.hs`` ::
 
@@ -1443,7 +1443,7 @@ funciones de ``Geometry.Cuboid`` en ``Geometry.Cube`` pero no podemos usar
 simplemente ``import Geometry.Cuboid`` ya que importaríamos funciones con el
 mismo nombre que en ``Geometry.Cube``. Por este motivo lo cualificamos.
 
-Así que si ahora estamos en un archivo que se encuentra en el mismo lugar
+Así que si ahora estamos en un fichero que se encuentra en el mismo lugar
 que la carpeta ``Geometry`` podemos utilizar: ::
 
     import Geometry.Sphere  

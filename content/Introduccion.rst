@@ -2,19 +2,19 @@ Introducción
 ============
 
 
-Sobre este tutorial
--------------------
+Sobre esta guía
+---------------
 
 Bienvenido a *¡Aprende Haskell por el bien de todos!* Si estás leyendo esto, es
 probable que quieras aprender Haskell. Bien has venido al sitio adecuado, pero
-primero vamos a hablar un poco sobre este tutorial.
+primero vamos a hablar un poco sobre esta guía.
 
-He decidido escribir este tutorial porque quiero arraigar mi propio conocimiento
+He decidido escribir esta guía porque quiero arraigar mi propio conocimiento
 sobre Haskell y porque pienso que puedo ayudar a la gente que se inicia en
-Haskell desde mi perspectiva. Existen bastantes tutoriales sobre Haskell
-flotando por la red. Cuando me inicié en Haskell no lo hice desde un solo
+Haskell desde mi perspectiva. Existen bastantes manuales y guías sobre Haskell
+por la red. Cuando me inicié en Haskell no lo hice desde un solo
 documento. La forma en la que aprendí Haskell fue leyendo varios artículos y
-tutoriales porque cada uno explicaba algo de una forma diferente en el que lo
+guías porque cada uno explicaba algo de una forma diferente en el que lo
 hacia otro. Así, yendo a través de varios documentos, fui capaz de juntar todas
 las piezas y entonces todo encajó. De modo que este es otro intento de añadir
 otro útil documento para aprender Haskell de forma que tengas más oportunidades
@@ -24,7 +24,7 @@ de encontrar uno que te guste.
    :align: left
    :alt: bird
 
-Este tutorial está dirigido a personas que tengan experiencia en lenguajes de
+Esta guía está dirigida a personas que tengan experiencia en lenguajes de
 programación imperativa (C, C++, Java, Python...) pero no hayan programado antes
 en ningún lenguaje funcional (Haskell, ML, OCaml...). Aunque apuesto que incluso
 si no tienes ninguna experiencia significativa en programación, un tipo
@@ -134,7 +134,7 @@ Qué necesitas para comenzar
 Un editor de texto y un compilador de Haskell. Probablemente ya tienes instalado
 tu editor de texto favorito así que no vamos a perder el tiempo con esto. Los
 dos principales compiladores de Haskell ahora mismo son GHC (Glasgow Haskell
-Compiler) y Hugs. Para los propósito de este tutorial usaremos GHC. No voy a
+Compiler) y Hugs. Para los propósito de esta guía usaremos GHC. No voy a
 cubrir muchos detalles de la instalación. En Windows es cuestión de descargarse
 el instalador,  pulsar "siguiente" un par de veces y luego reiniciar tu
 ordenador. En las distribuciones de Linux basadas en Debian simplemente haz

@@ -11,7 +11,7 @@ Empezando
 Muy bien ¡Vamos a empezar! Si eres esa clase de persona horrible que no lee las
 introducciones y te la has saltado, quizás quieras leer la última
 sección de la introducción de todos modos porque explica lo que necesitas para
-seguir este tutorial y como vamos a cargar funciones. La primera cosa que vamos
+seguir esta guía y como vamos a cargar funciones. La primera cosa que vamos
 a hacer es ejecutar GHC en modo interactivo y llamar algunas funciones para ir
 acostumbrándonos un poco. Abre tu terminal y escribe ``ghci``. Serás recibido
 con un saldo como este. ::
@@ -207,7 +207,7 @@ ambos. ::
 
 Simple. La podríamos haber definido también como
 ``doubleUs x y = x + x + y + y``. Al ponerla a prueba produce resultandos
-bastante predecibles (recuerda añadir esta función en el archivo ``baby.hs``,
+bastante predecibles (recuerda añadir esta función en el fichero ``baby.hs``,
 guardarlo y luego ``:l baby`` dentro de GHCi). ::
 
     ghci> doubleUs 4 9  	       	      

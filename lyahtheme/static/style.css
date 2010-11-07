@@ -41,7 +41,7 @@ h3 {
 
 p {
     margin-bottom:25px;
-/*	text-indent: 3ex; */
+	text-indent: 3ex; 
 }
 
 a {
@@ -61,6 +61,16 @@ strong {
 em {
     font-style:italic;
     font-weight:normal;
+}
+
+.dfn {
+	font-family:Consolas, "Courier New", monospace;
+	font-size:16px;
+    font-style: normal;
+	background: #BC2932;
+	color: white;
+	white-space: nowrap;
+	padding: 1px 3px 1px 3px;
 }
 
 ul {
@@ -102,7 +112,7 @@ img.align-center {
 
 .pre {
 	font-family:Consolas, "Courier New", monospace;
-    color: #BC2932;
+    color: #555;
     font-weight:bold;
 	white-space: nowrap;
 }
@@ -228,6 +238,11 @@ img.align-center {
 .note .first {
    display: inline;
    font-weight:bold;
+}
+
+.note p {
+    margin-bottom: 0;	
+	text-indent: 0;
 }
 
 .math {

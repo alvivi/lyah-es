@@ -805,6 +805,8 @@ y el sucesor de un día e incluso podemos crear listas de rangos con ellos. ::
 Bastante impresionante.
 
 
+.. _sinonimos:
+
 Sinónimos de tipo
 -----------------
 

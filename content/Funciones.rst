@@ -292,8 +292,8 @@ nada ahora, simplemente obtiene un IMC y te lo muestra) ::
         | bmi <= 30.0 = "¡Estás gordo! Pierde algo de peso gordito."  
         | otherwise   = "¡Enhorabuena, eres una ballena!" 
     
-Las guardas se indican con barras que siguen al nombre de la función y sus
-parámetros. Normalmente tienen una sangría están alineadas. Una
+Las guardas se indican con barras verticales que siguen al nombre de la
+función y sus parámetros. Normalmente tienen una sangría están alineadas. Una
 guarda es básicamente una expresión booleana. Si se evalúa a ``True``, entonces
 el cuerpo de la función correspondiente es utilizado. Si se evalúa a ``False``,
 se comprueba la siguiente guarda y así sucesivamente. Si llamamos a esta
@@ -403,14 +403,14 @@ función de esta forma: ::
         where bmi = weight / height ^ 2
         
 Hemos puesto la palabra reservada ``where`` después de las guardas
-(Normalmente es mejor alinearla con el resto de las barras) y luego definimos
-varios nombres o funciones. Estos nombres son visibles en las guardas y nos
-dan la ventaja de no tener que repetirnos. Si decidimos que tenemos que
-calcular el IMC de otra forma solo tenemos que modificarlo en un lugar.
-También mejora la legibilidad ya que da nombre a las cosas y hace que nuestros
-programas sean más rápidos ya que cosas como nuestro ``bmi`` solo debe
-calcularse una vez. Podríamos pasarnos un poco y presentar una función como
-esta: ::
+(Normalmente es mejor alinearla con el resto de las barras verticales) y luego
+definimos varios nombres o funciones. Estos nombres son visibles en las
+guardas y nos dan la ventaja de no tener que repetirnos. Si decidimos que
+tenemos que calcular el IMC de otra forma solo tenemos que modificarlo en un
+lugar. También mejora la legibilidad ya que da nombre a las cosas y hace que
+nuestros programas sean más rápidos ya que cosas como nuestro ``bmi`` solo
+debe calcularse una vez. Podríamos pasarnos un poco y presentar una función
+como esta: ::
 
     bmiTell :: (RealFloat a) => a -> a -> String  
     bmiTell weight height  
