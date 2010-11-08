@@ -749,7 +749,7 @@ ello. Considera el siguiente tipo de dato: ::
 
     data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday  
 
-Como ningún contructore de datos tiene argumentos, podemos hacerlo miembro de
+Como ningún contructor de datos tiene parámetros, podemos hacerlo miembro de
 la clase de tipos ``Enum``. La clase ``Enum`` son para cosas que tinen un
 predecesor y sucesor. Tambien podemos hacerlo miembro de la clase de tipos
 ``Bounded``, que es para cosas que tengan un valor mínimo posible y valor

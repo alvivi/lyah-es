@@ -73,9 +73,15 @@ em {
 	padding: 1px 3px 1px 3px;
 }
 
+.highlight {
+	margin-left: 3ex;
+	margin-right: 3ex;
+}
+
 ul {
     list-style-type:disc;
     margin:25px 25px;
+	padding-left: 3ex;
 }
 
 ul p {

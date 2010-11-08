@@ -1005,7 +1005,7 @@ resumen básico de las funciones.
    Debes utilizar siempre el módulo ``Data.Map`` para las asociaciones
    clave-valor a no ser que las claves son sean de la clase de tipos ``Ord``.
    
- * ``empty`` representa un diccionario vacío. No toma ningún argumento,
+ * ``empty`` representa un diccionario vacío. No toma ningún parámetro,
    simplemente devuelve un diccionario vacío. ::
    
        ghci> Map.empty  

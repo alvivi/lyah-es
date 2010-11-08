@@ -221,8 +221,8 @@ quieres puedes pensar que son como la interfaces de Java, solo que mejor.
 
 Interesante. Aquí vemos algo nuevo, el símbolo ``=>``. Cualquier cosa antes
 del símbolo ``=>`` es una restricción de clase. Podemos leer la declaración de
-tipo anterior como esto: La función de igualdad toma dos argumentos que son del
-mismo tipo y devuelve un ``Bool``. El tipo de estos dos argumentos debe ser
+tipo anterior como esto: La función de igualdad toma dos parámetross que son del
+mismo tipo y devuelve un ``Bool``. El tipo de estos dos parámetross debe ser
 miembro de la clase ``Eq`` (esto es la restricción de clase).
 
 La clase de tipos ``Eq`` proporciona una interfaz para pruebas de igualdad.

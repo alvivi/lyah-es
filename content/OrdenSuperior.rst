@@ -216,7 +216,7 @@ parámetros. Aquí tienes como la implementaríamos:
 Mira la declaración de tipo. El primer elemento es una función que toma dos
 cosas y produce una tercera. No tienen que ser del mismo tipo, aunque pueden
 serlo. El segundo y el tercer parámetro son listas. La primera tiene que ser una
-lista de ``a`` ya que la función de unión toma ``a`` como primer argumento. La
+lista de ``a`` ya que la función de unión toma ``a`` como primer parámetro. La
 segunda es una lista de ``b``. El resultado es una lista de ``c``. Si la
 declaración de tipo de una función dice que acepta una función ``a -> b -> c``
 como parámetro, también aceptará una función del tipo ``a -> a -> a``. Recuerda
@@ -225,8 +225,8 @@ estas seguro de su tipo, simplemente puedes omitir la declaración de tipo y
 luego mirar el tipo que infiere Haskell usando ``:t``.
 
 La acción de la función es muy similar a la de ``zip``. El caso base es el
-mismo, solo que hay un argumento extra, la función de unión, pero este
-argumento no tiene importancia en el caso base así que usamos ``_`` con él. El
+mismo, solo que hay un parámetro extra, la función de unión, pero este
+parámetro no tiene importancia en el caso base así que usamos ``_`` con él. El
 cuerpo de la función para el último patrón es también muy similar al de ``zip``,
 solo que no hace ``(x, y)`` sino ``f x y``. Una sola función de orden superior
 puede ser utilizada para realizar una multitud de tareas diferentes si es

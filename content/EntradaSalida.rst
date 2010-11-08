@@ -227,7 +227,7 @@ mónadas veremos el motivo concreto de esta restricción. Por ahora, puedes
 pensar que un bloque ``do`` extrae automáticamente el valor de la última
 acción y lo liga a su propio resultado.
 
-Excepto para la última linea, cada línea de un bloque ``do`` que no se liga
+Excepto para la última línea, cada línea de un bloque ``do`` que no se liga
 puede también escribirse como una ligadura. Así que ``putStrLn "Blah"`` se
 puede escribir como ``_ <- putStrLn "Blah"``. Sin embargo es algo inútil, por
 lo que no usamos ``<-`` para acciones que no contienen un resultado
@@ -1459,10 +1459,297 @@ sistema operativo que nos diga donde podemos ubicar nuestro fichero temporal
     Take salad out of the oven
 
 
+Parámetros de la línea de comandos
+----------------------------------
 
 
+.. image:: /images/arguments.png
+   :align: right
+   :alt: Parámetros
 
+Prácticamente es una obligación trabajar con parámetros de la línea de
+comandos cuando estamos creando un programa que se ejecuta en la terminal. Por
+suerte, la biblioteca estándar de Haskell tiene una buena forma de obtener los
+parámetros de la línea de comandos.
+
+En la sección anterior, creamos un programa para añadir tareas a nuestra lista
+de tareas pendientes y otro programa para eliminar tareas de dicha lista. Hay
+dos problemas con el enfoque que tomamos. La primera es que fijamos el nombre
+del fichero que contenía la lista en nuestro código fuente. Simplemente
+decidimos que sería ``todo.txt`` y el usuario nunca podría trabajar con varias
+listas.
+
+Una forma de solventar este problema sería preguntar siempre al usuario con
+que lista trabajar. Utilizamos este enfoque cuando quisimos saber que tarea
+quería el usuario eliminar. Funciona, pero hay mejores opciones ya que
+requiere que el usuario ejecute el programa, espere a que el programa le
+pregunte algo y luego decirle lo que necesita. A esto se llama programa
+interactivo y el problema de los programas interactivos es: ¿Qué pasa si
+queremos automatizar la ejecución del programa? Como en un fichero de comandos
+por lotes que ejecuta un programa o varios de ellos.
+
+Por este motivo a veces es mejor que el usuario diga al programa que tiene que
+hacer cuando lo ejecuta, en lugar de que el programa tenga que preguntar al
+usuario una vez se haya ejecutado. Y que mejor forma de que el usuario diga al
+programa que quiere que haga cuando se ejecute que con los parámetros de la
+línea de comandos.
+
+El módulo ``System.Environment`` tiene dos acciones de E/S muy interesante.
+Una es :dfn:`getArgs`, cuya declaración de tipo es ``getArgs :: IO [String]``
+y es una acción de E/S que obtendrá los parámetros con los que el programa fue
+ejecutado y el resultado que contiene son dichos parámetros en forma de lista.
+:dfn:`getProgName` tiene el tipo ``IO String`` y es una acción de E/S que
+contiene el nombre del programa.
+
+Aquí tienes un pequeño programa que demuestra el comportamiento de estas
+funciones: ::
+
+    import System.Environment   
+    import Data.List  
+  
+    main = do  
+       args <- getArgs  
+       progName <- getProgName  
+       putStrLn "The arguments are:"  
+       mapM putStrLn args  
+       putStrLn "The program name is:"  
+       putStrLn progName
    
+Ligamos ``getArgs`` y ``getProgName`` a ``args`` y ``progName``. Mostramos
+``The arguments are:`` y luego para cada parámetro en ``args`` hacemos
+``putStrLn``. Al final también mostramos el nombre del programa. Vamos a
+compilar esto como ``arg-test``.
 
+.. code-block:: console
 
+    $ ./arg-test first second w00t "multi word arg"  
+    The arguments are:  
+    first  
+    second  
+    w00t  
+    multi word arg  
+    The program name is:  
+    arg-test
+    
+Bien. Armados con este conocimiento podemos crear aplicaciones de línea de
+comandos interesantes. De hecho vamos a continuar y a crear una. En la
+sección anterior creamos programas separados para añadir tareas y para
+eliminarlas. Ahora vamos a crear un programa con ambas funcionalidades, lo que
+haga dependerá de los parámetros de la línea de comandos. También vamos a
+permitir que puede trabajar con ficheros diferentes y no solo ``todo.txt``.
 
+Llamaremos al programa ``todo`` y será capaz de hacer tres cosas:
+
+ * Ver las tareas
+ * Añadir una tarea
+ * Eliminar una tarea
+ 
+No nos vamos a preocupar sobre posibles errores en la entrada ahora mismo.
+
+Nuestro programa estará creado de forma que si queremos añadir la tarea
+``Find the magic sword of power`` en el fichero ``todo.txt``, tendremos que
+escribir ``todo add todo.txt "Find the magic sword of power"`` en la terminal.
+Para ver las tareas simplemente ejecutamos ``todo view todo.txt`` y para
+eliminar la tarea con índice 2 hacemos ``todo remove todo.txt 2``.
+
+Empezaremos creando una lista de asociación. Será una simple lista de
+asociación que tenga como claves los parámetros de la línea de comandos y
+funciones como sus correspondientes valores. Todas estas funciones serán del
+tipo ``[String] -> IO ()``. Tomarán la lista de parámetros de la línea de
+comandos y devolverán una acción de E/S que se encarga de mostrar las tareas,
+añadir una tarea o eliminar una tarea. ::
+
+    import System.Environment   
+    import System.Directory  
+    import System.IO  
+    import Data.List  
+  
+    dispatch :: [(String, [String] -> IO ())]  
+    dispatch =  [ ("add", add)  
+                , ("view", view)  
+                , ("remove", remove)  
+                ]
+
+Tenemos que definir ``main``, ``add``, ``view`` y ``remove``, así que
+empecemos con ``main``. ::
+
+    main = do  
+        (command:args) <- getArgs  
+        let (Just action) = lookup command dispatch  
+        action args
+        
+Primero, ligamos los parámetros a ``(command:args)``. Si te acuerdas del
+ajuste de patrones, esto significa que el primer parámetro se ligará con
+``command`` y el resto de ellos con ``args``. Si ejecutamos nuestro programa
+como ``todo add todo.txt "Spank the monkey"``, ``command`` será ``"add"`` y
+``args`` será ``["todo.txt", "Spank the monkey"]``.
+
+En la siguiente línea buscamos el comando en lista de asociación. Como
+``"add"`` se asocia con ``add``, obtendremos ``Just add`` como resultado.
+Utilizamos de nuevo el ajuste de patrones para extraer esta función del tipo
+``Maybe`` ¿Qué pasaría si el comando no estuviese en la lista de asociación?
+Bueno, entonces devolvería ``Nothing``, pero ya hemos dicho que no nos vamos
+a preocupar demasiado de los errores en la entrada, así que el ajuste de
+patrones fallaría y junto a él nuestro programa.
+
+Para terminar, llamamos a la función ``action`` con el resto de la lista de
+parámetros. Esto devolverá una acción de E/S que o bien añadirá una tarea, o
+bien mostrará una lista de tareas, o bien eliminará una tarea. Y como está
+acción es parte del bloque ``do`` de ``main``, se ejecutará. Si seguimos el
+ejemplo que hemos utilizado hasta ahora nuestra función ``action`` será
+``add``, la cual será llamada con ``args`` (es decir con ``["todo.txt",
+"Spank the monkey"]``) y devolverá una acción que añadirá la tarea ``Spank
+the monkey`` a ``todo.txt``. 
+
+¡Genial! Todo lo que nos queda ahora es implementar las funciones ``add``,
+``view`` y ``remove``. Empecemos con ``add``: ::
+
+    add :: [String] -> IO ()  
+    add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
+    
+Si ejecutamos nuestro programa como ``todo add todo.txt "Spank the monkey"``,
+``"add"`` será ligado a ``command`` en el primer ajuste de patrones del bloque
+``main``, mientras que ``["todo.txt", "Spank the monkey"]`` será pasado a la
+función que obtengamos de la lista de asociación. Así que como no estamos
+preocupándonos acerca de posibles entradas erróneas, podemos usar el ajuste
+de patrones directamente sobre una lista con esos dos elementos y devolver una
+acción de E/S que añada la tarea al final de fichero, junto con un salto de
+línea.
+
+A continuación vamos a implementar la funcionalidad de mostrar la lista de
+tareas. Si queremos ver los elementos de un fichero, ejecutamos ``todo view
+todo.txt``. Así que en el primer ajuste de patrones, ``command`` será
+``"view"`` y ``args`` será ``["todo.txt"]``. ::
+
+    view :: [String] -> IO ()  
+    view [fileName] = do  
+        contents <- readFile fileName  
+        let todoTasks = lines contents  
+            numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0..] todoTasks  
+        putStr $ unlines numberedTasks
+        
+Ya hicimos algo muy parecido en el programa que eliminaba tareas a la hora de
+mostrar las tareas para que el usuario pudiera elegir una, solo que aquí solo
+mostramos las tareas.
+
+Y para terminar implementamos ``remove``. Será muy similar al programa que
+eliminaba tareas, así que si hay algo que no entiendas revisa la explicación
+que dimos en su momento. La principal diferencia es que no fijamos el nombre
+del fichero a ``todo.txt`` sino que lo obtenemos como parámetro. Tampoco
+preguntamos al usuario el índice de la tarea a eliminar ya que también lo
+obtenemos como un parámetro más. ::
+
+    remove :: [String] -> IO ()  
+    remove [fileName, numberString] = do  
+        handle <- openFile fileName ReadMode  
+        (tempName, tempHandle) <- openTempFile "." "temp"  
+        contents <- hGetContents handle  
+        let number = read numberString  
+            todoTasks = lines contents  
+            newTodoItems = delete (todoTasks !! number) todoTasks  
+        hPutStr tempHandle $ unlines newTodoItems  
+        hClose handle  
+        hClose tempHandle  
+        removeFile fileName  
+        renameFile tempName fileName
+        
+Abrimos el fichero basándonos en ``fileName`` y abrimos un fichero temporal,
+eliminamos la línea con índice de línea que el usuario desea eliminar, lo
+escribimos en un fichero temporal, eliminamos el fichero original y
+renombramos el fichero temporal a ``fileName``.
+
+¡Aquí tienes el programa entero en todo su esplendor! ::
+
+    import System.Environment   
+    import System.Directory  
+    import System.IO  
+    import Data.List  
+
+    dispatch :: [(String, [String] -> IO ())]  
+    dispatch =  [ ("add", add)  
+                , ("view", view)  
+                , ("remove", remove)  
+                ]  
+
+    main = do  
+        (command:args) <- getArgs  
+        let (Just action) = lookup command dispatch  
+        action args  
+
+    add :: [String] -> IO ()  
+    add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")  
+
+    view :: [String] -> IO ()  
+    view [fileName] = do  
+        contents <- readFile fileName  
+        let todoTasks = lines contents  
+            numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0..] todoTasks  
+        putStr $ unlines numberedTasks  
+
+    remove :: [String] -> IO ()  
+    remove [fileName, numberString] = do  
+        handle <- openFile fileName ReadMode  
+        (tempName, tempHandle) <- openTempFile "." "temp"  
+        contents <- hGetContents handle  
+        let number = read numberString  
+            todoTasks = lines contents  
+            newTodoItems = delete (todoTasks !! number) todoTasks  
+        hPutStr tempHandle $ unlines newTodoItems  
+        hClose handle  
+        hClose tempHandle  
+        removeFile fileName  
+        renameFile tempName fileName
+        
+.. image:: /images/salad.png
+   :align: left
+   :alt: Ensalada
+
+Resumiendo: creamos una lista de asociación que asocie los comandos con
+funciones que tomen argumentos de la línea de comandos y devuelvan acciones
+de E/S. Vemos que comando quiere ejecutar el usuario y obtenemos la función
+apropiada a partir de la lista de asociación. Llamamos a esa función con el
+resto de parámetros de la línea de comandos y obtenemos una acción de E/S que
+realizará la acción apropiada cuando sea ejecutada.
+
+En otros lenguajes, deberíamos haber implementado esto utilizando un gran
+``switch`` o cualquier otra cosa, pero gracias a las funciones de orden
+superior se nos permite crear una lista de asociación que nos devolverá la
+acción de E/S adecuada para cada comando que pasemos por la línea de comandos.
+
+¡Vamos a probar nuestra aplicación!
+
+.. code-block:: console
+
+    $ ./todo view todo.txt  
+    0 - Iron the dishes  
+    1 - Dust the dog  
+    2 - Take salad out of the oven  
+
+    $ ./todo add todo.txt "Pick up children from drycleaners"  
+
+    $ ./todo view todo.txt  
+    0 - Iron the dishes  
+    1 - Dust the dog  
+    2 - Take salad out of the oven  
+    3 - Pick up children from drycleaners  
+
+    $ ./todo remove todo.txt 2  
+
+    $ ./todo view todo.txt  
+    0 - Iron the dishes  
+    1 - Dust the dog  
+    2 - Pick up children from drycleaners
+
+Otra cosa interesante acerca de esto es que bastante sencillo añadir
+funcionalidad adicional. Simplemente tenemos que agregar un elemento más en
+la lista de asociación y luego implementar la función correspondiente. Como
+ejercicio puedes implementar el comando ``bump`` que tomará un fichero y un
+y un índice de una tarea y hará que dicha tarea aparezca al principio de la
+lista de tareas pendientes.
+
+Puedes hacer que este programa fallé de forma más elegante en caso de que
+reciba unos parámetros erróneos (como por ejemplo ``todo UP YOURS HAHAHAH``)
+creando una acción de E/S que simplemente informe que ha ocurrido un error
+(digamos ``errorExit :: IO ()``) y luego comprar si hay algún parámetro
+erróneo para realizar el informe. Otra forma sería utilizando excepciones, lo
+cual veremos dentro de poco.
