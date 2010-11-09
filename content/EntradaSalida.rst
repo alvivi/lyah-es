@@ -1753,3 +1753,415 @@ creando una acción de E/S que simplemente informe que ha ocurrido un error
 (digamos ``errorExit :: IO ()``) y luego comprar si hay algún parámetro
 erróneo para realizar el informe. Otra forma sería utilizando excepciones, lo
 cual veremos dentro de poco.
+
+
+Aleatoriedad
+------------
+
+
+.. image:: /images/random.png
+   :align: right
+   :alt: Aleatorio
+
+Muchas veces mientras programamos, necesitamos obtener algunos datos
+aleatorios. Quizá estemos haciendo un juego en el que se tenga que lanzar un
+dado o quizá necesitemos generar algunos datos para comprobar nuestro
+programa. Hay mucho usos para los datos aleatorios. Bueno, en realidad,
+pseudo-aleatorios, ya que todos sabemos que la única fuente verdadera de
+aleatoriedad en un mono sobre un monociclo con un trozo de queso en un mano
+y su trasero en la otra. En esta sección, vamos a ver como Haskell genera
+datos aparentemente aleatorios. 
+
+En la mayoría de los otros lenguajes, tenemos funciones que nos devuelven
+números aleatorios. Cada vez que llamas a la función, obtienes (con suerte)
+un número aleatorio diferente. Bueno, recuerda, Haskell es un leguaje
+funcional puro. Por lo tanto posee transparencia referencial. Lo que
+significa que una función, dados los mismo parámetros, debe producir el mismo
+resultado. Esto es genial ya que nos permite razonar sobre los programas de
+una forma diferente y nos permite retrasar la evaluación de las operaciones
+hasta que realmente las necesitemos. Si llamamos a una función, podemos estar
+seguros de que no hará cualquier otra cosa antes de darnos un resultado. Todo
+lo que importa es su resultado. Sin embargo, esto hace un poco complicado
+obtener números aleatorios. Si tenemos una función como: ::
+
+    randomNumber :: (Num a) => a  
+    randomNumber = 4
+    
+No será muy útil como función de números aleatorios ya que siempre nos
+devolverá el mismo ``4``, aunque puedo asegurar que ese 4 es totalmente
+aleatorio ya que acabo de lanzar un dado para obtenerlo. 
+
+¿Qué hacen demás lenguajes para generar número aparentemente aleatorios?
+Bueno, primero obtienen algunos datos de tu computadora, como la hora actual,
+cuanto y a donde has movido el ratón, el ruido que haces delante del 
+computador, etc. Y basándose en eso, devuelve un número que parece aleatorio.
+La combinación de esos factores (la aleatoriedad) probablemente es diferente
+en cada instante de tiempo, así que obtienes números aleatorios diferentes.
+
+Así que en Haskell, podemos crear un número aleatorio si creamos una función
+que tome como parámetro esa aleatoriedad y devuelva un número (o cualquier
+otro tipo de dato) basándose en ella.
+
+Utilizaremos el módulo ``System.Random``. Contiene todas las funciones que
+calmaran nuestra sed de aleatoriedad. Vamos a jugar con una de las funciones
+que exporta, llamada :dfn:`random`. Su declaración de tipo es ``random ::
+(RandomGen g, Random a) => g -> (a, g)`` ¡Wau! Hay nuevas clases de tipos en
+esta declaración. La clase de tipos :dfn:`RandomGen` es para tipos que pueden
+actuar como fuentes de aleatoriedad. La clase de tipos :dfn:`Random` es para
+tipos que pueden tener datos aleatorios. Un dato booleano puede tener valores
+aleatorios, ``True`` o ``False``. Un número también puede tomar un conjunto
+de diferentes valores alotarios ¿Puede el tipo función tomar valores
+aleatorios? No creo. Si traducimos la declaración de tipo de ``random`` al
+español temos algo como: toma un generador aleatorio (es decir nuestra fuente
+de aleatoriedad) y devuelve un valor aleatorio y un nuevo generador aleatorio
+¿Por qué devuelve un nuevo generador junto al valor aleatorio? Lo veremos
+enseguida.
+
+Para utilizar la función ``random``, primero tenemos que obtener uno de esos
+generadores aleatorios. El módulo ``System.Random`` exporta un tipo
+interensante llamado :dfn:`StdGen` que posee una instancia para la clase de
+tipos ``RandomGen``. Podemos crear un ``StdGen`` manualmente o podemos decirle
+al sistema que nos de uno basandose en un motón de cosas aleatorias.
+
+Para crear manualmente un generador aletario, utilizamos la función
+:dfn:`mkStdGen`. Tiene el tipo ``Int -> StdGen``. Toma un entero y basándose
+en eso, nos devuelve un generador aleatorio. Bien, vamos a intentar utilizar
+el tandem ``random`` ``mkStdGen`` para obtener un número aleatorio. 
+
+.. code-block:: console
+
+    ghci> random (mkStdGen 100)  
+    <interactive>:1:0:  
+        Ambiguous type variable `a' in the constraint:  
+          `Random a' arising from a use of `random' at <interactive>:1:0-20  
+        Probable fix: add a type signature that fixes these type variable(s)
+
+¿Qué pasa? Ah, vale, la función ``random`` puede devolver cualquier tipo que
+sea miembro de la clase de tipos ``Random``, así que tenemos que decir a
+Haskell exactamente que tipo queremos. Recuerda también que devuelve un valor
+aleatorio y un generador.
+
+.. code-block:: console
+
+    ghci> random (mkStdGen 100) :: (Int, StdGen)  
+    (-1352021624,651872571 1655838864)
+    
+¡Por fin, un número que parece aleatorio! El primer componente de la dupla es
+nuestro número aleatorio mientras que el segundo componente es una
+representación textual del nuevo generador ¿Qué sucede si volvemos a llamar
+``random`` con el mismo generador?
+
+.. code-block:: console
+
+    ghci> random (mkStdGen 100) :: (Int, StdGen)  
+    (-1352021624,651872571 1655838864)
+
+Por supuesto. El mismo resultado para los mismos parámetros. Vamos a probar
+dándole como parámetro un generador diferente.
+
+.. code-block:: console
+
+    ghci> random (mkStdGen 949494) :: (Int, StdGen)  
+    (539963926,466647808 1655838864)
+    
+Genial, un número diferente. Podemos usar la anotación de tipo con muchos
+otros tipos.    
+
+.. code-block:: console
+
+    ghci> random (mkStdGen 949488) :: (Float, StdGen)  
+    (0.8938442,1597344447 1655838864)  
+    ghci> random (mkStdGen 949488) :: (Bool, StdGen)  
+    (False,1485632275 40692)  
+    ghci> random (mkStdGen 949488) :: (Integer, StdGen)  
+    (1691547873,1597344447 1655838864)
+    
+Vamos a crear una función que simule lanzar una modena tres veces. Si
+``random`` no devolviera un generador nuevo junto con el valor aleatorio, 
+tendríamos que hacer que esta función tomara tres generadores como parámetros
+y luego devolver un resultado por cada uno de ellos. Pero esto parece que no
+es muy correcto ya que si un generador puede crear un valor aleatorio del
+tipo ``Int`` (el cual puede tener una gran variedad de posibles valores)
+debería ser capaz de simular tres lazamientos de una moneda (que solo puede
+tener ocho posibles valores). Así que este es el porqué de que ``random``
+devuelva un nuevo generador junto al valor generado.
+
+Represtaremos el resultado del lanzamiento de una moneda con un simple
+``Bool``. ``True`` para cara, ``False`` para cruz. ::
+
+    threeCoins :: StdGen -> (Bool, Bool, Bool)  
+    threeCoins gen =   
+        let (firstCoin, newGen) = random gen  
+            (secondCoin, newGen') = random newGen  
+            (thirdCoin, newGen'') = random newGen'  
+        in  (firstCoin, secondCoin, thirdCoin)
+        
+Llamamos a ``random`` con el generador que obtivimos como parámetro y
+obtenemos el resultado de lanzar una moneda junto a un nuevo generador. Luego
+volvemos a llamar la misma función, solo que esta vez con nuestro nuevo
+generador, de forma que obtenemos el segundo resultado. Si la hubiéramos
+llamado con el mismo generador las tres veces, todos los resultados hubieran
+sido iguales y por tanto solo hubiéramos podido obtener como resultados
+``(False, False, False)`` o ``(True, True, True)``.
+
+.. code-block:: console
+
+    ghci> threeCoins (mkStdGen 21)  
+    (True,True,True)  
+    ghci> threeCoins (mkStdGen 22)  
+    (True,False,True)  
+    ghci> threeCoins (mkStdGen 943)  
+    (True,False,True)  
+    ghci> threeCoins (mkStdGen 944)  
+    (True,True,True)
+    
+Fíjate que no hemos tendio que hacer ``random gen :: (Bool, StdGen)``. Se
+debe a que ya hemos especificado en la declaración de tipo de la función que
+queremos valores booleanos. Por este motivo Haskell puede inferir que queremos
+valores booleanos.
+
+¿Y qué pasaría si quisiéramos lanzar la moneda cuatro veces? ¿Y cinco? Bien,
+para eso tenemos la función llamada :dfn:`randoms` que toma un generador y
+devulve una secuencia infinita de valores aletorios.
+
+.. code-block:: console
+
+    ghci> take 5 $ randoms (mkStdGen 11) :: [Int]  
+    [-1807975507,545074951,-1015194702,-1622477312,-502893664]  
+    ghci> take 5 $ randoms (mkStdGen 11) :: [Bool]  
+    [True,True,True,True,False]  
+    ghci> take 5 $ randoms (mkStdGen 11) :: [Float]  
+    [7.904789e-2,0.62691015,0.26363158,0.12223756,0.38291094]
+    
+¿Por qué ``randoms`` no devuelve un nuevo generador junto con la lista?
+Podemos implementar la función ``randoms`` de forma muy sencilla como: ::
+
+    randoms' :: (RandomGen g, Random a) => g -> [a]  
+    randoms' gen = let (value, newGen) = random gen in value:randoms' newGen
+    
+Una función recursiva. Obtenemos un valor aleatorio y nuevo generador a parir
+del generador actual y creamos una lista que tenga el valor aleatorio como
+cabeza y una lista de valores aloratorios basada en el nuevo generador como
+cola. Como queremos ser capazes de generar una cantidad infinita valores
+aleatorios, no podemos devolver un nuevo generador.
+
+Podríamos crear una función que generara secuencias de números aletorios
+finitas y devolviera también un nuevo generador. ::
+
+    finiteRandoms :: (RandomGen g, Random a, Num n) => n -> g -> ([a], g)  
+    finiteRandoms 0 gen = ([], gen)  
+    finiteRandoms n gen =   
+        let (value, newGen) = random gen  
+            (restOfList, finalGen) = finiteRandoms (n-1) newGen  
+        in  (value:restOfList, finalGen)
+        
+De nuevo, una funcón recursiva. Decimos que si queremos cero valores
+alatorios, devolvemos una lista vacía y el generador que se nos dió. Para
+cualquier otra cantidad de valores aleatorios, primero obtenemos un número
+aleatorio y nuevo generador. Esto será la cabeza. Luego decimos que la cola
+será ``n-1`` valores aleatorios generadors con el nuevo generador. Terminamos
+devolviendo la cabeza junto el resto de la lista y el generador que obtuvimos
+cuando generamos los ``n-1`` valores aleatorios.
+
+¿Y si queremos obtener un valor aleatorio dentro de un determindo rango? Todos
+los enteros que hemos generador hasta ahora son escandalosamente grandes o
+pequeños ¿Y si queremos lanzar un dado? Bueno, para eso utilizamos
+:dfn:`randomR`. Su declaración de tipo es ``randomR :: (RandomGen g, Random a)
+:: (a, a) -> g -> (a, g)``, lo que significa que tiene comportamiento similar
+a ``random``, solo que primero toma una dupla de valores que establecerán el
+límite superior e inferior de forma que el valor aleatorio generado esté 
+dentro de ese rango.
+
+.. code-block:: console
+
+    ghci> randomR (1,6) (mkStdGen 359353)  
+    (6,1494289578 40692)  
+    ghci> randomR (1,6) (mkStdGen 35935335)  
+    (3,1250031057 40692)
+    
+También existe ``randomRs``, la cual produce una secuencia de valores
+aleatorios dentro de nuestro rango. 
+
+.. code-block:: console
+
+    ghci> take 10 $ randomRs ('a','z') (mkStdGen 3) :: [Char]  
+    "ndkxbvmomg"
+
+Genial, tiene pinta de ser una contraseña de alto secreto.
+
+Puedes estar preguntándote que tienes que ver esta sección con la E/S. Hasta
+ahora no hemos visto nada relacionado con la E/S. Bien, hasta ahora siempre
+hemos creado nuestro generador de forma manual basándonos en algún entero
+arbitrario. El problema es que, en los programas reales, siempre devolverán
+los mismos números aleatorios, lo cual no es muy buena idea. Por este motivo
+``System.Random`` nos ofrece la acción de E/S :dfn:`getStdGen` que tiene 
+el tipo ``IO StdGen``. Cuando se inicia la ejecución de un programa, éste 
+pregunta al sistema por un buen generador de valores aleatorios y lo almacena
+en algo llamado generador global. ``getStdGen`` trae ese generador para que
+podamos ligarlo a algo. 
+
+Aquí tienes un programa simple que genera una cadena aleatoria. ::
+
+    import System.Random  
+  
+    main = do  
+        gen <- getStdGen  
+        putStr $ take 20 (randomRs ('a','z') gen)
+
+.. code-block:: console
+
+    $ runhaskell random_string.hs  
+    pybphhzzhuepknbykxhe  
+    $ runhaskell random_string.hs  
+    eiqgcxykivpudlsvvjpg  
+    $ runhaskell random_string.hs  
+    nzdceoconysdgcyqjruo  
+    $ runhaskell random_string.hs  
+    bakzhnnuzrkgvesqplrx
+    
+Ten cuidad ya que al llamar dos veces a ``getStdGen`` estamos preguntándole
+dos veces al sistema por el mismo generador global. Si hacemos algo como: ::
+
+    import System.Random  
+
+    main = do  
+        gen <- getStdGen  
+        putStrLn $ take 20 (randomRs ('a','z') gen)  
+        gen2 <- getStdGen  
+        putStr $ take 20 (randomRs ('a','z') gen2)
+        
+Obtendremos la misma cadena mostrada dos veces. Una forma de obtener dos
+cadenas diferentes de 20 caracteres de longitud es crear una lista infinita
+y tomar los 20 primeros caracteres y mostrarlos en una línea, luego tomamos
+los 20 siguientes y los mostramos en una segunda línea. Para realizar esto
+podemos utilizar la función ``splitAt`` de ``Data.List``, que divide una
+lista en un índice dado y devuelve una dupla que tiene la primera parte como
+primer componente y la segunda parte como segundo componente. ::
+
+    import System.Random  
+    import Data.List  
+
+    main = do  
+        gen <- getStdGen  
+        let randomChars = randomRs ('a','z') gen  
+            (first20, rest) = splitAt 20 randomChars  
+            (second20, _) = splitAt 20 rest  
+        putStrLn first20  
+        putStr second20
+        
+Otra forma de hacerlo es utilizando la acción :dfn:`newStdGen` que divide el
+generador de valores aleatorios en dos nuevos generadores. Actualiza el
+generador global con uno de ellos y el toro lo de vuelve como resultado de la
+acción. ::
+
+    import System.Random  
+
+    main = do     
+        gen <- getStdGen     
+        putStrLn $ take 20 (randomRs ('a','z') gen)     
+        gen' <- newStdGen  
+        putStr $ take 20 (randomRs ('a','z') gen')
+        
+No solo obtenemos un nuevo generador cuando ligamos ``newStdGen``, sino que
+el generador global también se actualiza, así que si después utilizamos
+``getStdGen`` obtendremos otro generador que será diferente a ``gen``.
+
+Vamos a crear un programa que haga que nuestro usuario adivine el número en
+el que estamos pensado. ::
+
+    import System.Random  
+    import Control.Monad(when)  
+
+    main = do  
+        gen <- getStdGen  
+        askForNumber gen  
+
+    askForNumber :: StdGen -> IO ()  
+    askForNumber gen = do  
+        let (randNumber, newGen) = randomR (1,10) gen :: (Int, StdGen)  
+        putStr "Which number in the range from 1 to 10 am I thinking of? "  
+        numberString <- getLine  
+        when (not $ null numberString) $ do  
+            let number = read numberString  
+            if randNumber == number   
+                then putStrLn "You are correct!"  
+                else putStrLn $ "Sorry, it was " ++ show randNumber  
+            askForNumber newGen
+            
+.. image:: /images/jackofdiamonds.png
+   :align: left
+   :alt: Sota de diamantes
+
+Hemos creado la función ``askForNumber``, que toma un generador de valores
+aleatorios y devuelve una acción de E/S que preguntará al usuario por un
+número y le dirá si ha acertado o no. Dentro de esta función, primero
+generamos un número aleatorio y nuevo generador basándonos en el generador
+que obtuvimos como parámetro, los llamamos ``randNumber`` y ``newGen``.
+Digamos que el número generado es el ``7``. Luego preguntamos al usuario en
+que número estamos pensando. Ejecutamos ``getLine`` y ligamos el resultado a
+``numberString``. Cuando el usuario introduce ``7``, ``numberString`` se
+convierte en ``"7"``. Luego, utilizamos una cláusula ``when`` para comprobar
+si la cadena que ha introducido el usuario está vacía. Si lo está, una acción
+de E/S vacía (``return ()``) se ejecutará, terminando así nuestro programa. Si
+no lo está, la acción contenida en el bloque ``do`` se ejecutará. Utilizamos
+``read`` sobre ``numberString`` para convertirla en un número, el cual 
+ahora será ``7``.
+
+.. note:: Si el usuario introduce algo que ``read`` no pueda leer (como
+          ``"haha"``), nuestro programa terminará bruscamente con un mensaje
+          de error bastante horrendo. Si no te apetece que el programa termine
+          de esta forma, utiliza la función :dfn:`reads`, que devuelve una
+          lista vacía cuando no puede leer una cadena. Cuando si puede
+          devuelve una lista unitaria que contiene una dupla con nuestro valor
+          deseado como primer componente y una cadena con lo que no ha
+          consumido como segundo componente.
+
+Comprobamos si el número que han introducido es igual al número que hemos
+generado aleatoriamente y damos al usuario un mensaje apropiado. Luego
+llamamos a ``askForNumber`` de forma recursiva, solo que esta vez con el
+nuevo generador que hemos obtenido, de forma que obtenemos una acción de E/S
+como la que acabamos de ejecutar, solo que depende de un generador diferente.
+
+``main`` consiste básicamente en obtener el generador de valores aleatorio y
+llamar a ``askForNumber`` con el generador inicial.
+
+¡Aquí tienes nuestro programa en acción!
+
+.. code-block:: console
+
+    $ runhaskell guess_the_number.hs  
+    Which number in the range from 1 to 10 am I thinking of? 4  
+    Sorry, it was 3  
+    Which number in the range from 1 to 10 am I thinking of? 10  
+    You are correct!  
+    Which number in the range from 1 to 10 am I thinking of? 2  
+    Sorry, it was 4  
+    Which number in the range from 1 to 10 am I thinking of? 5  
+    Sorry, it was 10  
+    Which number in the range from 1 to 10 am I thinking of?
+    
+Otra forma de hacer el mismo programa sería: ::
+
+    import System.Random  
+    import Control.Monad(when)  
+
+    main = do  
+        gen <- getStdGen  
+        let (randNumber, _) = randomR (1,10) gen :: (Int, StdGen)     
+        putStr "Which number in the range from 1 to 10 am I thinking of? "  
+        numberString <- getLine  
+        when (not $ null numberString) $ do  
+            let number = read numberString  
+            if randNumber == number  
+                then putStrLn "You are correct!"  
+                else putStrLn $ "Sorry, it was " ++ show randNumber  
+            newStdGen  
+            main
+            
+Es muy similar a la versión anterior, solo que en lugar de hacer una función
+que tome un generador y luego se llame a si misma de forma recursiva, hacemos
+todo el trabajo en ``main``. Después de decir al usuario si el número que
+pensaba es correcto o no, actualizamos el generador global y volvemos a llamar
+a ``main``. Ambas implementaciones son válidas pero a mi me gusta más la
+primera ya que el ``main`` realiza menos acciones y también nos proporciona
+una función que podemos reutilizar.
