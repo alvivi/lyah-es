@@ -2165,3 +2165,212 @@ pensaba es correcto o no, actualizamos el generador global y volvemos a llamar
 a ``main``. Ambas implementaciones son válidas pero a mi me gusta más la
 primera ya que el ``main`` realiza menos acciones y también nos proporciona
 una función que podemos reutilizar.
+
+
+Cadenas de bytes
+----------------
+
+
+.. image:: /images/chainchomp.png
+   :align: right
+   :alt: Como un cadena normal, solo que muerde...
+
+Las listas son unas estructuras de datos estupendas además útiles. Hasta ahora
+las hemos utilizado en cualquier sitio. Hay una multitud de funciones que
+operan con ellas y la evaluación perezosa de Haskell nos permite
+intercambiarlas por los bucles a la hora de realizar filtrados y trazados, ya
+que la evaluación solo ocurre cuando realmente se necesita, de modo que las
+listas infinitas (¡incluso listas infinitas de listas infinitas!) no son un
+problema para nosotros. Por este motivo las listas también se pueden utilizar
+para representar flujos de datos, ya sea para leer desde la entrada estándar
+o desde un fichero. Podemos abrir un fichero y leerlo como si se tratase de
+una cadena, incluso aunque solo se acceda hasta donde alcancen nuestras
+necesidades.
+
+Sin embargo, procesar ficheros como cadenas tiene un inconveniente: suele ser
+lento. Como sabes, ``String`` es sinónimo de tipo de ``[Char]``. ``Char`` no
+tiene un tamaño fijo, ya que puede tomar varios bytes para representar un
+carácter. Ademas, las listas son perezosas. Si tienes un lista como
+``[1,2,3,4]``, se evaluará solo cuando sea completamente necesario. Así que
+la lista entera es una especie de promesa de que en algún momento será una
+lista. Recuerda que ``[1,2,3,4]`` es simplemente una decoración sintáctica
+para ``1:2:3:4:[]``. Cuando el primer elemento de la lista es forzado a 
+evaluarse (digamos que mostrándolo por pantalla), el resto de la lista
+``2:3:4:[]`` sigue siendo una promesa de una lista, y así continuamente. Así
+que puedes pensar en las listas como si se tratasen de promesas de que el
+el siguiente elemento será entregado una vez sea necesario. No hace falta
+pensar mucho para concluir que procesar una simple lista de números como
+una serie de promesas no de debe ser la cosa más eficiente del mundo.
+
+Esta sobrecarga no nos suele preocupar la mayor parte del tiempo, pero si
+debería hacerlo al la hora de leer y manipular ficheros de gran tamaño. Por
+esta razón Haskell posee **cadenas de bytes**. Las cadenas de bytes son una
+especie de listas, solo que cada elemento tiene el tamaño de un byte (o 8
+bits). La forma en la que son evaluadas es también diferente.
+
+Existen dos tipos de cadenas de bytes: las estrictas y las perezosas. Las
+estrictas residen en ``Data.ByteString`` y no posee ninguna evaluación
+perezosa. No hay ninguna promesa involucrada, un cadena de bytes estricta
+representa una serie de bytes en un vector. No podemos crear cosas como
+cadenas de bytes infinitas. Si evaluamos el primer byte de un cadena de bytes
+estricta evaluamos toda la cadena. La ventaja es que hay menos sobrecarga ya
+que no implica ningún *thunk* (término técnico de *promesa*). La desventaja es
+que consumirán memoria mucho más rápido ya que se leen en memoria de un solo
+golpe.
+
+El otro tipo de cadenas de bytes reside en ``Data.ByteString.Lazy``. Son
+perezosas, pero no de la misma forma que las listas. Como ya hemos dicho, hay
+tantos *thunks* como elementos en una cadena normal. Este es el porqué de que
+sean lentas en algunas situaciones. Las cadenas de bytes perezosas toman otra
+enfoque, se almacenan en bloques de 64KB de tamaño. De esta forma, si
+evaluamos un byte en una cadena de bytes perezosa (mostrándolo por pantalla o
+algo parecido), los primeros 64KB serán evaluados. Luego de estos, solo existe
+una promesa de que los siguientes serán evaluados. Las cadenas de bytes
+perezosas son como una especie de lista de cadenas de bytes de 64KB. Cuando
+procesemos ficheros utilizando cadenas de bytes perezosas, los contenidos del
+fichero serán leídos bloque a bloque. Es genial ya que no llevará la memoria
+hasta sus límite y probablemente 64KB caben perfectamente en la memoria
+cache L2 de tu procesador.
+
+Si miras la `Documentación <http://www.haskell.org/ghc/docs/latest/html/libraries/bytestring/Data-ByteString-Lazy.html>`_
+de ``Data.ByteString.Lazy``, verás que exporta un montón de funciones que
+tienen el mismo nombre que las de ``Data.List``, solo que en sus declaraciones
+de tipo tienen ``ByteString`` en lugar de ``[a]`` y ``Word8`` de la ``a`` de
+su interior. Las funciones con nombres similares se comportan prácticamente
+igual salvo que unas trabajan con listas y las otras con cadenas de bytes.
+Como importan nombres de funciones iguales, vamos a importarlas de forma
+cualificada en nuestro código y luego lo cargaremos en GHCi para jugar con
+con las cadenas de bytes. ::
+
+    import qualified Data.ByteString.Lazy as B  
+    import qualified Data.ByteString as S
+    
+``B`` posee las cadenas de bytes perezosas mientras que ``S`` contiene las
+estrictas. Utilizaremos casi siempre la versión perezosa.
+
+La función :dfn:`pack` tiene un tipo ``[Word8] -> ByteString``. Lo cual
+significa que toma una lista de bytes del tipo ``Word8`` y devuelve una
+``ByteString``.  Puedes verlo como si tomara un lista, que es perezosa, y la
+hace menos perezosa, de forma que sigue siendo perezosa solo que a intervalos
+de 64KB.
+
+¿Qué sucede con el tipo ``Word8``? Bueno, es como ``Int``, solo que tiene un
+rango mucho más pequeño, de 0 a 255. Representa un número de 8b. Y al igual
+que ``Int``, es miembro de la clase ``Num``. Por ejemplo, sabemos que el
+valor 5 es polimórfico ya que puede comportarse como cualquier tipo numeral. 
+Bueno, pues también puede tomar el tipo ``Word8``.
+
+.. code-block:: console
+
+    ghci> B.pack [99,97,110]  
+    Chunk "can" Empty  
+    ghci> B.pack [98..120]  
+    Chunk "bcdefghijklmnopqrstuvwx" Empty
+    
+Como puede ver, normalmente no tienes que preocupar mucho del tipo ``Word8``,
+ya que el sistema de tipos puede hacer que los números tomen ese tipo. Si
+tratas de utilizar un número muy grande, como 336, como un ``Word8``,
+simplemente se truncará de forma binaria al valor 80.
+
+Hemos empaquetado solo unos pocos valores dentro de una cadena de bytes, de
+forma que caben dentro de un mismo bloque (``Chunk``). El ``Empty`` es como
+``[]`` para las listas.
+
+:dfn:`unpack` es la versión inversa de de ``pack``. Toma una cadena de bytes y
+la convierte en una lista de bytes.
+
+:dfn:`fromChunks` toma una lista de cadenas de bytes estrictas y la convierte
+en una cadena de bytes perezosa.  :dfn:`toChunks` toma una cadena de bytes
+perezosa y la convierte en una estricta.
+
+.. code-block:: console
+
+    ghci> B.fromChunks [S.pack [40,41,42], S.pack [43,44,45], S.pack [46,47,48]]  
+    Chunk "()*" (Chunk "+,-" (Chunk "./0" Empty))
+    
+Esto es útil cuando tienes un montón de cadenas de bytes estrictas y quieres
+procesarlas eficientemente sin tener que unirlas en memoria en una más grande
+primero. 
+
+La versión de ``:`` para cadenas de bytes se conoce como :dfn:`cons`. Toma un
+byte y una cadena de bytes y pone dicho byte al principio. Aunque es perezosa,
+generará un nuevo bloque para ese elemento aunque dicho bloque aún no este
+lleno. Por este motivo es mejor utilizar la versión estricta de ``cons``,
+:dfn:`cons'`, si vas a insertar un montón de bytes al principio de una cadena
+de bytes.
+
+.. code-block:: console
+
+    ghci> B.cons 85 $ B.pack [80,81,82,84]  
+    Chunk "U" (Chunk "PQRT" Empty)  
+    ghci> B.cons' 85 $ B.pack [80,81,82,84]  
+    Chunk "UPQRT" Empty  
+    ghci> foldr B.cons B.empty [50..60]  
+    Chunk "2" (Chunk "3" (Chunk "4" (Chunk "5" (Chunk "6" (Chunk "7" (Chunk "8" (Chunk "9" (Chunk ":" (Chunk ";" (Chunk "<" Empty))))))))))  
+    ghci> foldr B.cons' B.empty [50..60]  
+    Chunk "23456789:;<" Empty
+    
+Como puedes ver :dfn:`empty` crea una cadena de bytes vacía ¿Puedes ver las
+diferencias entre ``cons`` y ``cons'``? Con ayuda de ``foldr`` hemos empezado
+con una cadena de bytes vacía y luego hemos recorrido la lista de números
+desde la derecha, añadiendo cada número al principio de la cadena de bytes.
+Cuando utilizamos ``cons``, acabamos con un bloque por cada byte, lo cual no
+es muy útil para nuestros propósitos.
+
+De cualquier modo, los módulo de cadenas de bytes tienen un montón de
+funciones análogas a las de ``Data.List``, incluyendo, pero no limitándose, a
+``head``, ``tail``, ``init``, ``null``, ``length``, ``map``, ``reverse``,
+``foldl``, ``foldr``, ``concat``, ``takeWhile``, ``filter``, etc.
+
+También contienen funciones con el mismo nombre y comportamiento que algunas
+funciones que se encuentran en ``System.IO``, solo que ``String`` se remplaza
+por ``ByteString``. Por ejemplo, la función ``readFile`` de ``System.IO``
+tiene el tipo ``readFile :: FilePath -> IO String``, mientras que
+:dfn:`readFile` de los módulos de cadenas de bytes tiene el tipo
+``readFile :: FilePath -> IO ByteString``. Ten cuidado, si estás utilizando la
+versión estricta de cadenas de bytes e intentas leer un fichero, se leerá en
+memoria de un solo golpe. Con las cadenas de bytes perezosas se leerá bloque
+a bloque.
+
+Vamos a crear un programa simple que tome dos rutas de ficheros como
+parámetros de la línea de comandos y copie el contenido del primero en el
+segundo. Ten en cuenta que ``System.Directory`` ya contiene una función
+llamada ``copyFile``, pero vamos a implementar nuestro programa así de todas
+formas. ::
+
+    import System.Environment  
+    import qualified Data.ByteString.Lazy as B  
+
+    main = do  
+        (fileName1:fileName2:_) <- getArgs  
+        copyFile fileName1 fileName2  
+
+    copyFile :: FilePath -> FilePath -> IO ()  
+    copyFile source dest = do  
+        contents <- B.readFile source  
+        B.writeFile dest contents
+        
+Creamos nuestra propia función que toma dos ``FilePath`` (recuerda,
+``FilePath`` es solo un sinónimo de ``String``) y devuelve una acción de E/S
+que copiará el contenido de un fichero utilizando cadenas de bytes. En la
+función ``main``, simplemente obtenemos los parámetros y llamamos a nuestra
+función con ellos para obtener una acción de E/S que será ejecutada. 
+
+.. code-block:: console
+
+    $ runhaskell bytestringcopy.hs something.txt ../../something.txt
+    
+Fíjate que un programa que no utilice cadenas de bytes puede tener el mismo
+parecido, la única diferencia sería que en lugar de escribir ``B.readFile`` y
+``B.writeFile`` usaríamos ``readFile`` y ``writeFile``. Muchas veces podemos
+convertir un programa que utilice cadenas a un programa que utilice cadenas
+de bytes simplemente utilizando los módulos correctos y cualificando algunas
+funciones. A veces, pueden necesitar convertir funciones que trabajan con
+cadenas para que funcionen con cadenas de bytes, pero no es demasiado difícil.
+
+Siempre que necesites un mayor rendimiento en programas que lean montones
+de datos en forma de cadenas, intenta utilizar cadenas de bytes, tendrás
+grandes posibilidades de conseguir un rendimiento mayor con muy poco esfuerzo.
+Normalmente yo suelo crear programas que trabajan con cadenas normales y luego
+las convierto a cadenas de bytes de el rendimiento no se ajusta a los
+objetivos.

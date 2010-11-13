@@ -178,10 +178,10 @@ conocido.
    que en realidad pasa es que el acumulador hace un especie de promesa de que
    él calculará el valor cuando se le pide que produzca un resultado (a esto
    también se le llama thunk). Esto pasa para cada valor intermedio del
-   acumulador y todos esos thunks desbordan la pila. Los pliegues estrictos
+   acumulador y todos esos *thunks* desbordan la pila. Los pliegues estrictos
    no sufren de este error ya que van calculando de verdad los valores
    intermedios según recorren la lista en lugar de de llenar la pila con
-   thunks. Ya sabes, si alguna vez te encuentras con errores de desbordamiento
+   *thunks*. Ya sabes, si alguna vez te encuentras con errores de desbordamiento
    de pila mientras realizas un pliegue, prueba estas funciones.
 
  * ``concat`` aplana una lista de listas en una simple lista con los mismos
