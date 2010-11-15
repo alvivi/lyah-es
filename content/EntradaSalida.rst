@@ -2374,3 +2374,361 @@ grandes posibilidades de conseguir un rendimiento mayor con muy poco esfuerzo.
 Normalmente yo suelo crear programas que trabajan con cadenas normales y luego
 las convierto a cadenas de bytes de el rendimiento no se ajusta a los
 objetivos.
+
+
+Excepciones
+-----------
+
+
+.. image:: /images/timber.png
+   :align: left
+   :alt: ¡Árbol va!
+   
+Todos los lenguajes tienen procedimientos, funciones o trozos de código que
+fallan de alguna forma. Es una ley de vida. Lenguajes diferentes tienen
+formas diferentes de manejar estos fallos. En *C*, solemos utilizar un valor
+de retorno anormal (como -1 o un puntero nulo) para indicar que el valor
+devuelto no debe ser tratado de forma normal. *Java* y *C#*, por otra parte,
+tienden a utilizar excepciones para controlar estos fallos. Cuando se lanza
+una excepción, la ejecución de código salta a algún lugar que hemos definido
+para realice las tareas apropiadas e incluso quizá relance la excepción para
+que sea tratada en otro lugar.
+
+Haskell tiene un buen sistema de tipos. Los tipos de datos algebraicos nos
+permiten tener tipos como ``Maybe`` y ``Either`` que podemos utilizar para
+representar resultados que son válidos y que no lo son. En *C*, devolver,
+digamos -1, cuando suceda un error es una cuestión de convención. Solo tiene
+un significado especial para los humanos. Si no tenemos cuidado, podemos
+tratar esos datos anormales como válidos de forma que nuestro código termine
+siendo un auténtico desastre. El sistema de tipos de Haskell nos da la
+seguridad que necesitamos en este aspecto. Una función ``a -> Maybe b``
+indica claramente que puede producir un ``b`` envuelto por un ``Just`` o bien
+puede devolver ``Nothing``. El tipo es completamente diferente a ``a -> b`` y
+si intentamos utilizar estas dos funciones indistintamente, el sistema de
+tipos se quejará. 
+
+Aunque aún teniendo tipos expresivos que soporten operaciones erróneas,
+Haskell sigue teniendo soporte para excepciones, ya tienen más sentido en
+el contexto de la E/S. Un montón de cosas pueden salir mal cuando estamos
+tratando con el mundo exterior ya que no es muy fiable. Por ejemplo, cuando
+abrimos un fichero, bastantes cosas pueden salir mal. El fichero puede estar
+protegido, puede no existir o incluso que no exista un soporte físico para él.
+Así que está bien poder saltar a algún lugar de nuestro código que se encargue
+de un error cuando dicho error suceda.
+
+Vale, así que el código de E/S (es decir, código impuro) puede lanzar
+excepciones. Tiene sentido ¿Pero qué sucede con el código puro? Bueno, también
+puede lanzar excepciones. Piensa en las funciones ``div`` y ``head``. Tienen
+los tipos ``(Integral a) => a -> a ->`` y ``[a] -> a`` respectivamente. No
+hay ningún ``Maybe`` ni ``Either`` en el tipo que devuelven pero aún así
+pueden fallar. ``div`` puede fallar si intentas dividir algo por cero y
+``head`` cuando le das una lista vacía. 
+
+.. code-block:: console
+
+    ghci> 4 `div` 0  
+    *** Exception: divide by zero  
+    ghci> head []  
+    *** Exception: Prelude.head: empty list
+ 
+.. image:: /images/police.png
+   :align: left
+   :alt: ¡Alto ahí cirminal!
+   
+El código puro puede lanzar excepciones, pero solo pueden ser capturadas en
+las partes de E/S de nuestro código (cuando estamos dentro de un bloque ``do``
+que es alcanzado por ``main``). Esto ocurre así porque no sabemos cuando (o
+si) algo será evaluado en el código puro ya que se evalúa de forma perezosa y
+no tiene definido un orden de ejecución concreto, mientras que las partes de
+E/S sí lo tienen.
+
+Antes hablábamos de como debíamos permanecer el menor tiempo posible en las
+partes de E/S de nuestro programa. La lógica de nuestro programa debe
+permanecer mayoritariamente en nuestras funciones puras, ya que sus resultados
+solo dependen de los parámetros con que las llamemos. Cuando tratas con
+funciones puras, solo tenemos que preocuparnos de que devuelve una función, ya
+que no puede hacer otra cosa. Esto hace nuestra vida más sencilla. Aunque
+realizar algunas tareas en la parte E/S es fundamental (como abrir un fichero
+y cosas así), deben permanecer al mínimo. Las funciones puras son perezosas
+por defecto, lo que significa que no sabemos cuando serán evaluadas y
+realmente tampoco nos debe preocupar. Sin embargo, cuando las funciones puras
+empiezan a lanzar excepciones, si importa cuando son evaluadas. Por este
+motivo solo podemos capturar excepciones lanzadas desde código puro en las
+partes de E/S de nuestro programa. Y como queremos mantener las partes de E/S
+al mínimo esto no nos beneficia mucho. Sin embargo, si no las capturamos en
+una parte de E/S de nuestro código, el programa se abortará ¿Solución? No
+mezcles las excepciones con código puro. Toma ventaja del potente sistema de
+tipos de Haskell y utiliza tipos como ``Either`` y ``Maybe`` para representar
+resultados que pueden ser erróneos.
+
+Por este motivo, por ahora solo veremos como utilizar las excepciones de E/S.
+Las excepciones de E/S ocurren cuando algo va mal a la hora de comunicamos con
+el mundo exterior. Por ejemplo, podemos tratar de abrir un fichero y luego
+puede ocurrir que ese fichero ha sido eliminado o algo parecido. Fíjate en el
+siguiente programa, el cual abre un fichero que ha sido obtenido como
+parámetro  y nos dice cuantas líneas contiene. ::
+
+    import System.Environment  
+    import System.IO  
+
+    main = do (fileName:_) <- getArgs  
+              contents <- readFile fileName  
+              putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"  
+    
+Un programa muy simple. Realizamos la acción de E/S ``getArgs`` y ligamos la
+primera cadena de la cadena que nos devuelve a ``fileName``. Luego llamamos a
+los contenidos de fichero como ``contents``. Para terminar, aplicamos
+``lines`` a esos contenidos para obtener una lista de lineas y luego obtenemos
+la longitud de esa lista y la mostramos utilizando ``show``. Funciona de la
+forma esperada, pero ¿Qué sucede cuando le damos el nombre de un fichero que
+no existe?
+
+.. code-block:: console
+
+    $ runhaskell linecount.hs i_dont_exist.txt  
+    linecount.hs: i_dont_exist.txt: openFile: does not exist (No such file or directory)
+
+¡Ajá! Obtenemos un error de *GHC* que nos dice que ese fichero no existe.
+Nuestro programa falla ¿Qué pasaría si quisiéramos mostrar un mensaje más
+agradable en caso de que el fichero no exista? Una forma de hacerlo sería
+comprobando si el fichero existe antes de intentar abrirlo utilizando la
+función :dfn:`doesFileExist` de ``System.Directory``. ::
+
+    import System.Environment  
+    import System.IO  
+    import System.Directory  
+
+    main = do (fileName:_) <- getArgs  
+              fileExists <- doesFileExist fileName  
+              if fileExists  
+                  then do contents <- readFile fileName  
+                          putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"  
+                  else do putStrLn "The file doesn't exist!"
+
+Hicimos ``fileExists <- doesFileExist fileName`` porque ``doesFileExist``
+tiene como declaración de tipo ``doesFileExist :: FilePath -> IO Bool``, lo
+que significa que devuelve una acción de E/S que tiene como resultado un valor
+booleano que nos dice si el fichero existe o no. No podemos utilizar
+``doesFileExist`` directamente en una expresión ``if``. 
+
+Otra solución sería utilizando excepciones. Es perfectamente aceptable
+utilizarlas en este contexto. Un fichero que no existe es una excepción que
+se lanza desde la E/S, así que capturarla en la E/S es totalmente aceptable.
+
+Para tratar con esto utilizando excepciones, vamos a aprovecharnos de la
+función :dfn:`catch` de ``System.IO.Error``. Su declaración de tipo es
+``catch :: IO a -> (IOError -> IO a) -> IO a``. Toma dos parámetros. El
+primero es una acción de E/S. Por ejemplo, podría ser una acción que trate de
+abrir un fichero. El segundo es lo que llamamos un manipulador. Si la primera
+acción de E/S que le pasemos a ``catch`` lanza un excepción, la excepción pasa
+al manipulador que decide que hacer. Así que el resultado final será una
+acción que o bien actuará como su primer parámetro o bien hará lo que diga el
+manipulador en caso de que la primera acción de E/S lance una excepción. 
+
+.. image:: /images/puppy.png
+   :align: right
+   :alt: Cachorrito
+
+Si te es familiar los bloques *try-catch* de lenguajes como *Java* o *Python*,
+la función ``catch`` es similar a ellos. El primer parámetro es lo que hay que
+intentar hacer, algo así como lo que hay dentro de un bloque *try*. El segundo
+parámetro es el manipulador que toma una excepción, de la misma forma que la
+mayoría de los bloques *catch* toman excepciones que puedes examinar para ver
+que ha ocurrido. El manipulador es invocado si se lanza una excepción. 
+
+El manipulador toma un valor del tipo ``IOError``, el cual es un valor que
+representa que ha ocurrido una excepción de E/S. También contienen información
+acerca de la excepción que ha sido lanzada. La implementación de este tipo
+depende de la implementación del propio lenguaje, por lo que no podemos
+inspeccionar valores del tipo ``IOError`` utilizando el ajuste de patrones
+sobre ellos, de la misma forma que no podemos utilizar el ajuste de patrones
+con valores del tipo ``IO algo``. Sin embargo, podemos utilizar un montón de
+predicados útiles para examinar los valores del tipo ``IOError`` como veremos
+en unos segundos.
+
+Así que vamos a poner en uso a nuestro nuevo amigo ``catch``. ::
+
+    import System.Environment  
+    import System.IO  
+    import System.IO.Error  
+
+    main = toTry `catch` handler  
+
+    toTry :: IO ()  
+    toTry = do (fileName:_) <- getArgs  
+               contents <- readFile fileName  
+               putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"  
+
+    handler :: IOError -> IO ()  
+    handler e = putStrLn "Whoops, had some trouble!"
+    
+Lo primero de todo, puedes ver como hemos utilizado las comillas simples para
+utilizar esta función de forma infija, ya que toma dos parámetros. Utilizarla
+de forma infija la hace mas legible. Así que ``toTry `catch` handler`` es lo
+mismo que ``catch toTry handler``, además concuerda con su tipo. ``toTry`` es
+una acción de E/S que intentaremos ejecutar y ``handler`` es la función que
+toma un ``IOError`` y devuelve una acción que será ejecutada en caso de que
+suceda una excepción. 
+
+Vamos a probarlo:
+
+.. code-block:: console
+
+    $ runhaskell count_lines.hs i_exist.txt  
+    The file has 3 lines!  
+
+    $ runhaskell count_lines.hs i_dont_exist.txt  
+    Whoops, had some trouble!
+    
+No hemos comprobado que tipo de ``IOError`` obtenemos dentro de ``handler``. 
+Simplemente decimos ``"Whoops, had some trouble!"`` para cualquier tipo de
+error. Capturar todos los tipos de excepciones un mismo manipulador no es una
+buena práctica en Haskell ni en ningún otro lenguaje ¿Qué pasaría si se
+lanzara alguna otra excepción que no queremos capturar, como si interrumpimos 
+el programa o algo parecido? Por esta razón vamos a hacer lo mismo que se
+suele hacer en otros lenguajes: comprobaremos que tipo de excepción estamos
+capturando. Si la excepción es del tipo que queremos capturar, haremos nuestro
+trabajo. Si no, relanzaremos esa misma excepción. Vamos a modificar nuestro
+programa para que solo capture las excepciones debidas a que un fichero no
+exista. ::
+
+    import System.Environment  
+    import System.IO  
+    import System.IO.Error  
+
+    main = toTry `catch` handler  
+
+    toTry :: IO ()  
+    toTry = do (fileName:_) <- getArgs  
+               contents <- readFile fileName  
+               putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"  
+
+    handler :: IOError -> IO ()  
+    handler e  
+        | isDoesNotExistError e = putStrLn "The file doesn't exist!"  
+        | otherwise = ioError e
+        
+Todo permanece igual excepto el manipulador, el cual hemos modificado para
+que capture únicamente un grupo de excepciones de E/S. Hemos utilizado dos
+nuevas funciones de ``System.IO.Error``, :dfn:`isDoesNotExistError` y
+:dfn:`ioError`. ``isDoesNotExistError`` es un predicado sobre ``IOError``, o
+lo que es lo mismo, es una función que toma un valor del tipo ``IOError`` y
+devuelve ``True`` o ``False``, por lo que su declaración de tipo es
+``isDoesNotExistError :: IOError -> Bool``. Hemos utilizado esta función con
+la excepción que se le pasa al manipulador para ver si el error fue debido a
+que no existía un fichero. Utilizamos también la sintaxis de
+:ref:`guardas <guardas>`, aunque podríamos haber utilizado un ``if else``. En
+caso de que la excepción no fuera lanzada debido a que no se encuentre un
+fichero, relanzamos la excepción que se le pasó al manipulador utilizando la
+función ``ioError``. Su declaración de tipo es ``ioError :: IOException ->
+IO a``, así que toma un ``IOError`` y produce un acción de E/S que lanza esa
+excepción. La acción de E/S tiene el tipo ``IO a`` ya que realmente nunca
+devolverá un valor.
+
+Resuminedo, si la excepción lanzada dentro de la acción de E/S ``toTry`` que
+hemos incluido dentro del bloque ``do`` no se debe a que no exista un fichero,
+``toTry `catch` handler`` capturará esa excepción y la volverá a lanzar.
+
+Existen varios predicados que trabajan con ``IOError`` que podemos utilizar
+junto las guardas, ya que, si una guarda no se evalua a ``True``, se seguirá
+evaluando la siguiente guarda. Los predicados que trabajan con ``IOError``
+son:
+
+ * :dfn:`isAlreadyExistsError`
+ * :dfn:`isDoesNotExistError`
+ * :dfn:`isAlreadyInUseError`
+ * :dfn:`isFullError`
+ * :dfn:`isEOFError`
+ * :dfn:`isIllegalOperation`
+ * :dfn:`isPermissionError`
+ * :dfn:`isUserError`
+
+La moyoría de éstas se explican por si mismas. ``isUserError`` se evalua a
+``True`` cuando utilizamos la función :dfn:`userError` para crear la
+excepción, lo cual se utiliza para crear excepciones en nuestro código y
+acompañarlas con una cadena. Por ejemplo, puedes utilizar algo como
+``ioError $ userError "remote computer unplugged!"``, aunque es preferible que
+utilices los tipos ``Either`` y ``Maybe`` para representar posibles fallos en
+lugar de lanzar excepciones por ti mismo con ``userError``. 
+
+Podríamos tener un manipulador que se pareciera a algo como esto: ::
+
+    handler :: IOError -> IO ()  
+    handler e  
+        | isDoesNotExistError e = putStrLn "The file doesn't exist!"  
+        | isFullError e = freeSomeSpace  
+        | isIllegalOperation e = notifyCops  
+        | otherwise = ioError e
+        
+Donde ``notifyCops`` y ``freeSomeSpace`` son acciones de E/S que hemos
+definido. Asegurate de relanzar las excepciones que no cumplan tu criterio, de
+lo contrario harás que tu programa falle de forma sigilosa cuando no debería.
+
+``System.IO.Error`` también exporta algunas funciones que nos permiten
+preguntar a estas excepciones por algunos atributos, como qué manipulador 
+causó el error, o qué ruta de fichero lo provocó. Estas funciones comienzan
+por ``ioe`` y puedes ver la `lista completa <http://www.haskell.org/ghc/docs/6.10.1/html/libraries/base/System-IO-Error.html#3>`_
+en la documentación. Digamos que queremos mostrar la ruta de un fichero que
+provocó un error. No podemos mostrar el ``fileName`` que obtuvimos de
+``getArgs``, ya que solo un valor del tipo ``IOError`` se pasa al manipulador
+y manipulador no sabe nada más. Una función depende exclusivamente de los 
+parámetros con los que fue llamada. Por esta razón podemos utilizar la
+función :dfn:`ioeGetFileName`, cuya declaración de tipo es ``ioeGetFileName ::
+IOError -> Maybe FilePath``. Toma un ``IOError`` como parámetro y quizá
+devuelva un ``FilePath`` (que es un sinónimo de ``String``, así que es
+prácticamente lo mismo). Básicamente lo que hace es extraer la ruta de un
+fichero de un ``IOError``, si puede. Vamos a modificar el programa anterior
+para que muestre la ruta del fichero que provocó una posible excepción. ::
+
+    import System.Environment     
+    import System.IO     
+    import System.IO.Error     
+
+    main = toTry `catch` handler     
+
+    toTry :: IO ()     
+    toTry = do (fileName:_) <- getArgs     
+               contents <- readFile fileName     
+               putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"     
+
+    handler :: IOError -> IO ()     
+    handler e     
+        | isDoesNotExistError e =   
+            case ioeGetFileName e of Just path -> putStrLn $ "Whoops! File does not exist at: " ++ path  
+                                     Nothing -> putStrLn "Whoops! File does not exist at unknown location!"  
+        | otherwise = ioError e
+
+Si la guarda donde se encuentra ``isDoesNotExistError`` se evalua a ``True``,
+utilizamos una expresión ``case`` para llamar a ``ioeGetFileName`` con ``e``
+y aplicamos un ajuste de patrones con el ``Maybe`` que devuelve. Normalmente
+utilizamos las expresiones ``case`` cuando queremos aplicar un ajuste de
+patrones sin tener que crear una nueva función.
+
+No tienes porque utilizar un manipulador para capturar todas las excepciones
+que ocurran en la parte de E/S de tu programa. Puedes cubrir ciertas partes de
+tu código de E/S con ``catch`` o puedes cubrir varias de ellas con ``catch``
+y utilizar diferentes manipuladores. Algo como: ::
+
+    main = do toTry `catch` handler1  
+              thenTryThis `catch` handler2  
+              launchRockets
+              
+Aquí, ``toTry`` utiliza ``handler1`` como manipulador y ``thenTryThis``
+utiliza ``handler2``. ``launchRockets`` no es ningún parámetro de nignún
+``catch``, así que cualquier excepción que lanze abortará el programa, a no
+ser que ``launchRockets`` utilice internamente un ``catch`` que gestione sus
+propias excepciones. Por supuesto ``toTry``, ``thenTryThis`` y
+``launchRockets`` son acciones de E/S que han sido unidas con un bloque ``do``
+e hipotéticamente definidas en algún lugar. Es similar a los bloques
+*try-catch* que aparecen en otro lenguajes, donde puedes utilizar un solo
+bloque *try-catch* para envolver a todo el programa o puede utilizar un
+enfoque más detallado y utilizar bloques diferentes en diferentes partes
+del programa.
+
+Ahora ya sabes como tratar las excepciones de la E/S. No hemos visto como
+lanzar excepciones desde código puro y trabajar con ellas, porque, como ya
+hemos dicho, Haskell ofrece mejores formas de informar de errores sin recurrir
+a partes de la E/S. Incluso aún teniendo que trabajar con acciones de la E/S
+que puede fallar, prefiero tener tipos como ``IO (Either a b)``, que indiquen
+que son acciones de E/S normales solo que su resultado será del tipo
+``Either a b``, así que o bien devolverán ``Left a`` o  ``Right b``.

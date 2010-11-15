@@ -155,7 +155,7 @@ fichero llamado, digamos, ``myFunctions.hs``, puedes cargar esas funciones
 tecleando ``:l myFunctions`` y jugar con ellas, siempre que ``myFunctions.hs``
 esté en el mismo directorio en el que fue invocado ``ghci``. Si modificas el
 script .hs, simplemente ejecuta ``:l myFunctions`` o haz ``:r``, lo cual es
-equivalente ya recarga el script actual. Mi forma de trabajo usual cuando juego
+equivalente ya recarga el script actual. Mi forma de trabajo habitual cuando juego
 con estas cosas es definir algunas funciones en un fichero .hs, las cargo y paso
 el rato con ellas, luego modifico el fichero .hs volviendo a cargarlo y así
 sucesivamente. Esto es también lo que vamos a hacer aquí.

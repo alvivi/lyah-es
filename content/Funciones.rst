@@ -260,6 +260,7 @@ No tiene mucho sentido. Tendría más sentido ajustar patrones como
 ``(xs ++ [x,y,z])`` o simplemente ``(xs ++ [x])`` pero dada la naturaleza de las
 listas no podemos hacer esto.
 
+.. _guardas:
 
 ¡Guardas, Guardas!
 ------------------
