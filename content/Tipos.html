@@ -1,0 +1,488 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tipos y clases de tipos &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
+    <link rel="next" title="La sintaxis de las funciones" href="Funciones.html" />
+    <link rel="prev" title="Empezando" href="Empezando.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Funciones.html" title="La sintaxis de las funciones"
+             accesskey="N">siguiente</a></li>
+        <li class="right" >
+          <a href="Empezando.html" title="Empezando"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="tipos-y-clases-de-tipos">
+<h1>Tipos y clases de tipos<a class="headerlink" href="#tipos-y-clases-de-tipos" title="Enlazar permanentemente con este título">¶</a></h1>
+<div class="section" id="cree-en-el-tipo">
+<h2>Cree en el tipo<a class="headerlink" href="#cree-en-el-tipo" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="¡Vaca!" class="align-left" src="../_images/cow.png" />
+<p>Anteriormente mencionamos que Haskell tiene un sistema de tipos estático. Se
+conoce el tipo de cada expresión en tiempo de compilación, lo que produce código
+más seguro. Si escribes un programa donde intentas dividir un valor de tipo
+booleano por algún número ni siquiera llegará a compilarse. Esto es bueno ya que
+es mejor capturar este tipo de errores en tiempo de compilación en lugar de que
+el programa falle. Todo en Haskell tiene un tipo, de forma que el compilador
+puede razonar acerca de tu programa antes de compilarlo.</p>
+<p>Al contrario que Java o Pascal, Haskell posee inferencia de tipos. Si escribimos
+un número, no tenemos que decirle que eso es un número. Puede deducirlo el solo,
+así que no tenemos que escribir explícitamente los tipos de nuestras funciones
+o expresiones para conseguir resultados. Ya hemos cubierto parte de las bases de
+Haskell con muy poco conocimiento de los tipos. Sin embargo, entender el sistema
+de tipos es una parte muy importante para aprender Haskell.</p>
+<p>Un tipo es como una etiqueta que posee toda expresión. Esta etiqueta nos dice a
+que categoría de cosas se ajusta a la expresión. La expresión <tt class="xref docutils literal"><span class="pre">True</span></tt> es un
+booleano, <tt class="docutils literal"><span class="pre">&quot;Hello&quot;</span></tt> es una cadena, etc.</p>
+<p>Ahora vamos a usar GHCi para examinar los tipos de algunas expresiones. Lo
+haremos gracias al comando <tt class="docutils literal"><span class="pre">:t</span></tt>, el cual, seguido de una expresión válida nos
+dice su tipo. Vamos a dar un vistazo:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="sc">&#39;a&#39;</span>
+<span class="sc">&#39;a&#39;</span> <span class="ow">::</span> <span class="kt">Char</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="kt">True</span>
+<span class="kt">True</span> <span class="ow">::</span> <span class="kt">Bool</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="s">&quot;HELLO!&quot;</span>
+<span class="s">&quot;HELLO!&quot;</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="kt">True</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="kt">True</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Char</span><span class="p">)</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="mi">4</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">::</span> <span class="kt">Bool</span>
+</pre></div>
+</div>
+<img alt="Bomba" class="align-right" src="../_images/bomb.png" />
+<p>Podemos ver que ejecutando el comando <tt class="docutils literal"><span class="pre">:t</span></tt> sobre una expresión se muestra esa
+misma expresión seguida de <tt class="docutils literal"><span class="pre">::</span></tt> y de su tipo. <tt class="docutils literal"><span class="pre">::</span></tt> se puede leer como <em>tiene
+el tipo</em>. Los tipos explícitos siempre se denotan con su primera letra en
+mayúsculas. <tt class="docutils literal"><span class="pre">'a'</span></tt>, como hemos visto, tiene el tipo <tt class="docutils literal"><span class="pre">Char</span></tt>. El nombre de este
+tipo viene de &#8220;Character&#8221; (Carácter en inglés). <tt class="xref docutils literal"><span class="pre">True</span></tt> tiene el tipo <tt class="docutils literal"><span class="pre">Bool</span></tt>.
+Tiene sentido. Pero, ¿Qué es esto? Examinando el tipo de <tt class="docutils literal"><span class="pre">&quot;HELLO!&quot;</span></tt> obtenemos
+<tt class="docutils literal"><span class="pre">[Char]</span></tt>. Los corchetes denotan una lista. Así que leemos esto como una <em>lista
+de caracteres</em>. Al contrario que las listas, cada tamaño de tuplas tiene su
+propio tipo. Así que la expresión <tt class="docutils literal"><span class="pre">(True,</span> <span class="pre">'a')</span></tt> tiene el tipo
+<tt class="docutils literal"><span class="pre">(Bool,</span> <span class="pre">Char)</span></tt>, mientras que la expresión <tt class="docutils literal"><span class="pre">('a',</span> <span class="pre">'b',</span> <span class="pre">'c')</span></tt> tiene el tipo
+<tt class="docutils literal"><span class="pre">(Char,</span> <span class="pre">Char,</span> <span class="pre">Char)</span></tt>. <tt class="docutils literal"><span class="pre">4</span> <span class="pre">==</span> <span class="pre">5</span></tt> siempre devolverá <tt class="xref docutils literal"><span class="pre">False</span></tt> así que esta
+expresión tiene el tipo <tt class="docutils literal"><span class="pre">Bool</span></tt>.</p>
+<p>Las funciones también tiene tipos. Cuando escribimos nuestras propias funciones
+podemos darles un tipo explícito en su declaración. Generalmente está bien
+considerado escribir los tipos explícitamente en la declaración de un función,
+excepto cuando estas son muy cortas. De aquí en adelante le daremos tipos
+explícitos a todas las funciones que creemos. ¿Recuerdas la lista por
+comprensión que filtraba solo las mayúsculas de una cadena?
+Aquí tienes como se vería con su declaración de tipo:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">removeNonUppercase</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span>
+<span class="nf">removeNonUppercase</span> <span class="n">st</span> <span class="ow">=</span> <span class="p">[</span> <span class="n">c</span> <span class="o">|</span> <span class="n">c</span> <span class="ow">&lt;-</span> <span class="n">st</span><span class="p">,</span> <span class="n">c</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="o">..</span><span class="sc">&#39;Z&#39;</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">removeNonUppercase</span></tt> tiene el tipo <tt class="docutils literal"><span class="pre">[Char]</span> <span class="pre">-&gt;</span> <span class="pre">[Char]</span></tt>, que significa que es
+una función que toma una cadena y devuelve otra cadena. El tipo <tt class="docutils literal"><span class="pre">[Char]</span></tt> es
+sinónimo de <tt class="docutils literal"><span class="pre">String</span></tt> así que sería más elegante escribir el tipo como
+<tt class="docutils literal"><span class="pre">removeNonUppercase</span> <span class="pre">::</span> <span class="pre">String</span> <span class="pre">-&gt;</span> <span class="pre">String</span></tt>. Anteriormente no le dimos un tipo
+ha esta función ya que el compilador puede inferirlo por si solo. Pero, ¿Cómo
+escribimos el tipo de una función que toma varios parámetros? Aquí tienes una
+función que toma tres enteros y los suma:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">addThree</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+<span class="nf">addThree</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span>
+</pre></div>
+</div>
+<p>Los parámetros están separados por <tt class="docutils literal"><span class="pre">-&gt;</span></tt> y no existe ninguna diferencia
+especial entre los parámetros y el tipo que devuelve la función. El tipo que
+devuelve la función es el último elemento de la declaración y los parámetros son
+los restantes. Más tarde veremos porque simplemente están separados por <tt class="docutils literal"><span class="pre">-&gt;</span></tt>
+en lugar de tener algún tipo de distinción más explícita entre los tipos de
+parámetros y el tipo de retorno, algo como <tt class="docutils literal"><span class="pre">Int,</span> <span class="pre">Int,</span> <span class="pre">Int</span> <span class="pre">-&gt;</span> <span class="pre">Int</span></tt>.</p>
+<p>Si escribes una función y no tienes claro el tipo que debería tener, siempre
+puedes escribir la función sin su tipo y ejecutar el comando <tt class="docutils literal"><span class="pre">:t</span></tt> sobre ella.
+Las funciones también son expresiones así que no hay ningún problema en usar
+<tt class="docutils literal"><span class="pre">:t</span></tt> con ellas.</p>
+<p>Aquí tienes una descripción de los tipos más comunes.</p>
+<blockquote>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Int</span></tt> representa enteros. Se utiliza para representar número enteros, por
+lo que <tt class="docutils literal"><span class="pre">7</span></tt> puede ser un <tt class="docutils literal"><span class="pre">Int</span></tt> pero <tt class="docutils literal"><span class="pre">7.2</span></tt> no puede. <tt class="docutils literal"><span class="pre">Int</span></tt> está
+acotado, lo que significa que tiene un valor máximo y un valor mínimo.
+Normalmente en máquinas de 32bits el valor máximo de <tt class="docutils literal"><span class="pre">Int</span></tt> es 2147483647
+y el mínimo -2147483648.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Integer</span></tt> representa... esto... enteros también. La diferencia es que no
+están acotados así que pueden representar número realmente grandes. Sin
+embargo, <tt class="docutils literal"><span class="pre">Int</span></tt> es más eficiente.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">factorial</span> <span class="ow">::</span> <span class="kt">Integer</span> <span class="ow">-&gt;</span> <span class="kt">Integer</span>
+<span class="nf">factorial</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">product</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="n">n</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">factorial</span> <span class="mi">50</span>
+<span class="mi">30414093201713378043612608166064768844377641568960512000000000000</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Float</span></tt> es un número real en coma flotante de simple precisión.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">circumference</span> <span class="ow">::</span> <span class="kt">Float</span> <span class="ow">-&gt;</span> <span class="kt">Float</span>
+<span class="nf">circumference</span> <span class="n">r</span> <span class="ow">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r</span>
+</pre></div>
+</div>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">circumference</span> <span class="mf">4.0</span>
+<span class="mf">25.132742</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Double</span></tt> es un número real en coma flotante de... ¡Doble precisión!.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">circumference&#39;</span> <span class="ow">::</span> <span class="kt">Double</span> <span class="ow">-&gt;</span> <span class="kt">Double</span>
+<span class="nf">circumference&#39;</span> <span class="n">r</span> <span class="ow">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r</span>
+</pre></div>
+</div>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">circumference&#39;</span> <span class="mf">4.0</span>
+<span class="mf">25.132741228718345</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Bool</span></tt> es el tipo booleano. Solo puede tener dos valores: <tt class="docutils literal"><span class="pre">Ture</span></tt> o
+<tt class="xref docutils literal"><span class="pre">False</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Char</span></tt> representa un carácter. Esta denotado por comillas simples. Una
+lista de caracteres es una cadena.</p>
+</li>
+</ul>
+</blockquote>
+<p>Las tuplas también son tipos pero dependen de su longitud y del tipo de sus
+componentes, así que teóricamente existe una infinidad de tipos de tuplas y
+eso son demasiados tipos como para cubrirlos en esta guía. La tupla vacía
+es también un tipo <tt class="docutils literal"><span class="pre">()</span></tt> el cual solo puede contener un valor: <tt class="docutils literal"><span class="pre">()</span></tt>.</p>
+</div>
+<div class="section" id="variables-de-tipos">
+<h2>Variables de tipos<a class="headerlink" href="#variables-de-tipos" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>¿Cual crees que es el tipo de la función <tt class="docutils literal"><span class="pre">head</span></tt>? Como <tt class="docutils literal"><span class="pre">head</span></tt> toma una lista
+de cualquier tipo y devuelve su primer elemento... ¿Cual podrá ser? Vamos a
+verlo:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">head</span>
+<span class="nf">head</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div>
+<img alt="Caja" class="align-left" src="../_images/box.png" />
+<p>Hmmm... ¿Qué es <tt class="docutils literal"><span class="pre">a</span></tt>? ¿Es un tipo? Si recuerdas antes dijimos que los tipos
+deben comenzar con mayúsculas, así que no puede ser exactamente un tipo. Como no
+comienza con una mayúscula es en realidad una <strong>variable de tipo</strong>. Esto
+significa que <tt class="docutils literal"><span class="pre">a</span></tt> puede ser cualquier tipo. Esto es parecido a los tipos
+genéricos de otros lenguajes, solo que en Haskell es mucho más potente ya que
+nos permite definir fácilmente funciones muy generales siempre que no hagamos
+ningún uso especifico del tipo en cuestión. Las funciones que tienen variables
+de tipos son llamadas <strong>funciones polimórficas</strong>. El declaración de tipo
+<tt class="docutils literal"><span class="pre">head</span></tt> representa que es un función que toma una lista de cualquier tipo y
+devuelve un elemento de ese mismo tipo.</p>
+<p>Aunque las variables de tipos pueden tener nombres más largos de un solo
+carácter, normalmente les damos nombres como a, b, c, d, etc.</p>
+<p>¿Recuerdas <tt class="docutils literal"><span class="pre">fst</span></tt>? Devuelve el primer componente de un par. Vamos a
+examinar su tipo.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">fst</span>
+<span class="nf">fst</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div>
+<p>Como vemos, <tt class="docutils literal"><span class="pre">fst</span></tt> toma una dupla que contiene dos tipos y devuelve un elemento
+que posee el mismo tipo que el primer componente del par. Ese es el porqué de
+que podamos usar <tt class="docutils literal"><span class="pre">fst</span></tt> con duplas que contengan cualquier combinación de
+tipos. Ten en cuenta que solo porque <tt class="docutils literal"><span class="pre">a</span></tt> y <tt class="docutils literal"><span class="pre">b</span></tt> son diferentes variables de
+tipos no tienen porque ser diferentes tipos. Simplemente representa que el
+primer componente y el valor que devuelve la función son del mismo tipo.</p>
+</div>
+<div class="section" id="clases-de-tipos-paso-a-paso-1a-parte">
+<span id="clases-de-tipo-1"></span><h2>Clases de tipos paso a paso (1ª parte)<a class="headerlink" href="#clases-de-tipos-paso-a-paso-1a-parte" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="Clases" class="align-right" src="../_images/classes.png" />
+<p>Las clases de tipos son una especie de interfaz que define algún comportamiento.
+Si un tipo es parte de una clase de tipos, significa que ese tipo soporta e
+implementa el comportamiento que define la clase de tipos. Un montón de gente que
+viene de la POO se confunden con las clases de tipos porque piensan que son como
+las clases en los lenguajes orientados a objetos. Bien, pues no lo son. Si
+quieres puedes pensar que son como la interfaces de Java, solo que mejor.</p>
+<p>¿Cual es la declaración de tipo de la función <tt class="docutils literal"><span class="pre">==</span></tt>?</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">==</span><span class="p">)</span>
+<span class="p">(</span><span class="o">==</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Eq</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">El operador de igualdad <tt class="docutils literal"><span class="pre">==</span></tt> es una función. También lo son <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">-</span></tt>,
+<tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">/</span></tt> y casi todos los operadores. Si el nombre de una función está
+compuesta solo por caracteres especiales (no alfanuméricos), es considerada
+una función infija por defecto. Si queremos examinar su tipo, pasarla a otra
+función o llamarla en forma prefija debemos rodearla con paréntesis. Por
+ejemplo: <tt class="docutils literal"><span class="pre">(+)</span> <span class="pre">1</span> <span class="pre">4</span></tt> equivale a <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">4</span></tt>.</p>
+</div>
+<p>Interesante. Aquí vemos algo nuevo, el símbolo <tt class="docutils literal"><span class="pre">=&gt;</span></tt>. Cualquier cosa antes
+del símbolo <tt class="docutils literal"><span class="pre">=&gt;</span></tt> es una restricción de clase. Podemos leer la declaración de
+tipo anterior como esto: La función de igualdad toma dos parámetross que son del
+mismo tipo y devuelve un <tt class="docutils literal"><span class="pre">Bool</span></tt>. El tipo de estos dos parámetross debe ser
+miembro de la clase <tt class="docutils literal"><span class="pre">Eq</span></tt> (esto es la restricción de clase).</p>
+<p>La clase de tipos <tt class="docutils literal"><span class="pre">Eq</span></tt> proporciona una interfaz para pruebas de igualdad.
+Cualquier tipo que tenga sentido comparar dos valores de ese tipo por igualdad
+debe ser miembro de la clase <tt class="docutils literal"><span class="pre">Eq</span></tt>. Todos los tipos estándar de Haskell excepto
+el tipo IO (un tipo para manejar la entrada/salida) y las funciones forman parte
+de la clase <tt class="docutils literal"><span class="pre">Eq</span></tt>.</p>
+<p>La función <tt class="docutils literal"><span class="pre">elem</span></tt> tiene el tipo <tt class="docutils literal"><span class="pre">(Eq</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">Bool</span></tt> porque usa
+<tt class="docutils literal"><span class="pre">==</span></tt> sobre los elementos de la lista para saber si existe el elemento
+indicado dentro de la lista.</p>
+<p>Algunas clases de tipos básicas son:</p>
+<blockquote>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Eq</span></tt> es utilizada por los tipos que soportan pruebas de igualdad. Los
+miembros de esta clase implementan las funciones <tt class="docutils literal"><span class="pre">==</span></tt> o <tt class="docutils literal"><span class="pre">/=</span></tt> en algún
+dentro de la definición. Todos los tipos que mencionamos anteriormente forman
+parte de la clase <tt class="docutils literal"><span class="pre">Eq</span></tt> exceptuando las funciones, así que podemos hacer
+pruebas de igualdad sobre ellos.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">5</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">5</span> <span class="o">/=</span> <span class="mi">5</span>
+<span class="kt">False</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="sc">&#39;a&#39;</span> <span class="o">==</span> <span class="sc">&#39;a&#39;</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="s">&quot;Ho Ho&quot;</span> <span class="o">==</span> <span class="s">&quot;Ho Ho&quot;</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mf">3.432</span> <span class="o">==</span> <span class="mf">3.432</span>
+<span class="kt">True</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Ord</span></tt> es para tipos que poseen algún orden.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="p">(</span><span class="o">&gt;</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+</pre></div>
+</div>
+<p>Todos los tipos que hemos llegado a ver excepto las funciones son parte de la
+clase <tt class="docutils literal"><span class="pre">Ord</span></tt>. <tt class="docutils literal"><span class="pre">Ord</span></tt> cubre todas las funciones de comparación como <tt class="docutils literal"><span class="pre">&gt;</span></tt>,
+<tt class="docutils literal"><span class="pre">&lt;</span></tt>, <tt class="docutils literal"><span class="pre">&gt;=</span></tt> y <tt class="docutils literal"><span class="pre">&lt;=</span></tt>. La función <tt class="docutils literal"><span class="pre">compare</span></tt> toma dos miembros de la clase
+<tt class="docutils literal"><span class="pre">Ord</span></tt> del mismo tipo y devuelve su orden. El orden está representado por el
+tipo <tt class="docutils literal"><span class="pre">Ordering</span></tt> que puede ser tres valores distintos: <tt class="docutils literal"><span class="pre">GT</span></tt>, <tt class="docutils literal"><span class="pre">EQ</span></tt> y
+<tt class="docutils literal"><span class="pre">LT</span></tt> los cuales representan <em>mayor que</em>, <em>igual que</em> y <em>menor que</em>
+respectivamente.</p>
+<p>Para ser un miembro de <tt class="docutils literal"><span class="pre">Ord</span></tt>, un tipo de ser primero socio del prestigioso
+y exclusivo club <tt class="docutils literal"><span class="pre">Eq</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="s">&quot;Abrakadabra&quot;</span> <span class="o">&lt;</span> <span class="s">&quot;Zebra&quot;</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="s">&quot;Abrakadabra&quot;</span> <span class="p">`</span><span class="n">compare</span><span class="p">`</span> <span class="s">&quot;Zebra&quot;</span>
+<span class="kt">LT</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">5</span> <span class="o">&gt;=</span> <span class="mi">2</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">5</span> <span class="p">`</span><span class="n">compare</span><span class="p">`</span> <span class="mi">3</span>
+<span class="kt">GT</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Los miembros de <tt class="docutils literal"><span class="pre">Show</span></tt> pueden ser representados por cadenas. Todos los
+tipos que hemos visto excepto las funciones forman parte de <tt class="docutils literal"><span class="pre">Show</span></tt>. la
+función más usada que trabaja con la clase de tiposs <tt class="docutils literal"><span class="pre">Show</span></tt> es la función
+<tt class="docutils literal"><span class="pre">show</span></tt>. Esta toma un valor de un tipo que pertenezca a la clase <tt class="docutils literal"><span class="pre">Show</span></tt> y
+y lo representa como una cadena.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">show</span> <span class="mi">3</span>
+<span class="s">&quot;3&quot;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">show</span> <span class="mf">5.334</span>
+<span class="s">&quot;5.334&quot;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">show</span> <span class="kt">True</span>
+<span class="s">&quot;True&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Read</span></tt> es una especie de clase de tiposs opuesta a <tt class="docutils literal"><span class="pre">Show</span></tt>. La función
+<tt class="docutils literal"><span class="pre">read</span></tt> toma una cadena y devuelve el tipo que es miembro de <tt class="docutils literal"><span class="pre">Show</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;True&quot;</span> <span class="o">||</span> <span class="kt">False</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;8.2&quot;</span> <span class="o">+</span> <span class="mf">3.8</span>
+<span class="mf">12.0</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;5&quot;</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="mi">3</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;[1,2,3,4]&quot;</span> <span class="o">++</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Hasta aquí todo bien. Una vez más, todo los tipos que hemos visto excepto las
+funciones forman parte de esta clase de tipos. Pero, ¿Qué pasa si simplemente
+usamos <tt class="docutils literal"><span class="pre">read</span> <span class="pre">&quot;4&quot;</span></tt>?</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;4&quot;</span>
+<span class="o">&lt;</span><span class="n">interactive</span><span class="o">&gt;:</span><span class="mi">1</span><span class="kt">:</span><span class="mi">0</span><span class="kt">:</span>
+    <span class="kt">Ambiguous</span> <span class="kr">type</span> <span class="n">variable</span> <span class="p">`</span><span class="n">a&#39;</span> <span class="kr">in</span> <span class="n">the</span> <span class="n">constraint</span><span class="kt">:</span>
+      <span class="p">`</span><span class="kt">Read</span> <span class="n">a&#39;</span> <span class="n">arising</span> <span class="n">from</span> <span class="n">a</span> <span class="n">use</span> <span class="kr">of</span> <span class="p">`</span><span class="n">read&#39;</span> <span class="n">at</span> <span class="o">&lt;</span><span class="n">interactive</span><span class="o">&gt;:</span><span class="mi">1</span><span class="kt">:</span><span class="mi">0</span><span class="o">-</span><span class="mi">7</span>
+    <span class="kt">Probable</span> <span class="n">fix</span><span class="kt">:</span> <span class="n">add</span> <span class="n">a</span> <span class="kr">type</span> <span class="n">signature</span> <span class="n">that</span> <span class="n">fixes</span> <span class="n">these</span> <span class="kr">type</span> <span class="n">variable</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Lo que GHCi no está intentado decir es que no sabe que queremos que devuelva.
+Ten en cuenta que cuando usamos anteriormente <tt class="docutils literal"><span class="pre">read</span></tt> lo hicimos haciendo
+algo luego con su resultado. De esta forma, GHCi podía inferir el tipo del
+resultado de la función <tt class="docutils literal"><span class="pre">read</span></tt>. Si usamos la función como un booleano, él
+sabe que tiene que devolver un booleano. Pero ahora, lo único que sabe es que
+queremos un tipo de la clase <tt class="docutils literal"><span class="pre">Read</span></tt>, pero no cuál. Vamos a echar un vistazo a
+la declaración de tipo de la función <tt class="docutils literal"><span class="pre">read</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">read</span>
+<span class="nf">read</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Read</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div>
+<p>¿Ves? Devuelve un tipo que es parte de la clase <tt class="docutils literal"><span class="pre">Read</span></tt> pero si no lo
+usamos en ningún otro lugar luego, no hay forma de saber que tipo es. Ese
+es el motivo por el que usamos las <strong>anotaciones de tipo</strong> explicitas. Las
+anotación de tipo son una forma de decir explícitamente el tipo que debe
+tener una expresión. Lo hacemos añadiendo <tt class="docutils literal"><span class="pre">::</span></tt> al final de la expresión y
+luego especificando el tipo. Observa:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;5&quot;</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="mi">5</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;5&quot;</span> <span class="ow">::</span> <span class="kt">Float</span>
+<span class="mf">5.0</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">read</span> <span class="s">&quot;5&quot;</span> <span class="ow">::</span> <span class="kt">Float</span><span class="p">)</span> <span class="o">*</span> <span class="mi">4</span>
+<span class="mf">20.0</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;[1,2,3,4]&quot;</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">read</span> <span class="s">&quot;(3, &#39;a&#39;)&quot;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Char</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="sc">&#39;a&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>La mayoría de expresiones son del tipo que el compilador puede inferir por
+si solo. Pero a veces, el compilador desconoce el tipo de valor que debe
+devolver una expresión como <tt class="docutils literal"><span class="pre">read</span> <span class="pre">&quot;5&quot;</span></tt>, que podría ser <tt class="docutils literal"><span class="pre">Int</span></tt>,
+<tt class="docutils literal"><span class="pre">Double</span></tt>, etc. Para saberlo, Haskell debe en realidad evaluar
+<tt class="docutils literal"><span class="pre">read</span> <span class="pre">&quot;5&quot;</span></tt>. Pero como Haskell es un lenguaje estáticamente tipado, debe
+conocer todos los tipos antes de que el código sea compilado (o en GHCi,
+evaluado). Así que con esto le estamos diciendo a Haskell: &#8220;Hey, esta
+expresión debe ser de este tipo en caso de que no sepas cual es&#8221;.</p>
+</li>
+<li><p class="first">Los miembros de la clase <tt class="docutils literal"><span class="pre">Enum</span></tt> son tipos secuencialmente ordenados, es
+decir, pueden ser enumerados. La principal ventaja de la clase de tiposs
+<tt class="docutils literal"><span class="pre">Enum</span></tt> es que podemos usarlos en las listas de rangos. También tienen
+definidos los sucesores y predecesores, por lo que podemos usar las funciones
+<tt class="docutils literal"><span class="pre">succ</span></tt> y <tt class="docutils literal"><span class="pre">pred</span></tt>. Los tipos de esta clase son: <tt class="docutils literal"><span class="pre">()</span></tt>, <tt class="docutils literal"><span class="pre">Bool</span></tt>, <tt class="docutils literal"><span class="pre">Char</span></tt>,
+<tt class="docutils literal"><span class="pre">Ordering</span></tt>, <tt class="docutils literal"><span class="pre">Int</span></tt>, <tt class="docutils literal"><span class="pre">Integer</span></tt>, <tt class="docutils literal"><span class="pre">Float</span></tt> y <tt class="docutils literal"><span class="pre">Double</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="o">..</span><span class="sc">&#39;e&#39;</span><span class="p">]</span>
+<span class="s">&quot;abcde&quot;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">[</span><span class="kt">LT</span> <span class="o">..</span> <span class="kt">GT</span><span class="p">]</span>
+<span class="p">[</span><span class="kt">LT</span><span class="p">,</span><span class="kt">EQ</span><span class="p">,</span><span class="kt">GT</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">[</span><span class="mi">3</span> <span class="o">..</span> <span class="mi">5</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">succ</span> <span class="sc">&#39;B&#39;</span>
+<span class="sc">&#39;C&#39;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Los miembros de <tt class="docutils literal"><span class="pre">Bounded</span></tt> poseen límites inferiores y superiores.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">minBound</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="o">-</span><span class="mi">2147483648</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="kt">Char</span>
+<span class="sc">&#39;</span><span class="se">\1114111</span><span class="sc">&#39;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="kt">Bool</span>
+<span class="kt">True</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">minBound</span> <span class="ow">::</span> <span class="kt">Bool</span>
+<span class="kt">False</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">minBound</span></tt> y <tt class="docutils literal"><span class="pre">maxBound</span></tt> son interesantes ya que tienen el tipo
+<tt class="docutils literal"><span class="pre">(Bounded</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span></tt>. Es decir, son constantes polimórficas.</p>
+<p>Todas las tuplas son también <tt class="docutils literal"><span class="pre">Bounded</span></tt> si sus componentes los son también.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt">Char</span><span class="p">)</span>
+<span class="p">(</span><span class="kt">True</span><span class="p">,</span><span class="mi">2147483647</span><span class="p">,</span><span class="sc">&#39;</span><span class="se">\1114111</span><span class="sc">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Num</span></tt> es la clase de tipos numéricos. Sus miembros tienen la propiedad de
+poder comportarse como números. Vamos a examinar el tipo de un número.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="mi">20</span>
+<span class="mi">20</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">t</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">t</span>
+</pre></div>
+</div>
+<p>Parece que todos los números son también constantes polimórficas. Pueden
+actuar como si fueran cualquier tipo de la clase <tt class="docutils literal"><span class="pre">Num</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">20</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="mi">20</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">20</span> <span class="ow">::</span> <span class="kt">Integer</span>
+<span class="mi">20</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">20</span> <span class="ow">::</span> <span class="kt">Float</span>
+<span class="mf">20.0</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="mi">20</span> <span class="ow">::</span> <span class="kt">Double</span>
+<span class="mf">20.0</span>
+</pre></div>
+</div>
+<p>Estos son los tipo estándar de la clase <tt class="docutils literal"><span class="pre">Num</span></tt>. Si examinamos el tipo de
+<tt class="docutils literal"><span class="pre">*</span></tt> veremos que puede aceptar todo tipo de números.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+</pre></div>
+</div>
+<p>Toma dos números del mismo tipo y devuelve un número del mismo tipo. Esa es la
+razón por la que <tt class="docutils literal"><span class="pre">(5</span> <span class="pre">::</span> <span class="pre">Int)</span> <span class="pre">*</span> <span class="pre">(6</span> <span class="pre">::</span> <span class="pre">Integer)</span></tt> lanzará un error mientras que
+<tt class="docutils literal"><span class="pre">5</span> <span class="pre">*</span> <span class="pre">(6</span> <span class="pre">::</span> <span class="pre">Integer)</span></tt> funcionará correctamente y producirá un <tt class="docutils literal"><span class="pre">Interger</span></tt>
+porque <tt class="docutils literal"><span class="pre">5</span></tt> puede actuar como un <tt class="docutils literal"><span class="pre">Integer</span></tt> o un <tt class="docutils literal"><span class="pre">Int</span></tt>.</p>
+<p>Para unirse a <tt class="docutils literal"><span class="pre">Num</span></tt>, un tipo debe ser amigo de <tt class="docutils literal"><span class="pre">Show</span></tt> y <tt class="docutils literal"><span class="pre">Eq</span></tt>.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Integral</span></tt> es también un clase de tiposs numérica. <tt class="docutils literal"><span class="pre">Num</span></tt> incluye todos los
+números, incluyendo números reales y enteros. <tt class="docutils literal"><span class="pre">Integral</span></tt> únicamente incluye
+números enteros. <tt class="docutils literal"><span class="pre">Int</span></tt> e <tt class="docutils literal"><span class="pre">Integer</span></tt> son miembros de esta clase.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">Floating</span></tt> incluye únicamente números en coma flotante, es decir <tt class="docutils literal"><span class="pre">Float</span></tt>
+y <tt class="docutils literal"><span class="pre">Double</span></tt>.</p>
+</li>
+</ul>
+</blockquote>
+<p>Una función muy útil para trabajar con números es <tt class="docutils literal"><span class="pre">fromIntegral</span></tt>. Tiene el
+tipo <tt class="docutils literal"><span class="pre">fromIntegral</span> <span class="pre">::</span> <span class="pre">(Num</span> <span class="pre">b,</span> <span class="pre">Integral</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt>. A partir de esta
+declaración podemos decir que toma un número entero y lo convierte en un número
+más general. Esto es útil cuando estas trabajando con números reales y enteros
+al mismo tiempo.  Por ejemplo, la función <tt class="docutils literal"><span class="pre">length</span></tt> tiene el tipo
+<tt class="docutils literal"><span class="pre">length</span> <span class="pre">::</span> <span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">Int</span></tt> en vez de tener un tipo más general como
+<tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">b)</span> <span class="pre">=&gt;</span> <span class="pre">length</span> <span class="pre">::</span> <span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt>. Creo que es por razones históricas o algo
+parecido, en mi opinión, es absurdo. De cualquier modo, si queremos obtener el
+tamaño de una lista y sumarle <tt class="docutils literal"><span class="pre">3.2</span></tt>, obtendremos un error al intentar sumar
+un entero con uno en coma flotante. Para solucionar esto, hacemos
+<tt class="docutils literal"><span class="pre">fromIntegral</span> <span class="pre">(length</span> <span class="pre">[1,2,3,4])</span> <span class="pre">+</span> <span class="pre">3.2</span></tt> e irá como la seda.</p>
+<p>Fíjate que en la declaración de tipo de <tt class="docutils literal"><span class="pre">fromIntegral</span></tt> hay varias
+restricciones de clase. Esto es completamente válido como puedes ver, las
+restricciones de clase deben ir separadas por comas y entre paréntesis.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Funciones.html" title="La sintaxis de las funciones"
+             >siguiente</a></li>
+        <li class="right" >
+          <a href="Empezando.html" title="Empezando"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright Miran Lipovača.
+      Creado con <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

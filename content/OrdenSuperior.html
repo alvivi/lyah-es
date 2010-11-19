@@ -1,0 +1,1006 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Funciones de orden superior &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
+    <link rel="next" title="Módulos" href="Modulos.html" />
+    <link rel="prev" title="Recursión" href="Recursion.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Modulos.html" title="Módulos"
+             accesskey="N">siguiente</a></li>
+        <li class="right" >
+          <a href="Recursion.html" title="Recursión"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="funciones-de-orden-superior">
+<h1>Funciones de orden superior<a class="headerlink" href="#funciones-de-orden-superior" title="Enlazar permanentemente con este título">¶</a></h1>
+<img alt="Sol" class="align-right" src="../_images/sun.png" />
+<p>Las funciones de Haskell pueden tomar funciones como parámetros y devolver
+funciones como resultado. Una función que hace ambas cosas o alguna de ellas es
+llamada función de orden superior. Las funciones de orden superior no son
+simplemente una parte más de la experiencia Haskell, ellas mismas representan
+la experiencia Haskell. Aparecen cuando quieres definir computaciones definiendo
+cosas como son en lugar de definir los pasos de cambio de algún estado o
+algún bucle, las funciones de orden superior son indispensables. Son realmente
+una forma muy potente de resolver problemas y de pensar acerca de los programas.</p>
+<div class="section" id="funciones-currificadas">
+<h2>Funciones currificadas<a class="headerlink" href="#funciones-currificadas" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Oficialmente cada función de Haskell solo puede tomar un parámetro. Así que
+¿Como es posible que hayamos definido y usado varias funciones que toman mas de
+un parámetro? Bueno, ¡Es un buen truco! Todas las funciones que hemos usado
+hasta el momento y aceptaban más de un parámetro han sido funciones
+currificadas. ¿Qué significa esto? Lo entenderás mejor con un ejemplo. Vamos a
+tomar a nuestro buen amigo, la función <tt class="docutils literal"><span class="pre">max</span></tt>. Parece que toma dos parámetro y
+devuelve aquel que es mayor. Al aplicar <tt class="docutils literal"><span class="pre">max</span> <span class="pre">4</span> <span class="pre">5</span></tt> primero se crea una función
+que toma un solo parámetro y devuelve 4 o el parámetro, dependiendo de cual sea
+mayor. Luego, 5 es aplicado a esa función y esta produce el resultado deseado.
+Esto suena un poco complicado pero en realidad es un concepto muy cool. Las
+siguientes dos llamadas son equivalentes:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">max</span> <span class="mi">4</span> <span class="mi">5</span>
+<span class="mi">5</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">max</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">5</span>
+<span class="mi">5</span>
+</pre></div>
+</div>
+<img alt="Haskell Curry" class="align-left" src="../_images/curry.png" />
+<p>El poner un espacio entre dos cosas es sencillamente <strong>aplicar una función</strong>. El
+espacio es una especie de operador y tiene el orden de preferencia mayor. Vamos
+a examinar el tipo de <tt class="docutils literal"><span class="pre">max</span></tt>. Es <tt class="docutils literal"><span class="pre">max</span> <span class="pre">::</span> <span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt>. Esto
+también puede ser escrito como <tt class="docutils literal"><span class="pre">max</span> <span class="pre">::</span> <span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">a)</span></tt>. Y esto
+también puede leerse como: <tt class="docutils literal"><span class="pre">max</span></tt> toma un <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve (eso es <tt class="docutils literal"><span class="pre">-&gt;</span></tt>) una
+función que toma un <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve un <tt class="docutils literal"><span class="pre">a</span></tt>. Ese es el porqué el tipo
+devuelto y los parámetros de la función están simplemente separados por flechas.</p>
+<p>¿Y cómo nos beneficia esto? En pocas palabras, si llamamos a una función con
+demasiados pocos parámetros obtenemos una función <strong>parcialmente aplicada</strong>, es
+decir una función que toma tantos parámetros como le falte. Usar la aplicación
+parcial de funciones (Si prefieres, llamar a las funciones con menos parámetros)
+es una forma sencilla de crear funciones al vuelo de forma que podamos pasarlas
+como parámetros a otras funciones o dotarlas con algunos datos.</p>
+<p>Échale un vistazo a esta función ofensivamente simple.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">multThree</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">multThree</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
+</pre></div>
+</div>
+<p>¿Qué es lo que realmente pasa cuando realizamos <tt class="docutils literal"><span class="pre">multThree</span> <span class="pre">3</span> <span class="pre">5</span> <span class="pre">9</span></tt> o
+<tt class="docutils literal"><span class="pre">((multThree</span> <span class="pre">3)</span> <span class="pre">5)</span> <span class="pre">9</span></tt>? Primero, 3 es aplicado a <tt class="docutils literal"><span class="pre">multThree</span></tt> ya que está
+separado por un espacio. Esto crea una función que toma un parámetro y devuelve
+una función. Luego 5 es aplicado a está, de forma que se creará una función que
+toma un parámetro y lo multiplica por 15. 9 es aplicado a esa función y el
+resultado es 135 o algo similar. Recuerda que el tipo de esta función también
+podría escribirse como <tt class="docutils literal"><span class="pre">multThree</span> <span class="pre">::</span> <span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">a))</span></tt>. Lo que
+está antes del <tt class="docutils literal"><span class="pre">-&gt;</span></tt> es el parámetro que toma la función y lo que hay después
+es lo que devuelve. Así que nuestra función toma un <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve una función
+con un tipo <tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">a)</span></tt>. De forma similar, esta función toma
+una <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve una función del tipo <tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt>. Y finalmente,
+esta función toma una <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve una <tt class="docutils literal"><span class="pre">a</span></tt>. Mira esto:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">multTwoWithNine</span> <span class="ow">=</span> <span class="n">multThree</span> <span class="mi">9</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">multTwoWithNine</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="mi">54</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">multWithEighteen</span> <span class="ow">=</span> <span class="n">multTwoWithNine</span> <span class="mi">2</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">multWithEighteen</span> <span class="mi">10</span>
+<span class="mi">180</span>
+</pre></div>
+</div>
+<p>Al llamar a funciones con menos parámetros de los necesarios, hablando claro,
+creamos funciones al vuelo ¿Qué pasa si queremos crear una función que tome un
+número y lo compare con 100? Podríamos hacer algo como esto:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">compareWithHundred</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Ordering</span>
+<span class="nf">compareWithHundred</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">compare</span> <span class="mi">100</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Si la llamamos con 99 nos devuelve <tt class="docutils literal"><span class="pre">GT</span></tt>. Bastante simple. Fíjate en la <tt class="docutils literal"><span class="pre">x</span></tt>
+del lado derecho de la ecuación. Ahora vamos a pensar que devuelve`
+<tt class="docutils literal"><span class="pre">`compare</span> <span class="pre">100</span></tt>. Devuelve una función que toma un número y lo compara con 100.
+¡Wau! ¿No es eso lo que buscábamos? Podemos reescribirlo como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">compareWithHundred</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Ordering</span>
+<span class="nf">compareWithHundred</span> <span class="ow">=</span> <span class="n">compare</span> <span class="mi">100</span>
+</pre></div>
+</div>
+<p>La declaración de tipo permanece igual ya que <tt class="docutils literal"><span class="pre">compare</span> <span class="pre">100</span></tt> devuelve una
+función. <tt class="docutils literal"><span class="pre">compare</span></tt> tiene el tipo <tt class="docutils literal"><span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">Ordering)</span></tt> y
+llamarla con 100 devuelve <tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">a,</span> <span class="pre">Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">Ordering</span></tt>. La restricción
+de clase adicional se añade porque 100 es parte también de la clase de tipos
+<tt class="docutils literal"><span class="pre">Num</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">¡Asegúrate de que realmente sabes como funcionan las funciones
+currificadas y la aplicación parcial de funciones ya que son muy
+importantes!</p>
+</div>
+<p>Las funciones infijas también pueden ser aplicadas parcialmente usando
+secciones. Para seccionar una función infija simplemente hay que rodearla con
+paréntesis y suministrar un solo parámetro en un lado. Esto crea una función que
+toma un parámetro y lo aplica en el lado que falta un operando. Una función
+extremadamente trivial sería:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">divideByTen</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Floating</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">divideByTen</span> <span class="ow">=</span> <span class="p">(</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Llamar a, digamos, <tt class="docutils literal"><span class="pre">divideByTen</span> <span class="pre">200</span></tt> es equivalente a hacer <tt class="docutils literal"><span class="pre">200/10</span></tt> o
+<tt class="docutils literal"><span class="pre">(/10)</span> <span class="pre">200</span></tt>. Una función que comprueba si un carácter está en mayúsculas
+sería:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">isUpperAlphanum</span> <span class="ow">::</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<span class="nf">isUpperAlphanum</span> <span class="ow">=</span> <span class="p">(`</span><span class="n">elem</span><span class="p">`</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="o">..</span><span class="sc">&#39;Z&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Lo único especial de las secciones es el uso de <tt class="docutils literal"><span class="pre">-</span></tt>. Por definición, <tt class="docutils literal"><span class="pre">(-4)</span></tt>
+sería una función que toma un número y le restase 4. Sin embargo, por
+conveniencia, <tt class="docutils literal"><span class="pre">(-4)</span></tt> significa menos cuatro. Así que si quieres una función
+que reste 4 a un número puedes usar <tt class="docutils literal"><span class="pre">(subtract</span> <span class="pre">4)</span></tt> o <tt class="docutils literal"><span class="pre">((-)</span> <span class="pre">4)</span></tt>.</p>
+<p>¿Qué pasa si intentamos hacer simplemente <tt class="docutils literal"><span class="pre">multThree</span> <span class="pre">3</span> <span class="pre">4``en</span> <span class="pre">GHCi</span> <span class="pre">en</span> <span class="pre">lugar</span> <span class="pre">de</span>
+<span class="pre">darle</span> <span class="pre">un</span> <span class="pre">nombre</span> <span class="pre">con</span> <span class="pre">un</span> <span class="pre">``let</span></tt> o pasarlo a otra función?</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">multThree</span> <span class="mi">3</span> <span class="mi">4</span>
+<span class="o">&lt;</span><span class="n">interactive</span><span class="o">&gt;:</span><span class="mi">1</span><span class="kt">:</span><span class="mi">0</span><span class="kt">:</span>
+    <span class="kt">No</span> <span class="kr">instance</span> <span class="n">for</span> <span class="p">(</span><span class="kt">Show</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">t</span><span class="p">))</span>
+      <span class="n">arising</span> <span class="n">from</span> <span class="n">a</span> <span class="n">use</span> <span class="kr">of</span> <span class="p">`</span><span class="n">print&#39;</span> <span class="n">at</span> <span class="o">&lt;</span><span class="n">interactive</span><span class="o">&gt;:</span><span class="mi">1</span><span class="kt">:</span><span class="mi">0</span><span class="o">-</span><span class="mi">12</span>
+    <span class="kt">Possible</span> <span class="n">fix</span><span class="kt">:</span> <span class="n">add</span> <span class="n">an</span> <span class="kr">instance</span> <span class="n">declaration</span> <span class="n">for</span> <span class="p">(</span><span class="kt">Show</span> <span class="p">(</span><span class="n">t</span> <span class="ow">-&gt;</span> <span class="n">t</span><span class="p">))</span>
+    <span class="kt">In</span> <span class="n">the</span> <span class="n">expression</span><span class="kt">:</span> <span class="n">print</span> <span class="n">it</span>
+    <span class="kt">In</span> <span class="n">a</span> <span class="sc">&#39;do&#39;</span> <span class="n">expression</span><span class="kt">:</span> <span class="n">print</span> <span class="n">it</span>
+</pre></div>
+</div>
+<p>GHCi nos está diciendo que expresión producida es una función del tipo
+<tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> pero no sabe como mostrarlo por pantalla. Las funciones no son
+miembros de la clase de tiposs <tt class="docutils literal"><span class="pre">Show</span></tt>, así que no podemos obtener una cadena
+con la representación de una función. Si hacemos algo como <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">1</span></tt> en GHCi,
+primero calcula que eso es <tt class="docutils literal"><span class="pre">2</span></tt>, y luego llama a <tt class="docutils literal"><span class="pre">show</span></tt> en <tt class="docutils literal"><span class="pre">2</span></tt> para tener
+una representación textual de ese número. Y una representación textual de <tt class="docutils literal"><span class="pre">2</span></tt>
+es simplemente <tt class="docutils literal"><span class="pre">&quot;2&quot;</span></tt>, que es lo que obtenemos por pantalla.</p>
+</div>
+<div class="section" id="orden-superior-en-su-orden">
+<h2>Orden superior en su orden<a class="headerlink" href="#orden-superior-en-su-orden" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Las funciones pueden tomar funciones como parámetros y también devolver
+funciones. Para ilustrar esto vamos a crear una función que tome una función
+y la aplique dos veces a algo.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">applyTwice</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">applyTwice</span> <span class="n">f</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="Rocktopus" class="align-right" src="../_images/bonus.png" />
+<p>Antes de nada, fíjate en su declaración de tipo. Antes, no necesitábamos usar
+paréntesis ya que <tt class="docutils literal"><span class="pre">-&gt;</span></tt> es naturalmente asociativo por la derecha. Sin embargo,
+aquí está la excepción. Esto indica que el primer parámetro es una función que
+toma algo y devuelve algo del mismo tipo. El segundo parámetro es algo de ese
+mismo tipo y también devuelve algo de ese tipo. También podríamos leer esta
+declaración de tipo de forma currificada, pero para salvarnos de un buen dolor
+de cabeza diremos simplemente que esta función toma dos parámetros y devuelve
+una sola cosa. El primer parámetro es una función (del tipo <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt>) y el
+segundo es del mismo tipo <tt class="docutils literal"><span class="pre">a</span></tt>. La función puede ser del tipo <tt class="docutils literal"><span class="pre">Int</span> <span class="pre">-&gt;</span> <span class="pre">Int</span></tt> o
+del tipo <tt class="docutils literal"><span class="pre">String</span> <span class="pre">-&gt;</span> <span class="pre">String</span></tt> o cualquier otra cosa. Pero entonces, el segundo
+parámetro debe ser del mismo tipo.</p>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">De ahora en adelante diremos que una función toma varios parámetros en
+lugar de decir que en realidad una función toma un parámetro y
+devuleve una función parcialmente aplicada hasta que alcance una
+función que devuleva un valor sólido. Así que para simplificar diremos
+que <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> toma dos parámetros, incluso aunque nosotros
+sepamos lo que realmente está pasando.</p>
+</div>
+<p>El cuerpo de la función es muy simple. Simplemente usamos el parámetro <tt class="docutils literal"><span class="pre">f</span></tt>
+como una función, aplicando <tt class="docutils literal"><span class="pre">x</span></tt> a ella separándolas con un espacio y luego
+aplicando el resultado a <tt class="docutils literal"><span class="pre">f</span></tt> otra vez. De todas formas, juega un poco con
+la función:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">applyTwice</span> <span class="p">(</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="mi">10</span>
+<span class="mi">16</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">applyTwice</span> <span class="p">(</span><span class="o">++</span> <span class="s">&quot; HAHA&quot;</span><span class="p">)</span> <span class="s">&quot;HEY&quot;</span>
+<span class="s">&quot;HEY HAHA HAHA&quot;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">applyTwice</span> <span class="p">(</span><span class="s">&quot;HAHA &quot;</span> <span class="o">++</span><span class="p">)</span> <span class="s">&quot;HEY&quot;</span>
+<span class="s">&quot;HAHA HAHA HEY&quot;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">applyTwice</span> <span class="p">(</span><span class="n">multThree</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">9</span>
+<span class="mi">144</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">applyTwice</span> <span class="p">(</span><span class="mi">3</span><span class="kt">:</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Lo increíble y útil de la aplicación parcial es evidente. Si nuestra función
+requiere que le pasemos una función que tome un solo parámetro, podemos
+simplemente aplicar parcialmente una función hasta el que tome un solo parámetro
+y luego pasarla.</p>
+<p>Ahora vamos a usar la programación de orden superior para implementar una útil
+función que está en la librería estándar. Se llama <tt class="docutils literal"><span class="pre">zipWith</span></tt>. Toma una función
+y dos listas y las une aplicando la función entre los correspondientes
+parámetros. Aquí tienes como la implementaríamos:</p>
+<blockquote>
+zipWith&#8217; :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
+zipWith&#8217; _ [] _ = []
+zipWith&#8217; _ _ [] = []
+zipWith&#8217; f (x:xs) (y:ys) = f x y : zipWith&#8217; f xs ys</blockquote>
+<p>Mira la declaración de tipo. El primer elemento es una función que toma dos
+cosas y produce una tercera. No tienen que ser del mismo tipo, aunque pueden
+serlo. El segundo y el tercer parámetro son listas. La primera tiene que ser una
+lista de <tt class="docutils literal"><span class="pre">a</span></tt> ya que la función de unión toma <tt class="docutils literal"><span class="pre">a</span></tt> como primer parámetro. La
+segunda es una lista de <tt class="docutils literal"><span class="pre">b</span></tt>. El resultado es una lista de <tt class="docutils literal"><span class="pre">c</span></tt>. Si la
+declaración de tipo de una función dice que acepta una función <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt>
+como parámetro, también aceptará una función del tipo <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt>. Recuerda
+que cuando estas creando una función, especialmente de orden superior, y no
+estas seguro de su tipo, simplemente puedes omitir la declaración de tipo y
+luego mirar el tipo que infiere Haskell usando <tt class="docutils literal"><span class="pre">:t</span></tt>.</p>
+<p>La acción de la función es muy similar a la de <tt class="docutils literal"><span class="pre">zip</span></tt>. El caso base es el
+mismo, solo que hay un parámetro extra, la función de unión, pero este
+parámetro no tiene importancia en el caso base así que usamos <tt class="docutils literal"><span class="pre">_</span></tt> con él. El
+cuerpo de la función para el último patrón es también muy similar al de <tt class="docutils literal"><span class="pre">zip</span></tt>,
+solo que no hace <tt class="docutils literal"><span class="pre">(x,</span> <span class="pre">y)</span></tt> sino <tt class="docutils literal"><span class="pre">f</span> <span class="pre">x</span> <span class="pre">y</span></tt>. Una sola función de orden superior
+puede ser utilizada para realizar una multitud de tareas diferentes si es
+suficientemente general. Aquí tienes una pequeña muestra de las cosas que puede
+hacer <tt class="docutils literal"><span class="pre">zipWith'</span></tt>:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith&#39;</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith&#39;</span> <span class="n">max</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith&#39;</span> <span class="p">(</span><span class="o">++</span><span class="p">)</span> <span class="p">[</span><span class="s">&quot;foo &quot;</span><span class="p">,</span> <span class="s">&quot;bar &quot;</span><span class="p">,</span> <span class="s">&quot;baz &quot;</span><span class="p">]</span> <span class="p">[</span><span class="s">&quot;fighters&quot;</span><span class="p">,</span> <span class="s">&quot;hoppers&quot;</span><span class="p">,</span> <span class="s">&quot;aldrin&quot;</span><span class="p">]</span>
+<span class="p">[</span><span class="s">&quot;foo fighters&quot;</span><span class="p">,</span><span class="s">&quot;bar hoppers&quot;</span><span class="p">,</span><span class="s">&quot;baz aldrin&quot;</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith&#39;</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">replicate</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith&#39;</span> <span class="p">(</span><span class="n">zipWith&#39;</span> <span class="p">(</span><span class="o">*</span><span class="p">))</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">9</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Como puedes ver, una sola función de orden superior puede ser usada de forma
+muy versátil. Los lenguajes imperativos usan normalmente cosas como bucles,
+bucles <tt class="docutils literal"><span class="pre">while</span></tt>, estableciendo alguna variable, comprobando su estado, etc.
+para conseguir un comportamiento y luego envolverlo con una interfaz, como una
+función. La programación funcional utiliza las funciones de orden superior para
+abstraer los patrones comunes, como examinar dos listas por pares y hacer algo
+con esos pares o tomar un conjunto de soluciones y eliminar aquellas que no
+necesites.</p>
+<p>Vamos a implementar otra función que ya está en la librería estándar llamada
+<tt class="docutils literal"><span class="pre">flip</span></tt>. <tt class="docutils literal"><span class="pre">flip</span></tt> toma una función y devuelve una función que es como nuestra
+función original, solo que los dos primeros parámetros están intercambiados.
+Podemos implementarla así:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">flip&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span>
+<span class="nf">flip&#39;</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">g</span>
+    <span class="kr">where</span> <span class="n">g</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">y</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Aquí, tomamos ventaja del hecho de que las funciones estén currificadas. Cuando
+llamamos a <tt class="docutils literal"><span class="pre">flip'</span></tt> sin los parámetros <tt class="docutils literal"><span class="pre">x</span></tt> e <tt class="docutils literal"><span class="pre">y</span></tt>, devolverá una función que
+tome esos parámetros pero los llamará al revés. Incluso aunque las funciones a
+las que se les ha aplicado <tt class="docutils literal"><span class="pre">flip</span></tt> son normalmente pasadas a otras funciones,
+podemos tomar ventaja de la currificación cuando creemos funciones de orden
+superior pensando de antemano y escribir su resultado final como si fuesen
+llamadas totalmente aplicadas.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">flip&#39;</span> <span class="n">zip</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="s">&quot;hello&quot;</span>
+<span class="p">[(</span><span class="sc">&#39;h&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="sc">&#39;e&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="sc">&#39;l&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="sc">&#39;l&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="sc">&#39;o&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">)]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith</span> <span class="p">(</span><span class="n">flip&#39;</span> <span class="n">div</span><span class="p">)</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">..</span><span class="p">]</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mapeados-y-filtros">
+<h2>Mapeados y filtros<a class="headerlink" href="#mapeados-y-filtros" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">map</span></tt> toma una función y una lista y aplica esa función a cada elemento de esa
+lista, produciendo una nueva lista. Vamos a ver su definición de tipo y como se
+define.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">map</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+<span class="nf">map</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">map</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">map</span> <span class="n">f</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>La definición de tipo dice que toma una función y que a su vez esta toma un
+<tt class="docutils literal"><span class="pre">a</span></tt> y devuelve un <tt class="docutils literal"><span class="pre">b</span></tt>, una lista de <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve una lista de <tt class="docutils literal"><span class="pre">b</span></tt>. Es
+interesante que simplemente mirando la definición de tipo de una función, a
+veces podemos decir que hace la función. <tt class="docutils literal"><span class="pre">map</span></tt> es una de esas funciones de
+orden superior que son realmente versátiles y que pueden ser usadas de millones
+formas diferentes. Aquí lo tienes en acción:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="o">++</span> <span class="s">&quot;!&quot;</span><span class="p">)</span> <span class="p">[</span><span class="s">&quot;BIFF&quot;</span><span class="p">,</span> <span class="s">&quot;BANG&quot;</span><span class="p">,</span> <span class="s">&quot;POW&quot;</span><span class="p">]</span>
+<span class="p">[</span><span class="s">&quot;BIFF!&quot;</span><span class="p">,</span><span class="s">&quot;BANG!&quot;</span><span class="p">,</span><span class="s">&quot;POW!&quot;</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="n">replicate</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">3</span><span class="o">..</span><span class="mi">6</span><span class="p">]</span>
+<span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]]</span>
+<span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">9</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">36</span><span class="p">],[</span><span class="mi">49</span><span class="p">,</span><span class="mi">64</span><span class="p">]]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="n">fst</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">)]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Probablemente te hayas dado cuenta de cada una de estas sentencias se puede
+conseguir usando listas por comprensión. <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(+3)</span> <span class="pre">[1,5,3,1,6]</span></tt> es lo mismo
+que escribir <tt class="docutils literal"><span class="pre">[x+3</span> <span class="pre">|</span> <span class="pre">x</span> <span class="pre">&lt;-</span> <span class="pre">[1,5,3,1,6]]</span></tt>. Sin embargo usar <tt class="docutils literal"><span class="pre">map</span></tt> es mucho más
+legible cuando solo tienes que aplicar una función a los elementos de una lista,
+especialmente cuando estas tratando con mapeados de mapeados de modo que se
+llena todo con un montón de corchetes y termine todo siendo un lío.</p>
+<p><tt class="docutils literal"><span class="pre">filter</span></tt> es una función que toma un predicado (un predicado es una función
+que dice si algo es cierto o falso, o en nuestro caso, una función que devuelve
+un valor booleano) y una lista y devuelve una lista con los elementos que
+satisfacen el predicado. La declaración de tipo y la implementación serían
+algo como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">filter</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">filter</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">filter</span> <span class="n">p</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">p</span> <span class="n">x</span>       <span class="ow">=</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>Bastante simple. Si <tt class="docutils literal"><span class="pre">p</span> <span class="pre">x</span></tt> se evalúa a <tt class="xref docutils literal"><span class="pre">True</span></tt> entonces el elemento es
+incluido en la nueva lista. Si no, se queda fuera. Algunos ejemplos:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(</span><span class="o">==</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="n">even</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">notNull</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">not</span> <span class="p">(</span><span class="n">null</span> <span class="n">x</span><span class="p">)</span> <span class="kr">in</span> <span class="n">filter</span> <span class="n">notNull</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="kt">[]</span><span class="p">,[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="kt">[]</span><span class="p">,</span><span class="kt">[]</span><span class="p">,</span><span class="kt">[]</span><span class="p">]</span>
+<span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(`</span><span class="n">elem</span><span class="p">`</span> <span class="p">[</span><span class="sc">&#39;a&#39;</span><span class="o">..</span><span class="sc">&#39;z&#39;</span><span class="p">])</span> <span class="s">&quot;u LaUgH aT mE BeCaUsE I aM diFfeRent&quot;</span>
+<span class="s">&quot;uagameasadifeent&quot;</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(`</span><span class="n">elem</span><span class="p">`</span> <span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="o">..</span><span class="sc">&#39;Z&#39;</span><span class="p">])</span> <span class="s">&quot;i lauGh At You BecAuse u r aLL the Same&quot;</span>
+<span class="s">&quot;GAYBALLS&quot;</span>
+</pre></div>
+</div>
+<p>Todo esto podría haberse logrado también con listas por comprensión que usaran
+predicados. No hay ninguna regla que diga cuando usar <tt class="docutils literal"><span class="pre">map</span></tt> o <tt class="docutils literal"><span class="pre">filter</span></tt> en
+lugar de listas por comprensión, simplemente debes decidir que es más legible
+dependiendo del contexto. El filtro equivalente de aplicar varios predicados en
+una lista por comprensión es el mismo que aplicar varios filtrados o unir los
+predicados usando la función lógica <tt class="docutils literal"><span class="pre">&amp;&amp;</span></tt>.</p>
+<p>¿Recuerdas nuestra función <a class="reference internal" href="Recursion.html#quicksort"><em>quicksort</em></a> del capítulo anterior?
+Usamos listas por comprensión para filtrar los elementos que eran menores o
+iguales y mayores que el pivote. Podemos conseguir lo mismo de forma más
+legible usando <tt class="docutils literal"><span class="pre">filter</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">quicksort</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">quicksort</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">quicksort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span>
+    <span class="kr">let</span> <span class="n">smallerSorted</span> <span class="ow">=</span> <span class="n">quicksort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span>
+        <span class="n">biggerSorted</span> <span class="ow">=</span> <span class="n">quicksort</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="o">&gt;</span><span class="n">x</span><span class="p">)</span> <span class="n">xs</span><span class="p">)</span>
+    <span class="kr">in</span>  <span class="n">smallerSorted</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span> <span class="n">biggerSorted</span>
+</pre></div>
+</div>
+<img alt="Mapa" class="align-left" src="../_images/map.png" />
+<p>Mapear y filtrar son el pan de cada día de todas las herramientas de un
+programador funcional. No importa si utilizas las funciones <tt class="docutils literal"><span class="pre">map</span></tt> y <tt class="docutils literal"><span class="pre">filter</span></tt>
+o listas por comprensión. Recuerda como resolvimos el problema de encontrar
+triángulos rectos con una determinada circunferencia. En programación
+imperativa, deberíamos haber solucionado el problema anidando tres bucles y
+luego comprobar si la combinación actual satisface las propiedades de un
+triángulo recto. En ese caso, lo habríamos mostrado por pantalla o algo
+parecido. Con la programación funcional este patrón se consigue con el mapeado
+y filtrado. Creas una función que tome un valor y produzca un resultado.
+Mapeamos esa función sobre todos los elementos de la lista y luego filtramos la
+lista resultante para que satisfaga nuestra búsqueda. Gracias a la evaluación
+perezosa de Haskell, incluso si mapeas algo sobre una lista varias veces o la
+filtras varias veces, solo se recorrerá la lista una vez.</p>
+<p>Vamos a buscar el <strong>número más grande por debajo de 100.000 que sea divisible
+por 3829</strong>. Para lograrlo, simplemente filtramos un conjunto de posibilidades en
+el cual sabemos que está la solución.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">largestDivisible</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Integral</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span>
+<span class="nf">largestDivisible</span> <span class="ow">=</span> <span class="n">head</span> <span class="p">(</span><span class="n">filter</span> <span class="n">p</span> <span class="p">[</span><span class="mi">100000</span><span class="p">,</span><span class="mi">99999</span><span class="o">..</span><span class="p">])</span>
+    <span class="kr">where</span> <span class="n">p</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">x</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">3829</span> <span class="o">==</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Primero creamos una lista de números menores que 100.000 de forma descendiente.
+Luego la filtramos con nuestro predicado y como los número están ordenados de
+forma descendiente, el número más grande que satisface nuestro predicado es
+el primer elemento de la lista filtrada. Ni siquiera tenemos que usar una lista
+finita para nuestro conjunto de partida. La evaluación perezosa aparece otra
+vez. Como al final solo acabamos usando la cabeza de la lista, no importa si la
+lista es finita o infinita. La evaluación se para cuando se encuentre la primera
+solución adecuada.</p>
+<p>A continuación, vamos a buscar la <strong>suma de todos los cuadrados impares que son
+menores de 10.000</strong>. Pero primero, como vamos a usarla en nuestra solución,
+vamos a introducir la función <tt class="docutils literal"><span class="pre">takeWhile</span></tt>. Toma un predicado y una lista y
+recorre la lista desde el principio y devuelve estos elementos mientras el
+predicado se mantenga cierto. Una vez encuentre un predicado que no se evalúe a
+cierto para. Si queremos obtener la primera palabra de <tt class="docutils literal"><span class="pre">&quot;Los</span> <span class="pre">elefantes</span> <span class="pre">saben</span>
+<span class="pre">como</span> <span class="pre">montar</span> <span class="pre">una</span> <span class="pre">fiesta&quot;</span></tt>, podríamos hacer <tt class="docutils literal"><span class="pre">takeWhile</span> <span class="pre">(/='</span> <span class="pre">')</span> <span class="pre">&quot;Los</span> <span class="pre">elefantes</span>
+<span class="pre">saben</span> <span class="pre">como</span> <span class="pre">montar</span> <span class="pre">una</span> <span class="pre">fiesta&quot;</span></tt> y obtendríamos <tt class="docutils literal"><span class="pre">&quot;Los&quot;</span></tt>. Vale, ahora a por la
+suma de todos los cuadrados impares menores que 10.000. Primero empezaremos
+mapeado la función <tt class="docutils literal"><span class="pre">(^2)</span></tt> a la lista infinita <tt class="docutils literal"><span class="pre">[1..]</span></tt>. Luego filtramos la
+lista para quedarnos solo con los impares. Después tomamos los elementos
+mientras sean menores que 10.000. Finalmente, obtenemos la suma de todos estos
+elementos. Ni siquiera tenemos que crear una función para obtener el resultado,
+podemos hacerlo en una línea en GHCi:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">sum</span> <span class="p">(</span><span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="p">(</span><span class="n">filter</span> <span class="n">odd</span> <span class="p">(</span><span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">])))</span>
+<span class="mi">166650</span>
+</pre></div>
+</div>
+<p>¡Impresionante! Empezamos con algunos datos iniciales (la lista infinita de los
+números naturales) que mapeamos, los filtramos y luego recortamos hasta que
+encajen con nuestras necesidades para luego sumarlos. También podríamos haber
+escrito esto usando listas por comprensión.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">sum</span> <span class="p">(</span><span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="p">[</span><span class="n">n</span><span class="o">^</span><span class="mi">2</span> <span class="o">|</span> <span class="n">n</span> <span class="ow">&lt;-</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">],</span> <span class="n">odd</span> <span class="p">(</span><span class="n">n</span><span class="o">^</span><span class="mi">2</span><span class="p">)])</span>
+<span class="mi">166650</span>
+</pre></div>
+</div>
+<p>Es una cuestión de gustos. De nuevo, la característica evaluación perezosa de
+Haskell es lo que hace esto posible. Podemos mapear y filtrar una lista infinita
+ya que en realidad ni la mapeará ni la filtrará hasta el final, retrasará dichas
+acciones. Solo cuando forzamos a Haskell a que nos muestre la suma realiza la
+suma de que dice a <tt class="docutils literal"><span class="pre">takeWhile</span></tt> que necesita esos números. <tt class="docutils literal"><span class="pre">takeWhile</span></tt> fuerza
+el mapeado y el filtrado, pero solo hasta que encuentre un número mayor o igual
+que 10.000.</p>
+<p>En nuestro siguiente problema vamos tratar con las secuencias de Collatz.
+Tomamos un número natural. Si ese número es par lo dividimos por dos. Si es
+impar, lo multiplicamos por tres y le sumamos uno. Tomamos el número resultante
+y le aplicamos lo mismo, lo que produce un nuevo número y así sucesivamente.
+Resumiendo, obtenemos una secuencia de números. Se sabe que para todo número
+la secuencia termina con el uno. Así que empezamos con el número 13, obtenemos
+esta secuencia: 13, 40, 20, 10, 5, 16, 8, 4, 2, 1. 13 * 3 + 1 es igual a 40.
+40 dividido por dos es 20, etc. Podemos ver que la secuencia tiene 10 términos.
+Ahora, lo que queremos saber es: para cada número entre el 1 y el 100 ¿Cuántas
+secuencias tienen una longitud mayor que 15? Antes de nada creamos una función
+que produzca una secuencia:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">chain</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Integral</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">chain</span> <span class="mi">1</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nf">chain</span> <span class="n">n</span>
+    <span class="o">|</span> <span class="n">even</span> <span class="n">n</span> <span class="ow">=</span>  <span class="n">n</span><span class="kt">:</span><span class="n">chain</span> <span class="p">(</span><span class="n">n</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">odd</span> <span class="n">n</span>  <span class="ow">=</span>  <span class="n">n</span><span class="kt">:</span><span class="n">chain</span> <span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Como la secuencia termina en 1, ese es el caso base. Es una función típica
+recursiva.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">chain</span> <span class="mi">10</span>
+<span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">chain</span> <span class="mi">1</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">chain</span> <span class="mi">30</span>
+<span class="p">[</span><span class="mi">30</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">46</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span><span class="mi">70</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">106</span><span class="p">,</span><span class="mi">53</span><span class="p">,</span><span class="mi">160</span><span class="p">,</span><span class="mi">80</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>¡Bien! Parece que funciona correctamente. Y ahora, la función que nos da la
+respuesta a nuestro problema:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">numLongChains</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="nf">numLongChains</span> <span class="ow">=</span> <span class="n">length</span> <span class="p">(</span><span class="n">filter</span> <span class="n">isLong</span> <span class="p">(</span><span class="n">map</span> <span class="n">chain</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">100</span><span class="p">]))</span>
+    <span class="kr">where</span> <span class="n">isLong</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">length</span> <span class="n">xs</span> <span class="o">&gt;</span> <span class="mi">15</span>
+</pre></div>
+</div>
+<p>Mapeamos con la función <tt class="docutils literal"><span class="pre">chain</span></tt> la lista <tt class="docutils literal"><span class="pre">[1..100]</span></tt> para obtener la lista
+de las secuencias. Luego filtramos la lista con un predicado que simplemente
+nos dice si una lista tiene un tamaño mayor que 15. Una vez hemos realizado el
+filtrado, vemos cuantas secuencias han quedado en la lista resultante.</p>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Esta función tiene el tipo <tt class="docutils literal"><span class="pre">numLongChains</span> <span class="pre">::</span> <span class="pre">Int</span></tt> porque length
+devuelve el tipo <tt class="docutils literal"><span class="pre">Int</span></tt> en lugar de un <tt class="docutils literal"><span class="pre">Num</span></tt> por razones
+históricas.</p>
+</div>
+<p>También podemos hacer cosas como <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(*)</span> <span class="pre">[0..]</span></tt>, con el único motivo de
+ilustrar como funciona la currificación y como la funciones (parcialmente
+aplicadas) son valores reales que pueden ser pasadas como parámetros en otras
+funciones o como pueden ser incluidas en listas (solo que no puedes mostrarlas
+por pantalla). Hasta ahora solo hemos mapeado sobre listas funciones que toman
+un solo parámetro, como <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(*2)</span> <span class="pre">[0..]</span></tt> para obtener una lista del tipo
+<tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">[a]</span></tt>, pero también podemos usar <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(*)</span> <span class="pre">[0..]</span></tt> sin ningún
+problema. Lo que sucede es que cada número de la lista es aplicado a <tt class="docutils literal"><span class="pre">*</span></tt> que
+tiene el tipo <tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt>. Aplicar un solo parámetro a una
+función que tiene dos parámetros obtenemos una función que solo toma un
+parámetro, así que tendríamos una lista de funciones <tt class="docutils literal"><span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">[a</span> <span class="pre">-&gt;</span> <span class="pre">a]</span></tt>.
+<tt class="docutils literal"><span class="pre">map</span> <span class="pre">(*)</span> <span class="pre">[0..]</span> <span class="pre">``</span> <span class="pre">produce</span> <span class="pre">una</span> <span class="pre">lista</span> <span class="pre">que</span> <span class="pre">podríamos</span> <span class="pre">escribir</span> <span class="pre">como</span>
+<span class="pre">``[(0*),(1*),(2*),(3*),(4*),(5*)...</span></tt></p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kr">let</span> <span class="n">listOfFuns</span> <span class="ow">=</span> <span class="n">map</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="p">[</span><span class="mi">0</span><span class="o">..</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">listOfFuns</span> <span class="o">!!</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">5</span>
+<span class="mi">20</span>
+</pre></div>
+</div>
+<p>Al obtener el 4º elemento de nuestra lista obtenemos una función equivalente
+a <tt class="docutils literal"><span class="pre">(4*)</span></tt>. Y luego aplicamos 5 a esa función. Así que en realidad es como
+si escribiéramos <tt class="docutils literal"><span class="pre">(4*)</span> <span class="pre">5</span></tt> o simplemente <tt class="docutils literal"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">5</span></tt>.</p>
+</div>
+<div class="section" id="lambdas">
+<h2>Lambdas<a class="headerlink" href="#lambdas" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="Lambda" class="align-right" src="../_images/lambda.png" />
+<p>Las lambdas son funciones anónimas que suelen ser usadas cuando necesitamos
+una función una sola vez. Normalmente creamos funciones lambda con el único
+propósito de pasarlas a funciones de orden superior. Para crear una lambda
+escribimos un <tt class="docutils literal"><span class="pre">\</span></tt> (Porque tiene un cierto parecido con la letra griega lambda
+si le echas mucha imaginación) y luego los parámetros separados por espacios.
+Luego escribimos una <tt class="docutils literal"><span class="pre">-&gt;</span></tt> y luego el cuerpo de la función. Normalmente las
+envolvemos con paréntesis ya que de otra forma se extenderían al resto de la
+línea.</p>
+<p>Si miras 10 cm arriba verás que usamos una sección <tt class="docutils literal"><span class="pre">where</span></tt> en nuestra
+función <tt class="docutils literal"><span class="pre">numLongChains</span></tt> para crear la función <tt class="docutils literal"><span class="pre">isLong</span></tt> con el único
+propósito de usarla en un filtro. Bien, en lugar de hacer eso podemos usar una
+lambda:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">numLongChains</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="nf">numLongChains</span> <span class="ow">=</span> <span class="n">length</span> <span class="p">(</span><span class="n">filter</span> <span class="p">(</span><span class="nf">\</span><span class="n">xs</span> <span class="ow">-&gt;</span> <span class="n">length</span> <span class="n">xs</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">)</span> <span class="p">(</span><span class="n">map</span> <span class="n">chain</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">100</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Las lambdas son expresiones, ese es el porqué podemos simplemente pasarlas así.
+La expresión <tt class="docutils literal"><span class="pre">(\xs</span> <span class="pre">-&gt;</span> <span class="pre">length</span> <span class="pre">xs</span> <span class="pre">&gt;</span> <span class="pre">15)</span></tt> devuelve una función que nos dice si
+el tamaño de una lista es mayor que 15.</p>
+<img alt="Oveja" class="align-left" src="../_images/lamb.png" />
+<p>Es muy común que la gente que no está muy acostumbrada a como funciona la
+currificación y la aplicación parcial usen lambdas cuando no deben. Por ejemplo,
+la expresión <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(+3)</span> <span class="pre">[1,6,3,2]</span></tt> y <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(\x</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">3)</span> <span class="pre">[1,6,3,2]</span></tt> son
+equivalentes ya que ambas expresiones, <tt class="docutils literal"><span class="pre">(+3)</span></tt> y <tt class="docutils literal"><span class="pre">(\x</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">3)</span></tt> son
+funciones que toman un número y le suman 3. Nada más que decir, crear una lambda
+en este caso es algo estúpido ya que la aplicación parcial es mucho más legible.</p>
+<p>Al igual que las funciones normales, las lambdas pueden tomar cualquier número
+de parámetros.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">zipWith</span> <span class="p">(</span><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">30</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="p">[</span><span class="mf">153.0</span><span class="p">,</span><span class="mf">61.5</span><span class="p">,</span><span class="mf">31.0</span><span class="p">,</span><span class="mf">15.75</span><span class="p">,</span><span class="mf">6.6</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Y al igual que la funciones normales, las lambdas pueden usar el ajuste de
+patrones. La única diferencia es que no puedes definir varios patrones para
+un parámetro, como crear <tt class="docutils literal"><span class="pre">[]</span></tt> y <tt class="docutils literal"><span class="pre">(x:xs)</span></tt> para el mismo parámetro de forma
+que las variables se ajusten a uno u a otro. Si el ajuste de patrones falla en
+una lambda, se lanzará un error de ejecución, así que ten cuidado cuando los
+uses.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">)]</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Normalmente rodeamos las lambdas con paréntesis a no ser que queramos que se
+extiendan hasta el final de la línea. Aquí tienes algo interesante, debido
+a que las funciones se currifican por defecto, estas dos definiciones son
+iguales:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">addThree</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">addThree</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span>
+</pre></div>
+</div>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">addThree</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">addThree</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="nf">\</span><span class="n">y</span> <span class="ow">-&gt;</span> <span class="nf">\</span><span class="n">z</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span>
+</pre></div>
+</div>
+<p>Si definimos funciones de esta forma es obvio el motivo por el cual las
+definiciones de tipo son como son. Hay tres <tt class="docutils literal"><span class="pre">-&gt;</span></tt> tanto en la declaración de
+tipo como en la ecuación. Pero por supuesto, la primera forma de escribir
+funciones es mucho más legible, y la segundo sirve únicamente para ilustrar
+la currificación.</p>
+<p>Sin embargo hay veces que es más interesante usar esta notación. Creo que la
+función <tt class="docutils literal"><span class="pre">flip</span></tt> es mucho más legible si la definimos así:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">flip&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+<span class="nf">flip&#39;</span> <span class="n">f</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">x</span> <span class="n">y</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">y</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Aunque es lo mismo que escribir <tt class="docutils literal"><span class="pre">flip'</span> <span class="pre">f</span> <span class="pre">x</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">f</span> <span class="pre">y</span> <span class="pre">x</span></tt>, hacemos obvio que la
+mayor parte del tipo la usaremos para producir una nueva función. El caso de
+uso más común de <tt class="docutils literal"><span class="pre">flip</span></tt> es llamarla con solo la función parámetro y luego
+pasar la función resultante como parámetro a <tt class="docutils literal"><span class="pre">map``o</span> <span class="pre">``filter</span></tt>. Así que usa
+las lambdas cuando quieras hacer explícito que tu función esta principalmente
+pensada para se parcialmente aplicada y se pasada como a una función como
+parámetro.</p>
+</div>
+<div class="section" id="pliegues-y-papiroflexia">
+<h2>Pliegues y papiroflexia<a class="headerlink" href="#pliegues-y-papiroflexia" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="Pajarita" class="align-right" src="../_images/origami.png" />
+<p>Volviendo a cuando tratábamos con la recursión, nos dimos cuenta de que muchas
+funciones operaban con listas. Solíamos tener un caso base que era la lista
+vacía. Debíamos usar un patrón <tt class="docutils literal"><span class="pre">x:xs</span></tt> y hacíamos alguna operación con un solo
+elemento de la lista. Esto sugiere que es un patrón muy común, así que unas
+cuantas funciones muy útiles fueron creadas para encapsular este comportamiento.
+Estas funciones son llamadas pliegues (o <em>folds</em> en ingles). Son una especie de
+función <tt class="docutils literal"><span class="pre">map</span></tt>, solo que reducen la lista a un solo valor.</p>
+<p>Un pliegue toma una función binaria, un valor inicial (a mi me gusta llamarlo
+el acumulador) y una lista que plegar. La función binaria toma dos parámetros
+por si misma. La función binaria es llamada con el acumulador y el primer (o
+último) elemento y produce un nuevo acumulador. Luego, la función binaria se
+vuelve a llamar junto al nuevo acumulador y al nuevo primer (o último) elemento
+de la lista, y así sucesivamente. Cuando se ha recorrido la lista completa, solo
+permanece un acumulador, que es el valor al que se ha reducido la lista.</p>
+<p>Primero vamos a ver la función <tt class="docutils literal"><span class="pre">foldl</span></tt>, también llamada pliegue por la
+izquierda. Esta pliega la lista empezando desde la izquierda. La función binaria
+es aplicada junto a el valor inicial y la cabeza de la lista. Esto produce un
+nuevo acumulador y la función binaria es vuelta a llamar con ese nuevo valor y
+el siguiente elemento, etc.</p>
+<p>Vamos a volver a implementar <tt class="docutils literal"><span class="pre">sum</span></tt>, solo que esta vez, vamos a usar un pliegue
+en lugar de una recursión explícita.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">sum&#39;</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="mi">0</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>Probando, un, dos, tres:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">sum&#39;</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="mi">11</span>
+</pre></div>
+</div>
+<img alt="Pliegue a izquierdas" class="align-left" src="../_images/foldl.png" />
+<p>Vamos a dar un vistazo a como funciona este pliegue. <tt class="docutils literal"><span class="pre">\acc</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">acc</span> <span class="pre">+</span> <span class="pre">x</span></tt> es
+la función binaria. <tt class="docutils literal"><span class="pre">0</span></tt> es el valor inicial y <tt class="docutils literal"><span class="pre">xs</span></tt> es la lista que debe ser
+plegada. Primero, <tt class="docutils literal"><span class="pre">0</span></tt> se utiliza como el parámetro <tt class="docutils literal"><span class="pre">acc</span></tt> en la función
+binaria y <tt class="docutils literal"><span class="pre">3</span></tt> es utilizado como el parámetro <tt class="docutils literal"><span class="pre">x</span></tt> (o el valor actual).`
+<tt class="docutils literal"><span class="pre">`0</span> <span class="pre">+</span> <span class="pre">3</span></tt> produce un <tt class="docutils literal"><span class="pre">3</span></tt> que pasa a ser el nuevo acumulador. Luego, <tt class="docutils literal"><span class="pre">3</span></tt> es
+usado como acumulador y <tt class="docutils literal"><span class="pre">5</span></tt> como el elemento actual y por tanto <tt class="docutils literal"><span class="pre">8</span></tt> se
+convierte en el nuevo acumulador. Seguimos adelante y <tt class="docutils literal"><span class="pre">8</span></tt> es el acumulador,
+<tt class="docutils literal"><span class="pre">2</span></tt> el elemento actual, así que el nuevo acumulador es <tt class="docutils literal"><span class="pre">10</span></tt>. Para terminar
+ese <tt class="docutils literal"><span class="pre">10</span></tt> es usado como acumulador y <tt class="docutils literal"><span class="pre">1</span></tt> como el elemento actual, produciendo
+un <tt class="docutils literal"><span class="pre">1</span></tt>. ¡Enhorabuena, has hecho un pliegue!</p>
+<p>A la izquierda tienes un diagrama profesional que ilustra como funciona un
+pliegue paso a paso. Los números verdes (si los ves amarillos quizás seas
+daltónico) son los acumuladores. Puedes ver como la lista es consumida por el
+acumulador de arriba a abajo. Ñam, ñam, ñam... Si tenemos en cuenta que las
+funciones están currificadas, podemos escribir esta implementación de forma más
+bonita como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">sum&#39;</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>La función lambda <tt class="docutils literal"><span class="pre">(\acc</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">acc</span> <span class="pre">+</span> <span class="pre">x)</span></tt> es lo mismo que <tt class="docutils literal"><span class="pre">(+)</span></tt>. Podemos
+omitir el parámetro <tt class="docutils literal"><span class="pre">xs</span></tt> ya que al llamar a <tt class="docutils literal"><span class="pre">foldl</span> <span class="pre">(+)</span> <span class="pre">0</span></tt> nos devuelve una
+función que toma una lista. Generalmente, si tienes una función del tipo
+<tt class="docutils literal"><span class="pre">foo</span> <span class="pre">a</span> <span class="pre">=</span> <span class="pre">bar</span> <span class="pre">b</span> <span class="pre">a</span></tt> la puedes escribir como <tt class="docutils literal"><span class="pre">foo</span> <span class="pre">=</span> <span class="pre">bar</span> <span class="pre">b</span></tt> gracias a la
+currificación.</p>
+<p>Vamos a implementar otra función con un pliegue por la izquierda antes de
+continuar con los pliegues por la derecha. Estoy seguro de que sabes que
+<tt class="docutils literal"><span class="pre">elem</span></tt> comprueba si un elemento es parte de una lista así que no lo explicaré
+de nuevo (mmm... creo que ya lo hice). Vamos a implementarla.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">elem&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Eq</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<span class="nf">elem&#39;</span> <span class="n">y</span> <span class="n">ys</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="kr">then</span> <span class="kt">True</span> <span class="kr">else</span> <span class="n">acc</span><span class="p">)</span> <span class="kt">False</span> <span class="n">ys</span>
+</pre></div>
+</div>
+<p>Bueno, bueno, bueno... ¿Qué estamos haciendo aquí? El valor de inicio y el
+acumulador son ambos del tipo booleano. Cuando hablamos de pliegues tanto e tipo
+del acumulador y el tipo del resultado final son el mismo. Empezamos con el
+valor inicial <tt class="xref docutils literal"><span class="pre">False</span></tt>. Tiene sentido ya que asumimos que el elemento no está
+en la lista. También porque si llamamos a un pliegue con una lista vacía el
+resultado será simplemente el valor inicial. Luego comprobamos si el elemento
+actual es el que estamos buscando. Si lo es, ponemos el acumulador a <tt class="xref docutils literal"><span class="pre">True</span></tt>.
+Si no lo es, dejamos el acumulador como estaba. Si ya estaba a <tt class="xref docutils literal"><span class="pre">False</span></tt>,
+permanece en ese estado ya que el elemento actual no es el que buscamos. Si era
+<tt class="xref docutils literal"><span class="pre">True</span></tt>, se queda como estaba también.</p>
+<p>Ahora los pliegues por la derecha funcionan igual que los pliegues por la
+izquierda, solo que el acumulador consume elemento por la derecha. La función
+binaria de los pliegues por la izquierda como primer parámetro el acumulador
+y el valor actual como segundo parámetro (tal que así: <tt class="docutils literal"><span class="pre">\acc</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">...</span></tt>), la
+función binaria de los pliegues por la derecha tiene el valor actual como primer
+parámetro y el acumulador después (así: <tt class="docutils literal"><span class="pre">\x</span> <span class="pre">acc</span> <span class="pre">-&gt;</span> <span class="pre">...</span></tt>). Tiene sentido ya que
+el pliegue por la derecha tiene el acumulador a la derecha.</p>
+<p>El acumulador (y por tanto del resultado) de un pliegue puede ser de cualquier
+tipo. Puede ser un número, un booleano e incluso una nueva lista. Vamos a
+implementar la función <tt class="docutils literal"><span class="pre">map</span></tt> con un pliegue por la derecha. El acumulador será
+una lista, en la que iremos acumulando los elemento de la lista ya mapeados. Es
+obvio que el valor inicial será una lista vacía.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">map&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+<span class="nf">map&#39;</span> <span class="n">f</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="n">acc</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">acc</span><span class="p">)</span> <span class="kt">[]</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>Si estamos mapeando <tt class="docutils literal"><span class="pre">(+3)</span></tt> a <tt class="docutils literal"><span class="pre">[1,2,3]</span></tt>, recorremos la lista desde el lado
+derecho. Tomamos el último elemento, el cual es <tt class="docutils literal"><span class="pre">3</span></tt> y le aplicamos la función
+a él, de forma que acaba siendo un <tt class="docutils literal"><span class="pre">6</span></tt>. Luego lo añadimos al acumulador que
+es <tt class="docutils literal"><span class="pre">[]</span></tt>. <tt class="docutils literal"><span class="pre">6:[]</span></tt> es <tt class="docutils literal"><span class="pre">[6]</span></tt> que pasa a ser el nuevo acumulador. Aplicamos
+<tt class="docutils literal"><span class="pre">(+3)</span></tt> a <tt class="docutils literal"><span class="pre">2</span></tt> , que es <tt class="docutils literal"><span class="pre">5</span></tt> y es añadido (<tt class="docutils literal"><span class="pre">:</span></tt>) al acumulador, de forma
+que nos queda <tt class="docutils literal"><span class="pre">[5,6]</span></tt>. Hacemos lo mismo con el último elemento y acabamos
+obteniendo <tt class="docutils literal"><span class="pre">[4,5,6]</span></tt>.</p>
+<p>Por supuesto, también podríamos haber implementado esta función usando un
+pliegue por la izquierda. Sería algo como <tt class="docutils literal"><span class="pre">map'</span> <span class="pre">f</span> <span class="pre">xs</span> <span class="pre">=</span> <span class="pre">foldl</span> <span class="pre">(\acc</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">acc</span> <span class="pre">++</span>
+<span class="pre">[f</span> <span class="pre">x])</span> <span class="pre">[]</span> <span class="pre">xs</span></tt>, pero la cuestión es que la función <tt class="docutils literal"><span class="pre">++</span></tt> es bastante menos
+eficiente que <tt class="docutils literal"><span class="pre">:</span></tt>, así que normalmente usamos pliegues por la derecha cuando
+construimos listas a partir de una lista.</p>
+<img alt="Lavadora" class="align-right" src="../_images/washmachine.png" />
+<p>Si pones del revés una lista, puedes hacer un pliegue por la derecha como si
+fuera un pliegue por la izquierda y viceversa. A veces ni siquiera tienes que
+hacerlo. La función <tt class="docutils literal"><span class="pre">sum</span></tt> por ejemplo puede ser implementada tanto con un
+pliegue por la izquierda como por la derecha. Una gran diferencia es que los
+pliegues por la derecha funcionan con listas infinitas, mientras que los
+pliegues por la izquierda no. Para aclarar las cosas, si tomas una lista
+infinita en algún lugar y le aplicas un pliegue por la derecha, en algún momento
+alcanzará el inicio de la lista. Si embargo, si tomas una lista infinita en
+algún punto y le aplicas un pliegue por la izquierda nunca alcanzará el final.</p>
+<p><strong>Los pliegues se pueden utilizar para implementar cualquier función que
+recorra una lista, elemento a elemento, y luego devuelvan un valor. Siempre
+que quieras recorrer una lista y devolver un valor, hay posibilidades de
+utilizar un pliegue</strong>. Esta es la razón por la que los pliegues, junto a los
+mapeos y los filtros, son unas de las funciones más útiles de la programación
+funcional.</p>
+<p>Las funciones <tt class="docutils literal"><span class="pre">foldl1</span></tt> y <tt class="docutils literal"><span class="pre">foldr1</span></tt> son muy parecidas a <tt class="docutils literal"><span class="pre">foldl</span></tt> y <tt class="docutils literal"><span class="pre">foldr</span></tt>,
+solo que en lugar que no necesitas indicar un valor de inicio. Asumen que el
+primer (o el último) elemento de la lista es valor de inicio, luego empiezan
+a plegar la lista por el elemento siguiente. Esto me recuerda que la función
+<tt class="docutils literal"><span class="pre">sum</span></tt> puede ser implementada como: <tt class="docutils literal"><span class="pre">sum</span> <span class="pre">=</span> <span class="pre">foldl1</span> <span class="pre">(+)</span></tt>. Ya que estas
+funciones dependen de que la listas que van a plegar tengan al menos un
+elemento, pueden causar errores en tiempo de ejecución si son llamadas con
+listas vacías. Por otra parte, tanto <tt class="docutils literal"><span class="pre">foldl</span></tt> como <tt class="docutils literal"><span class="pre">foldr</span></tt> funcionan bien
+con listas vacías. Cuando hagas un pliegue piensa bien en como actuar ante una
+lista vacía. Si la función no tiene sentido al ser llamada con listas vacías
+probablemente puedas utilizar <tt class="docutils literal"><span class="pre">foldl1``y</span> <span class="pre">``foldr1</span></tt> para implementarla.</p>
+<p>Con el único motivo de mostrarte lo potente que estas funciones son, vamos
+a implementar un puñado de funciones estándar usando pliegues:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">maximum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">maximum&#39;</span> <span class="ow">=</span> <span class="n">foldr1</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="n">acc</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">acc</span> <span class="kr">then</span> <span class="n">x</span> <span class="kr">else</span> <span class="n">acc</span><span class="p">)</span>
+
+<span class="nf">reverse&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">reverse&#39;</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">acc</span><span class="p">)</span> <span class="kt">[]</span>
+
+<span class="nf">product&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">product&#39;</span> <span class="ow">=</span> <span class="n">foldr1</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span>
+
+<span class="nf">filter&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">filter&#39;</span> <span class="n">p</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="n">acc</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">p</span> <span class="n">x</span> <span class="kr">then</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">acc</span> <span class="kr">else</span> <span class="n">acc</span><span class="p">)</span> <span class="kt">[]</span>
+
+<span class="nf">head&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">head&#39;</span> <span class="ow">=</span> <span class="n">foldr1</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="kr">_</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="nf">last&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">last&#39;</span> <span class="ow">=</span> <span class="n">foldl1</span> <span class="p">(</span><span class="nf">\</span><span class="kr">_</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">head</span></tt> es mejor implementarla con ajuste de patrones, pero de esta forma
+puedes ver que incluso se puede implementar con pliegues. Nuestra función
+<tt class="docutils literal"><span class="pre">reverse'</span></tt> está bastante clara, creo. Tomamos como valor de inicio la lista
+vacía y luego recorremos la lista desde la izquierda y simplemente vamos
+añadiendo elementos a nuestro acumulador. Al final tenemos la lista al revés.
+<tt class="docutils literal"><span class="pre">\acc</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">:</span> <span class="pre">acc</span></tt> se parece a la función <tt class="docutils literal"><span class="pre">:</span></tt> solo que los parámetros están
+al revés. Por esta razón también podíamos haber escrito esto:
+<tt class="docutils literal"><span class="pre">foldl</span> <span class="pre">(flip</span> <span class="pre">(:))</span> <span class="pre">[]</span></tt>.</p>
+<p>Existe otra forma de representar los pliegues por la izquierda y por la derecha.
+Digamos que tenemos un pliegue por la derecha, una función <tt class="docutils literal"><span class="pre">f</span></tt> y un valor de
+inicio <tt class="docutils literal"><span class="pre">z</span></tt>. Si hacemos el pliegue sobre la lista <tt class="docutils literal"><span class="pre">[3,4,5,6]</span></tt>, básicamente es
+como si hiciésemos <tt class="docutils literal"><span class="pre">f</span> <span class="pre">3</span> <span class="pre">(f</span> <span class="pre">4</span> <span class="pre">(f</span> <span class="pre">5</span> <span class="pre">(f</span> <span class="pre">6</span> <span class="pre">z)))</span></tt>. <tt class="docutils literal"><span class="pre">f</span></tt> es llamada con el último
+elemento de la lista y el acumulador, ese valor es dado como acumulador de
+la siguiente llamada y así sucesivamente. Si tomamos <tt class="docutils literal"><span class="pre">+</span></tt> como <tt class="docutils literal"><span class="pre">f</span></tt> y un
+valor de inicio <tt class="docutils literal"><span class="pre">0</span></tt>, tenemos <tt class="docutils literal"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">(4</span> <span class="pre">+</span> <span class="pre">(5</span> <span class="pre">+</span> <span class="pre">(6</span> <span class="pre">+</span> <span class="pre">0)))</span></tt>. Representado de
+forma prefija sería <tt class="docutils literal"><span class="pre">(+)</span> <span class="pre">3</span> <span class="pre">((+)</span> <span class="pre">4</span> <span class="pre">((+)</span> <span class="pre">5</span> <span class="pre">((+)</span> <span class="pre">6</span> <span class="pre">0)))</span></tt>. De forma similar si
+hacemos un pliegue por la izquierda, tomamos <tt class="docutils literal"><span class="pre">g</span></tt> como función binaria y <tt class="docutils literal"><span class="pre">z</span></tt>
+como acumulador, sería equivalente a hacer <tt class="docutils literal"><span class="pre">g</span> <span class="pre">(g</span> <span class="pre">(g</span> <span class="pre">(g</span> <span class="pre">z</span> <span class="pre">3)</span> <span class="pre">4)</span> <span class="pre">5)</span> <span class="pre">6</span></tt>. Si
+tomamos <tt class="docutils literal"><span class="pre">flip</span> <span class="pre">(:)</span></tt> como función binaria y <tt class="docutils literal"><span class="pre">[]</span></tt> como el acumulador (de forma
+que estamos poniendo al reverso la lista), entonces sería equivalente a <tt class="docutils literal"><span class="pre">flip</span>
+<span class="pre">(:)</span> <span class="pre">(flip</span> <span class="pre">(:)</span> <span class="pre">(flip</span> <span class="pre">(:)</span> <span class="pre">(flip</span> <span class="pre">(:)</span> <span class="pre">[]</span> <span class="pre">3)</span> <span class="pre">4)</span> <span class="pre">5)</span> <span class="pre">6</span></tt>. Y estoy casi seguro que si
+evalúas esta expresión obtendrás <tt class="docutils literal"><span class="pre">[6,5,4,3]</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">scanl</span></tt> y <tt class="docutils literal"><span class="pre">scanr</span></tt> son como <tt class="docutils literal"><span class="pre">foldl</span></tt> y <tt class="docutils literal"><span class="pre">foldr</span></tt>, solo que devuelven todos
+los acumuladores intermedios en forma de lista. Existen también <tt class="docutils literal"><span class="pre">scanl1</span></tt> y
+<tt class="docutils literal"><span class="pre">scanr1</span></tt>, que son similares a <tt class="docutils literal"><span class="pre">foldl1</span></tt> y <tt class="docutils literal"><span class="pre">foldr1</span></tt>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">scanl</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">scanr</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">scanl1</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="ow">-&gt;</span> <span class="kr">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">acc</span> <span class="kr">then</span> <span class="n">x</span> <span class="kr">else</span> <span class="n">acc</span><span class="p">)</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">scanl</span> <span class="p">(</span><span class="n">flip</span> <span class="p">(</span><span class="kt">:</span><span class="p">))</span> <span class="kt">[]</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="kt">[]</span><span class="p">,[</span><span class="mi">3</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Cuando usamos <tt class="docutils literal"><span class="pre">scanl</span></tt>, el resultado final será el último elemento de la lista
+resultante mientras que con <tt class="docutils literal"><span class="pre">scanr</span></tt> estará al principio.</p>
+<p>Estas funciones son utilizadas para monitorizar la progresión de una función que
+puede ser implementada con un pliegue. Vamos a contestar a la siguiente
+cuestión ¿Cuántos elemento toma la suma de todos las raíces de todos los números
+naturales exceder 1000? Para obtener las raíces de todos los número naturales
+simplemente hacemos <tt class="docutils literal"><span class="pre">map</span> <span class="pre">sqrt</span> <span class="pre">[1..]</span></tt>. Ahora, para obtener la suma podría
+utilizar un pliegue, pero como estamos interesados en la progresión de la suma,
+utilizaremos <tt class="docutils literal"><span class="pre">scanl</span></tt>. Cuando obtengamos la lista resultante, simplemente
+contamos cuantas sumas están por debajo de 1000. La primera suma de la lista
+será 1. La segunda será 1 más la raíz de 2. La tercera será lo mismo que la
+anterior más la raíz de 3. Si hay X sumas menores de 1000, entonces tomará
+X + 1 elementos para que la suma exceda 1000.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">sqrtSums</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="nf">sqrtSums</span> <span class="ow">=</span> <span class="n">length</span> <span class="p">(</span><span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">1000</span><span class="p">)</span> <span class="p">(</span><span class="n">scanl1</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">(</span><span class="n">map</span> <span class="n">sqrt</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">])))</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">sqrtSums</span>
+<span class="mi">131</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">sum</span> <span class="p">(</span><span class="n">map</span> <span class="n">sqrt</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">131</span><span class="p">])</span>
+<span class="mf">1005.0942035344083</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">sum</span> <span class="p">(</span><span class="n">map</span> <span class="n">sqrt</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">130</span><span class="p">])</span>
+<span class="mf">993.6486803921487</span>
+</pre></div>
+</div>
+<p>Utilizamos <tt class="docutils literal"><span class="pre">takeWhile</span></tt> en lugar de <tt class="docutils literal"><span class="pre">filter</span></tt> porque éste no funciona con
+listas infinitas. Incluso aunque nosotros sepamos que la lista es ascendente,
+<tt class="docutils literal"><span class="pre">filter</span></tt> no lo sabe, así que usamos <tt class="docutils literal"><span class="pre">takeWhile</span></tt> para cortar la lista por la
+primera ocurrencia de una suma que supere 1000.</p>
+</div>
+<div class="section" id="aplicacion-de-funciones-con">
+<h2>Aplicación de funciones con $<a class="headerlink" href="#aplicacion-de-funciones-con" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Esta bien, ahora vamos a ver la función <tt class="docutils literal"><span class="pre">$</span></tt>, también llamada aplicación de
+función. Antes de nada vamos a ver como está definida:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="p">(</span><span class="o">$</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span>
+<span class="nf">f</span> <span class="o">$</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span>
+</pre></div>
+</div>
+<img alt="Dollar" class="align-left" src="../_images/dollar.png" />
+<p>¿Pero qué...? ¿Para qué queremos un operador tan inútil? ¡Es simplemente la
+aplicación de una función! Bueno, casi, pero no solo eso. Mientras que la
+aplicación de funciones normal (un espacio entre dos cosas) tiene un alto orden
+de precedencia, la función <tt class="docutils literal"><span class="pre">$</span></tt> tiene el orden de precedencia más bajo. La
+aplicación de funciones con el espacio es asociativa a izquierdas (así que
+<tt class="docutils literal"><span class="pre">f</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span></tt> es lo mismo que <tt class="docutils literal"><span class="pre">((f</span> <span class="pre">a)</span> <span class="pre">b)</span> <span class="pre">c</span></tt>), la aplicación de funciones con
+<tt class="docutils literal"><span class="pre">$</span></tt> es asociativa a derechas.</p>
+<p>Eso está muy bien, pero ¿De qué nos sirve esto? Básicamente es una función de
+conveniencia que utilizamos para no tener que escribir muchos paréntesis.
+Considera la expresión sum <tt class="docutils literal"><span class="pre">(map</span> <span class="pre">sqrt</span> <span class="pre">[1..130])</span></tt>. Gracias a que <tt class="docutils literal"><span class="pre">$</span></tt> tiene
+un bajo orden de precedencia podemos escribir es misma expresión como
+<tt class="docutils literal"><span class="pre">sum</span> <span class="pre">$</span> <span class="pre">map</span> <span class="pre">sqrt</span> <span class="pre">[1..130]</span></tt>, ahorrándonos que nuestros dedos pulsen esas
+molestas teclas. Cuando se encuentra un <tt class="docutils literal"><span class="pre">$</span></tt>, la expresión a la derecha es
+aplicada como parámetro a la función de la izquierda. ¿Qué pasa con
+<tt class="docutils literal"><span class="pre">sqrt</span> <span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span> <span class="pre">+</span> <span class="pre">9</span></tt>? Esta expresión suma 4 más 9 más la raíz de 3. Si lo que
+queremos es la raíz de <tt class="docutils literal"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span> <span class="pre">+</span> <span class="pre">9</span></tt> tenemos que escribir <tt class="docutils literal"><span class="pre">sqrt</span> <span class="pre">(3</span> <span class="pre">+</span> <span class="pre">4</span> <span class="pre">+</span> <span class="pre">9)</span></tt> o
+si usamos <tt class="docutils literal"><span class="pre">$</span></tt> podemos escribirlo como <tt class="docutils literal"><span class="pre">sqrt</span> <span class="pre">$</span> <span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span> <span class="pre">+</span> <span class="pre">9</span></tt>  ya que <tt class="docutils literal"><span class="pre">$</span></tt> tiene
+menor orden de precedencia que cualquier otro operador. Por este motivo podemos
+imaginar a <tt class="docutils literal"><span class="pre">$</span></tt> como una especie de paréntesis abierto que de forma automática
+añade un cierre al final de la expresión.</p>
+<p>¿Qué pasaría con <tt class="docutils literal"><span class="pre">sum</span> <span class="pre">(filter</span> <span class="pre">(&gt;</span> <span class="pre">10)</span> <span class="pre">(map</span> <span class="pre">(*2)</span> <span class="pre">[2..10]))</span></tt>? Bueno, como <tt class="docutils literal"><span class="pre">$</span></tt>
+es asociativo por la derecha, <tt class="docutils literal"><span class="pre">f</span> <span class="pre">(g</span> <span class="pre">(z</span> <span class="pre">x))</span></tt> sería igual que <tt class="docutils literal"><span class="pre">f</span> <span class="pre">$</span> <span class="pre">g</span> <span class="pre">$</span> <span class="pre">z</span> <span class="pre">x</span></tt>.
+Seguimos adelante y <tt class="docutils literal"><span class="pre">sum</span> <span class="pre">(filter</span> <span class="pre">(&gt;</span> <span class="pre">10)</span> <span class="pre">(map</span> <span class="pre">(*2)</span> <span class="pre">[2..10]))</span></tt> puede ser escrito
+como <tt class="docutils literal"><span class="pre">sum</span> <span class="pre">$</span> <span class="pre">filter</span> <span class="pre">(&gt;</span> <span class="pre">10)</span> <span class="pre">$</span> <span class="pre">map</span> <span class="pre">(*2)</span> <span class="pre">[2..10]</span></tt>.</p>
+<p>Pero aparte de eliminar los paréntesis, la existencia del operador <tt class="docutils literal"><span class="pre">$</span></tt> también
+supone que podemos tratar la aplicación de funciones como una función más. De
+esta forma, podemos, por ejemplo, mapear una lista de funciones:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="o">$</span> <span class="mi">3</span><span class="p">)</span> <span class="p">[(</span><span class="mi">4</span><span class="o">+</span><span class="p">),</span> <span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="p">),</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">]</span>
+<span class="p">[</span><span class="mf">7.0</span><span class="p">,</span><span class="mf">30.0</span><span class="p">,</span><span class="mf">9.0</span><span class="p">,</span><span class="mf">1.7320508075688772</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="composicion-de-funciones">
+<h2>Composición de funciones<a class="headerlink" href="#composicion-de-funciones" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>En matemáticas la composición de funciones está definida como:
+<img class="math" src="../_images/math/f7ea22ef62e9e9ed85c0b5d85a22d7a02f994aa8.png" alt="(f\circ{}g)x=f(g(x))"/>, que significa que al componer dos funciones se
+crea una nueva que, cuando se llama con un parámetro, digamos <em>x</em>, es
+equivalente a llamar a <em>g</em> con <em>x</em> y luego llamar a <em>f</em> con el resultado
+anterior.</p>
+<p>En Haskell la composición de funciones es prácticamente lo mismo. Realizamos la
+composición de funciones con la función <tt class="docutils literal"><span class="pre">.</span></tt>, que está definida como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="p">(</span><span class="o">.</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">c</span>
+<span class="nf">f</span> <span class="o">.</span> <span class="n">g</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="Notas" class="align-left" src="../_images/notes.png" />
+<p>Fíjate en la declaración de tipo. <tt class="docutils literal"><span class="pre">f</span></tt> debe tener como parámetro un valor con
+el mismo tipo que el valor devuelto por <tt class="docutils literal"><span class="pre">g</span></tt>. Así que la función resultante
+toma un parámetro del mismo tipo que toma <tt class="docutils literal"><span class="pre">g</span></tt> y devuelve un valor del mismo
+tipo que devuelve <tt class="docutils literal"><span class="pre">f</span></tt>. La expresión <tt class="docutils literal"><span class="pre">negate</span> <span class="pre">.</span> <span class="pre">(-3)</span></tt> devuelve una función que
+toma un número, lo multiplica por tres y luego lo niega.</p>
+<p>Uno de los usos de la composición de funciones es el de crear funciones al vuelo
+para ser pasadas a otras funciones. Claro, puedes usar lambdas pero
+muchas veces la composición de funciones es más clara y concisa. Digamos que
+tenemos una lista de números y queremos convertirlos todos en negativos. Una
+forma de hacerlo sería obteniendo primero el número absoluto y luego negándolo,
+algo así:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; map (\x -&gt; negate (abs x)) [5,-3,-6,7,-3,2,-19,24]</span>
+<span class="go">[-5,-3,-6,-7,-3,-2,-19,-24]</span>
+</pre></div>
+</div>
+<p>Fíjate que la función lambda se parece a la definición de composición de
+funciones. Usando la composición de funciones quedaría así:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; map (negate . abs) [5,-3,-6,7,-3,2,-19,24]</span>
+<span class="go">[-5,-3,-6,-7,-3,-2,-19,-24]</span>
+</pre></div>
+</div>
+<p>¡Genial! La composición de funciones es asociativa a derechas, así que podemos
+componer varias funciones al mismo tiempo. La expresión <tt class="docutils literal"><span class="pre">f</span> <span class="pre">(g</span> <span class="pre">(z</span> <span class="pre">x))</span></tt> es
+equivalente a <tt class="docutils literal"><span class="pre">(f</span> <span class="pre">.</span> <span class="pre">g</span> <span class="pre">.</span> <span class="pre">z)</span> <span class="pre">x</span></tt>. Teniendo esto en cuenta, podemos convertir:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; map (\xs -&gt; negate (sum (tail xs))) [[1..5],[3..6],[1..7]]</span>
+<span class="go">[-14,-15,-27]</span>
+</pre></div>
+</div>
+<p>En esto:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; map (negate . sum . tail) [[1..5],[3..6],[1..7]]</span>
+<span class="go">[-14,-15,-27]</span>
+</pre></div>
+</div>
+<p>¿Y qué pasa con las funciones que toman varios parámetros? Bueno, si queremos
+usarlas en la composición de funciones, tenemos que aplicarlas parcialmente de
+forma que cada función tome un solo parámetro. <tt class="docutils literal"><span class="pre">sum</span> <span class="pre">(replicate</span> <span class="pre">5`</span>
+<span class="pre">`(max</span> <span class="pre">6.7</span> <span class="pre">8.9))</span></tt> se puede escribir como <tt class="docutils literal"><span class="pre">(sum</span> <span class="pre">.</span> <span class="pre">replicate</span> <span class="pre">5</span> <span class="pre">.</span> <span class="pre">max</span> <span class="pre">6.7)</span> <span class="pre">8.9</span></tt>
+o como <tt class="docutils literal"><span class="pre">sum</span> <span class="pre">.</span> <span class="pre">replicate</span> <span class="pre">5</span> <span class="pre">.</span> <span class="pre">max</span> <span class="pre">6.7</span> <span class="pre">$</span> <span class="pre">8.9</span></tt>. Lo que sucede aquí es: se crea una
+función que toma <tt class="docutils literal"><span class="pre">max</span> <span class="pre">6.7</span></tt> y aplica <tt class="docutils literal"><span class="pre">replicate</span> <span class="pre">5</span></tt> a ella. Luego se crea otra
+función que toma el resultado de lo anterior y realiza una suma. Finalmente, la
+función anterior es llamada con <tt class="docutils literal"><span class="pre">8.9</span></tt>. Normalmente se lee como: Aplica <tt class="docutils literal"><span class="pre">8.9</span></tt>
+a <tt class="docutils literal"><span class="pre">max</span> <span class="pre">6.7</span></tt>, luego aplica <tt class="docutils literal"><span class="pre">replicate</span> <span class="pre">5</span></tt> y luego aplica <tt class="docutils literal"><span class="pre">sum</span></tt> al resultado
+anterior. Si quieres reescribir una expresión con un montón de paréntesis usando
+la composición de funciones, puedes empezar poniendo el último parámetro de la
+función más externa después de <tt class="docutils literal"><span class="pre">$</span></tt> y luego empezar a componer todas las demás
+funciones, escribiéndolas sin el último parámetro y poniendo <tt class="docutils literal"><span class="pre">.</span></tt> entre ellas.
+Si tienes <tt class="docutils literal"><span class="pre">replicate</span> <span class="pre">100</span> <span class="pre">(product</span> <span class="pre">(map</span> <span class="pre">(*3)</span> <span class="pre">(zipWith</span> <span class="pre">max</span> <span class="pre">[1,2,3,4,5]`</span>
+<span class="pre">`[4,5,6,7,8])))</span></tt> puedes escribirlo también como <tt class="docutils literal"><span class="pre">replicate</span> <span class="pre">100</span> <span class="pre">.</span> <span class="pre">product</span> <span class="pre">.</span>
+<span class="pre">map</span> <span class="pre">(*3)</span> <span class="pre">.</span> <span class="pre">zipWith</span> <span class="pre">max</span> <span class="pre">[1,2,3,4,5]</span> <span class="pre">$</span> <span class="pre">[4,5,6,7,8]</span></tt>. Si una expresión termina con
+3 paréntesis, existen posibilidades de escribir la misma expresión usando 3
+composiciones de funciones.</p>
+<p>Otro uso común de la composición de funciones es la definición de funciones en
+el llamado estilo libre de puntos. Echa un vistazo a esta función que
+escribimos anteriormente:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">sum&#39;</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">El término <em>estilo libre de puntos</em> (<em>point-free style</em> o
+<em>pointless style</em> en inglés) se originó en
+<a class="reference external" href="http://es.wikipedia.org/wiki/Topología">topología</a>, una rama de
+las matemáticas que trabaja con espacios compuestos de puntos y
+funciones entre estos espacios. Así que una función en estilo libre
+de puntos es una función que no menciona explícitamente los
+puntos (valores) del espacio sobre los que actua. Este término puede
+confundir a la gente ya que normalmente el estilo libre de puntos
+implica utilizar el operador de composición de funciones, el cual se
+representa con un punto en Haskell.</p>
+</div>
+<p><tt class="docutils literal"><span class="pre">xs</span></tt> está expuesta en ambos lados de la ecuación. Podemos eliminar <tt class="docutils literal"><span class="pre">xs</span></tt> de
+ambos lados gracias a la currificación, ya que <tt class="docutils literal"><span class="pre">foldl</span> <span class="pre">(+)</span> <span class="pre">0</span></tt> es una función
+que toma una lista. Escribir la función anterior como <tt class="docutils literal"><span class="pre">sum'</span> <span class="pre">=</span> <span class="pre">foldl</span> <span class="pre">(+)</span> <span class="pre">0</span></tt> se
+llama estilo libre de puntos. ¿Cómo escribimos esto en estilo libre de punto?</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">fn</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">ceiling</span> <span class="p">(</span><span class="n">negate</span> <span class="p">(</span><span class="n">tan</span> <span class="p">(</span><span class="n">cos</span> <span class="p">(</span><span class="n">max</span> <span class="mi">50</span> <span class="n">x</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>No podemos eliminar simplemente x de ambos lados. La <tt class="docutils literal"><span class="pre">x</span></tt> en el cuerpo de la
+función tiene un paréntesis después de ella. <tt class="docutils literal"><span class="pre">cos</span> <span class="pre">(max</span> <span class="pre">50)</span></tt> no tiene mucho
+sentido. No puedes calcular el coseno de una función. Lo que hacemos es expresar
+<tt class="docutils literal"><span class="pre">fn</span></tt> como una composición de funciones.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">fn</span> <span class="ow">=</span> <span class="n">ceiling</span> <span class="o">.</span> <span class="n">negate</span> <span class="o">.</span> <span class="n">tan</span> <span class="o">.</span> <span class="n">cos</span> <span class="o">.</span> <span class="n">max</span> <span class="mi">50</span>
+</pre></div>
+</div>
+<p>¡Excelente! Muchas veces una composición de funciones es mucho más concisa y
+legible, ya que te hace pensar en funciones y como se pasan los parámetros entre
+ellas en lugar de pensar en los datos y como estos son transformados. Puedes
+utilizar funciones simples con la composición de funciones para crear funciones
+mucho más complejas. Sin embargo, muchas veces, escribir una función en estilo
+libre de puntos pude ser menos legible si la función es muy compleja. Es por
+eso que se desaconseja el uso de la composición de funciones para cadenas de
+funciones muy largas. El estilo recomendable para estos casos es usar secciones
+<tt class="docutils literal"><span class="pre">let</span></tt> para dar nombres a resultados intermedios, dividiendo el problema en
+sub-problemas y luego realizar una composición con todo ellos de forma que si
+alguien lo lee le encuentre el sentido.</p>
+<p>En la sección de mapeos y filtros, solventamos el problema de encontrar la suma
+de todos los cuadrados impares menores que 10.000. Aquí tienes como se vería
+la solución si la ponemos en una función:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">oddSquareSum</span> <span class="ow">::</span> <span class="kt">Integer</span>
+<span class="nf">oddSquareSum</span> <span class="ow">=</span> <span class="n">sum</span> <span class="p">(</span><span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="p">(</span><span class="n">filter</span> <span class="n">odd</span> <span class="p">(</span><span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">])))</span>
+</pre></div>
+</div>
+<p>Siendo fan de la composición de funciones, probablemente podría haberla escrito
+como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">oddSquareSum</span> <span class="ow">::</span> <span class="kt">Integer</span>
+<span class="nf">oddSquareSum</span> <span class="ow">=</span> <span class="n">sum</span> <span class="o">.</span> <span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="o">.</span> <span class="n">filter</span> <span class="n">odd</span> <span class="o">.</span> <span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="o">$</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Sin embargo, si hay posibilidades de que alguien más lea este código, podría
+escribirlo como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">oddSquareSum</span> <span class="ow">::</span> <span class="kt">Integer</span>
+<span class="nf">oddSquareSum</span> <span class="ow">=</span>
+    <span class="kr">let</span> <span class="n">oddSquares</span> <span class="ow">=</span> <span class="n">filter</span> <span class="n">odd</span> <span class="o">$</span> <span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
+        <span class="n">belowLimit</span> <span class="ow">=</span> <span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="n">oddSquares</span>
+    <span class="kr">in</span>  <span class="n">sum</span> <span class="n">belowLimit</span>
+</pre></div>
+</div>
+<p>No ganaría ninguna competición de código corto, pero le facilitaría la vida a
+alguien que tuviera que leer este código.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="Modulos.html" title="Módulos"
+             >siguiente</a></li>
+        <li class="right" >
+          <a href="Recursion.html" title="Recursión"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright Miran Lipovača.
+      Creado con <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>

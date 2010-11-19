@@ -1,0 +1,375 @@
+
+@import url('reset.css');
+
+
+body {
+   font-size:14px;
+   line-height:25px;
+   font-family:Arial, sans-serif;
+   background-image: url(bg.png);
+   padding: 50px 0 50px 0;
+}
+
+.clear {
+    clear:both;
+}
+
+h1 {
+    font-size:60px;
+    line-height:60px;
+    font-family:georgia, Arial, serif;
+    margin-bottom:15px;
+    font-weight:normal;
+}
+
+h2 {
+    font-size:20px;
+    line-height:20px;
+    margin-bottom:15px;
+    font-family:Arial, sans-serif;
+    color:black;
+}
+
+h3 {
+    font-size:16px;
+    line-height:16px;
+    margin-bottom:15px;
+    font-family:Arial, serif;
+    color:#000;
+    font-style:italic;
+}
+
+p {
+    margin-bottom:25px;
+	text-indent: 3ex; 
+}
+
+a {
+   color: #3F8055;
+   text-decoration:none;
+}
+
+a:hover {
+    text-decoration:underline;
+}
+
+strong {
+    font-style:normal;
+    font-weight:bold;
+}
+
+em {
+    font-style:italic;
+    font-weight:normal;
+}
+
+.dfn {
+	font-family:Consolas, "Courier New", monospace;
+	font-size:16px;
+    font-style: normal;
+	background: #BC2932;
+	color: white;
+	white-space: nowrap;
+	padding: 1px 3px 1px 3px;
+}
+
+.highlight {
+	margin-left: 3ex;
+	margin-right: 3ex;
+}
+
+ul {
+    list-style-type:disc;
+    margin:25px 25px;
+	padding-left: 3ex;
+}
+
+ul p {
+	text-indent: 0;
+}
+
+
+.document {
+   background-color:white;
+   padding: 20px 0 20px 0;
+}
+
+.documentwrapper {
+    width:800px;
+    margin:0px auto;
+}
+
+
+img.align-right {
+    float: right;
+    margin:10px;
+}
+
+img.align-left {
+    float: left;
+    margin:10px;
+}
+
+img.align-center {
+    margin:10px auto 25px auto;
+    display:block;
+}
+
+
+.pre {
+	font-family:Consolas, "Courier New", monospace;
+    color: #555;
+    font-weight:bold;
+	white-space: nowrap;
+}
+
+
+.related {
+   width: 100%;
+   display: block;
+   background-color:white;
+   padding: 20px 0 20px 0;
+}
+
+.related h3 {
+   display: none;
+}
+
+.related a {
+   color: #555;
+   text-decoration: none;
+}
+
+.related a:hover {
+   text-decoration: underline;
+}
+
+.related ul {
+   display: table;
+   width: 800px;
+   margin: 0 auto;
+   white-space: nowrap;
+   list-style-type: none;
+}
+
+.related ul li {
+   display: inline;
+   padding-right: 1em;
+}
+
+
+.headerlink, .footer {
+    display: none;
+}
+
+
+
+.toctree-wrapper ul {
+    list-style-type:decimal;
+    font-family:arial,serif;
+    font-size:24px;
+    padding-left: 30px;
+    margin: 15px 0 25px 0;
+    color:#408156 ;
+}
+
+.toctree-wrapper ul > li {
+    font-family:georgia,serif;
+}
+
+.toctree-wrapper ul > li > a {
+    text-decoration:none;
+    color:black;
+    display:block;
+    border-bottom:1px solid #ddd;
+}
+
+.toctree-wrapper ul > li > a:visited {
+    color:#555;
+}
+
+.toctree-wrapper ul > li > a:hover {
+    color:#BD2A33;
+}
+
+.toctree-wrapper ul > li > a.upcoming {
+    color:#888;
+}
+
+.toctree-wrapper ul > li > a.upcoming:hover {
+    color:#888;
+}
+
+.toctree-wrapper ul > li> ul  {
+    line-height:40px;
+    font-family:arial, sans-serif;
+}
+
+.toctree-wrapper ul > li> ul> li {
+    list-style-type:none;
+}
+
+.toctree-wrapper ul > li > ul > li > a {
+   font-size:16px;
+   color:black;
+   text-decoration:underline;
+   border-bottom: none;
+}
+
+.toctree-wrapper ul > li > ul > li > a:visited {
+    color:#777;
+}
+
+.toctree-wrapper ul > li > ul > li > a:hover {
+    color:#BD2A33;
+}
+
+
+.highlight {   
+   font-family:Consolas, "Courier New", monospace;
+   font-size:14px;
+   line-height:16px;
+   padding:5px;
+   margin-bottom:25px;
+   white-space: normal;
+}
+
+.note {
+    padding: 5px 10px 5px 10px;
+    background-color:#ffc;
+    margin-bottom:25px;
+    background-image:url(note.jpg);
+}
+
+.note .first {
+   display: inline;
+   font-weight:bold;
+}
+
+.note p {
+    margin-bottom: 0;	
+	text-indent: 0;
+}
+
+.math {
+   vertical-align: top;
+   padding: 0 1ex 0 1ex;
+}
+
+.highlight {
+	overflow: auto;
+    padding: 1ex 2ex 1ex 2ex;
+}
+
+/* pre.code { */
+/*     color:white; */
+/*     /\*background-color:#522812;*\/ */
+/*     background-color:black; */
+/*     font-family:Consolas, "Courier New", monospace; */
+/*     font-size:12px; */
+/*     line-height:16px; */
+/*     padding:5px; */
+/*     margin-bottom:25px; */
+/*     background-repeat:no-repeat; */
+/*     background-position:top right; */
+/* } */
+
+/* .hs ol li { */
+/*     /\*background-image:url(hs.jpg);*\/ */
+/*     background-color:black; */
+/* } */
+
+
+/* .label { */
+/*     white-space:nowrap; */
+/*     font-family:Consolas, "Courier New", monospace; */
+/*     font-size:16px; */
+/*     padding:0px 3px; */
+/* } */
+
+/* .function { */
+/*     background-color:#c00; */
+/*     color:white; */
+/* } */
+
+/* .type { */
+/*     background-color:#519179; */
+/*     color:white; */
+/* } */
+
+/* .class { */
+/*     background-color:#CC33CC; */
+/*     color:white; */
+/* } */
+
+/* .law { */
+/*     background-color:#99DDcc; */
+/*     color:black; */
+/* } */
+
+
+
+
+/* .bgwrapper { */
+/*     margin-top:50px; */
+/*     margin-bottom:50px; */
+/*     background-color:white; */
+/*     padding:25px 0 50px 0; */
+/* } */
+
+/* .footdiv { */
+/*     width:100%; */
+/*     display:table; */
+/* } */
+
+/* .footdiv ul { */
+/*     display:table-row; */
+/* } */
+
+/* .footdiv ul li { */
+/*     display:table-cell; */
+/*     width:33%; */
+/* } */
+
+/* .prevlink { */
+/*     padding-left:20px; */
+/*     background-image:url(prv.png); */
+/*     background-position:0px 3px; */
+/*     background-repeat:no-repeat; */
+/* } */
+
+/* .nxtlink { */
+/*     padding-right:20px; */
+/*     background-image:url(nxt.png); */
+/*     background-position:top right; */
+/*     background-repeat:no-repeat; */
+/* } */
+
+/* .splashdiv { */
+/*     width:700px; */
+/*     margin:0 auto; */
+/*     color:white; */
+/* } */
+
+/* .splashdiv a { */
+/*     color:white; */
+/* } */
+
+/* .splashdiv .introtext { */
+/*     width:550px; */
+/*     float:left; */
+/*     text-align:left; */
+/* } */
+
+/* .splashdiv .go { */
+/*     width:150px; */
+/*     float:left; */
+/*     text-align:right; */
+/* } */
+
+/* p.exercise { */
+/*     font-weight:bold; */
+/*     color:black; */
+/*     margin-bottom:0px; */
+/* } */
+

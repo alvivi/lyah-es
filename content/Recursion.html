@@ -1,0 +1,364 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Recursión &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
+    <link rel="next" title="Funciones de orden superior" href="OrdenSuperior.html" />
+    <link rel="prev" title="La sintaxis de las funciones" href="Funciones.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="OrdenSuperior.html" title="Funciones de orden superior"
+             accesskey="N">siguiente</a></li>
+        <li class="right" >
+          <a href="Funciones.html" title="La sintaxis de las funciones"
+             accesskey="P">anterior</a> |</li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="recursion">
+<h1>Recursión<a class="headerlink" href="#recursion" title="Enlazar permanentemente con este título">¶</a></h1>
+<div class="section" id="hola-recursion">
+<h2>¡Hola recursión!<a class="headerlink" href="#hola-recursion" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="Rusia sovietica" class="align-left" src="../_images/recursion.png" />
+<p>En el capítulo anterior ya mencionamos la recursión. En este capítulo veremos
+más detenidamente este tema, el porqué es importante en Haskell y como podemos
+crear soluciones a problemas de forma elegante y concisa.</p>
+<p>Si aún no sabes que es la recursión, lee esta frase: La recursión es en realidad
+una forma de definir funciones en la que dicha función es utiliza en la propia
+definición de la función. Las definiciones matemáticas normalmente están
+definidas usando recursión. Por ejemplo, la serie de Fibonacci se define
+recursivamente. Primero, definimos los dos primeros números de Fibonacci de
+forma no recursiva. Decimos que <tt class="docutils literal"><span class="pre">F(0)</span> <span class="pre">=</span> <span class="pre">0</span></tt> y <tt class="docutils literal"><span class="pre">F(1)</span> <span class="pre">=</span> <span class="pre">1</span></tt>, que significa que
+el 1º y el 2º número de Fibonacci es 0 y 1, respectivamente. Luego, para
+cualquier otro índice, el número de Fibonacci es la suma de los dos números de
+Fibonacci anteriores. Así que <tt class="docutils literal"><span class="pre">F(n)</span> <span class="pre">=</span> <span class="pre">F(n-1)</span> <span class="pre">+</span> <span class="pre">F(n-2)</span></tt>. De esta forma,
+<tt class="docutils literal"><span class="pre">F(3)</span> <span class="pre">=</span> <span class="pre">F(2)</span> <span class="pre">+</span> <span class="pre">F(1)</span></tt> que es <tt class="docutils literal"><span class="pre">F(3)</span> <span class="pre">=</span> <span class="pre">(F(1)</span> <span class="pre">+</span> <span class="pre">F(0))</span> <span class="pre">+</span> <span class="pre">F(1)</span></tt>. Como hemos bajado
+hasta los únicos números definidos no recursivamente de la serie de Fibonacci,
+podemos asegurar que <tt class="docutils literal"><span class="pre">F(3)</span> <span class="pre">=</span> <span class="pre">2</span></tt>. Los elementos definidos no recursivamente,
+como <tt class="docutils literal"><span class="pre">F(0)</span></tt> o <tt class="docutils literal"><span class="pre">F(1)</span></tt>, se llaman <strong>casos base</strong>, y si tenemos solo casos
+base en una definición como en <tt class="docutils literal"><span class="pre">F(3)</span> <span class="pre">=</span> <span class="pre">(F(1)</span> <span class="pre">+</span> <span class="pre">F(0))</span> <span class="pre">+</span> <span class="pre">F(1)</span></tt> se denomina
+<strong>condición límite</strong>, la cual es muy importante si quieres que tu función
+termine. Si no hubiéramos definido <tt class="docutils literal"><span class="pre">F(0)</span></tt> y <tt class="docutils literal"><span class="pre">F(1)</span></tt> no recursivamente, nunca
+obtendríamos un resultado para un número cualquiera, ya que alcanzaríamos <tt class="docutils literal"><span class="pre">0</span></tt>
+y continuaríamos con los número negativos. De repente, encontraríamos un
+<tt class="docutils literal"><span class="pre">F(-2000)</span> <span class="pre">=</span> <span class="pre">F(-2001)</span> <span class="pre">+</span> <span class="pre">F(-2002)</span></tt> y seguiríamos sin ver un final.</p>
+<p>La recursión es muy importante en Haskell ya que, al contrario que en los
+lenguajes imperativos, realizamos cálculos declarando como <strong>es</strong> algo, en lugar
+de declarar <strong>como</strong> obtener algo. Por este motivo no hay bucles <tt class="docutils literal"><span class="pre">while</span></tt> o
+bucles <tt class="docutils literal"><span class="pre">for</span></tt> en Haskell y en su lugar tenemos que usar la recursión para
+declarar como es algo.</p>
+</div>
+<div class="section" id="el-impresionante-maximum">
+<h2>El impresionante maximum<a class="headerlink" href="#el-impresionante-maximum" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>La función <tt class="docutils literal"><span class="pre">maximum</span></tt> toma una lista de cosas que pueden ser ordenadas (es
+decir instancias de la clase de tipos <tt class="docutils literal"><span class="pre">Ord</span></tt>) y devuelve la más grande. Piensa
+en como implementarías esto de forma imperativa. Probablemente crearías una
+variable para mantener el valor máximo hasta el momento y luego recorrerías los
+elementos de la lista de forma que si un elemento es mayor que el actual valor
+máximo lo remplazarías. El máximo valor que se mantenga al final es el
+resultado. ¡Wau! son muchas palabras para definir un algoritmo tan simple.</p>
+<p>Ahora vamos a ver como definiríamos esto de forma recursiva. Primero podríamos
+establecer un caso base diciendo que el máximo de una lista unitaria es el único
+elemento que contiene la lista. Luego podríamos decir que el máximo de una lista
+más larga es la cabeza de esa lista si es mayor que el máximo de la cola, o el
+máximo de la cola en caso de que no lo sea. ¡Eso es! Vamos a implementarlo en
+Haskell.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">maximum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">maximum&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;maximum of empty list&quot;</span>
+<span class="nf">maximum&#39;</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">=</span> <span class="n">x</span>
+<span class="nf">maximum&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">maxTail</span> <span class="ow">=</span> <span class="n">x</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">maxTail</span>
+    <span class="kr">where</span> <span class="n">maxTail</span> <span class="ow">=</span> <span class="n">maximum&#39;</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>Como puedes ver el ajuste de patrones funcionan genial con la recursión. Muchos
+lenguajes imperativos no tienen patrones así que hay que utilizar muchos
+<tt class="docutils literal"><span class="pre">if</span></tt>/<tt class="docutils literal"><span class="pre">else</span></tt> para implementar los casos base. El primer caso base dice que si
+una lista está vacía, ¡Error! Tiene sentido porque ¿Cuál es el máximo de una
+lista vacía? No tengo ni idea. El segundo patrón también representa un caso
+base. Dice que si nos dan una lista unitaria simplemente devolvemos el único
+elemento.</p>
+<p>En el tercer patrón es donde está la acción. Usamos un patrón para dividir la
+lista en cabeza y cola. Esto es algo muy común cuando usamos una recursión con
+listas, así que ves acostumbrandote. Usamos una sección <tt class="docutils literal"><span class="pre">where</span></tt> para definir
+<tt class="docutils literal"><span class="pre">maxTail</span></tt> como el máximo del resto de la lista. Luego comprobamos si la cabeza
+es mayor que el resto de la cola. Si lo es, devolvemos la cabeza, si no, el
+máximo del resto de la lista.</p>
+<p>Vamos a tomar una lista de números de ejemplo y comprobar como funcionaria:
+<tt class="docutils literal"><span class="pre">[2,5,1]</span></tt>. Si llamamos <tt class="docutils literal"><span class="pre">maximum'</span></tt> con esta lista, los primeros dos patrones
+no ajustarían. El tercero si lo haría y la lista se dividiría en <tt class="docutils literal"><span class="pre">2</span></tt> y
+<tt class="docutils literal"><span class="pre">[5,1]</span></tt>. La sección <tt class="docutils literal"><span class="pre">where</span></tt> requiere saber el máximo de <tt class="docutils literal"><span class="pre">[5,1]</span></tt> así que
+nos vamos por ahí. Se ajustaría con el tercer patrón otra vez y <tt class="docutils literal"><span class="pre">[5,1]</span></tt> sería
+dividido en <tt class="docutils literal"><span class="pre">5</span></tt> y <tt class="docutils literal"><span class="pre">[1]</span></tt>. Otra vez, la sección <tt class="docutils literal"><span class="pre">where</span></tt> requiere saber el
+máximo de <tt class="docutils literal"><span class="pre">[1]</span></tt>. Como esto es un caso base, devuelve 1. ¡Por fin! Así que
+subimos un paso, comparamos <tt class="docutils literal"><span class="pre">5</span></tt> con el máximo de <tt class="docutils literal"><span class="pre">[1]</span></tt> (que es <tt class="docutils literal"><span class="pre">1</span></tt>),
+sorprendentemente obtenemos 5. Así que ahora sabemos que el máximo de <tt class="docutils literal"><span class="pre">[5,1]</span></tt>
+es <tt class="docutils literal"><span class="pre">5</span></tt>. Subimos otro paso y tenemos <tt class="docutils literal"><span class="pre">2</span></tt> y <tt class="docutils literal"><span class="pre">[5,1]</span></tt>. Comparamos <tt class="docutils literal"><span class="pre">2</span></tt> con el
+máximo de <tt class="docutils literal"><span class="pre">[5,1]</span></tt>, que es <tt class="docutils literal"><span class="pre">5</span></tt> y elegimos <tt class="docutils literal"><span class="pre">5</span></tt>.</p>
+<p>Una forma más clara de escribir la función <tt class="docutils literal"><span class="pre">maximum'</span></tt> es usando la función
+<tt class="docutils literal"><span class="pre">max</span></tt>. Si recuerdas, la función <tt class="docutils literal"><span class="pre">max</span></tt> toma dos números y devuelve el mayor
+de ellos. Así es como podríamos reescribir la función usando <tt class="docutils literal"><span class="pre">max</span></tt>:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">maximum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">maximum&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;maximum of empty list&quot;</span>
+<span class="nf">maximum&#39;</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">=</span> <span class="n">x</span>
+<span class="nf">maximum&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">max</span> <span class="n">x</span> <span class="p">(</span><span class="n">maximum&#39;</span> <span class="n">xs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>¿Te parece elegante eso? En esencia, el máximo de una lista es el máximo de su
+primer elemento y el máximo del resto de sus elementos.</p>
+<img alt="Máximo" class="align-center" src="../_images/maxs.png" />
+</div>
+<div class="section" id="unas-cuantas-funciones-recursivas-mas">
+<h2>Unas cuantas funciones recursivas más<a class="headerlink" href="#unas-cuantas-funciones-recursivas-mas" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Ahora que sabemos cómo pensar en general, de forma recursiva, vamos a
+implementar unas cuantas funciones de forma recursiva. En primer lugar, vamos a
+implementar <tt class="docutils literal"><span class="pre">replicate</span></tt>. <tt class="docutils literal"><span class="pre">replicate</span></tt> toma un <tt class="docutils literal"><span class="pre">Int</span></tt> y algún elemento y
+devuelve una lista que contiene varias repeticiones de ese mismo elemento. Por
+ejemplo, <tt class="docutils literal"><span class="pre">replicate</span>&nbsp; <span class="pre">3</span> <span class="pre">5</span></tt> devuelve <tt class="docutils literal"><span class="pre">[5,5,5]</span></tt>. Vamos a pensar en el caso
+base. Mi intuición me dice que el caso base es 0 o menos. Si intentamos replicar
+algo 0 o menos veces, debemos devolver una lista vacía. También para números
+negativos ya que no tiene sentido.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">replicate&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">i</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">i</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">replicate&#39;</span> <span class="n">n</span> <span class="n">x</span>
+    <span class="o">|</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span>    <span class="ow">=</span> <span class="kt">[]</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">x</span><span class="kt">:</span><span class="n">replicate&#39;</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Aquí usamos guardas en lugar de patrones porque estamos comprobando una
+condición booleana. Si <tt class="docutils literal"><span class="pre">n</span></tt> es menor o igual que 0 devolvemos una lista vacía.
+En otro caso devolvemos una lista que tiene <tt class="docutils literal"><span class="pre">x</span></tt> como primer elemento y <tt class="docutils literal"><span class="pre">x</span></tt>
+replicado n-1 veces como su cola. Finalmente, la parte n-1 hará que nuestra
+función alcance el caso base.</p>
+<p>Ahora vamos a implementar <tt class="docutils literal"><span class="pre">take</span></tt>. Esta función toma un cierto número de
+elementos de una lista. Por ejemplo, <tt class="docutils literal"><span class="pre">take</span> <span class="pre">3</span> <span class="pre">[5,4,3,2,1]</span></tt> devolverá
+<tt class="docutils literal"><span class="pre">[5,4,3]</span></tt>. Si intentamos obtener 0 o menos elementos de una lista, obtendremos
+una lista vacía. También si intentamos tomar algo de una lista vacía,
+obtendremos una lista vacía. Fíjate que ambos son casos base. Vamos a escribir
+esto.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">take&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">i</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">i</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">take&#39;</span> <span class="n">n</span> <span class="kr">_</span>
+    <span class="o">|</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span>   <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">take&#39;</span> <span class="kr">_</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">take&#39;</span> <span class="n">n</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">take&#39;</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<img alt="Pintor" class="align-right" src="../_images/painter.png" />
+<p>El primer patrón indica que si queremos obtener 0 o un número negativo de
+elementos, obtenemos una lista vacía. Date cuenta de que estamos usando <tt class="docutils literal"><span class="pre">_</span></tt>
+para enlazar la lista ya que realmente no nos importa en este patrón. Además
+también estamos usando una guarda, pero sin la parte <tt class="docutils literal"><span class="pre">otherwise</span></tt>. Esto
+significa que si <tt class="docutils literal"><span class="pre">n</span></tt> acaba siendo algo más que 0, el patrón fallará y
+continuará hacia el siguiente. El segundo patrón indica que si intentamos tomar
+algo de una lista vacía, obtenemos una lista vacía. El tercer patrón rompe la
+lista en cabeza y cola. Luego decimos que si tomamos <tt class="docutils literal"><span class="pre">n</span></tt> elementos de una
+lista es igual a una lista que tiene <tt class="docutils literal"><span class="pre">x</span></tt> como cabeza y como cola una lista que
+tome n-1 elementos de la cola. Intenta usar papel y lápiz para seguir el
+desarrollo de como sería la evaluación de, digamos, <tt class="docutils literal"><span class="pre">take</span> <span class="pre">3</span> <span class="pre">[4,3,2,1]</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">reverse</span></tt> simplemente pone al revés una lista. Piensa en el caso base, ¿Cuál
+es? Vamos... ¡Es una lista vacía! Una lista inversa es igual a esa misma lista
+vacía. Vale, ¿Qué hay del resto de la lista? Podríamos decir que si dividimos
+una lista en su cabeza y cola, la lista inversa es igual a la cola invertida y
+luego la cabeza al final.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">reverse&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">reverse&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">reverse&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">reverse&#39;</span> <span class="n">xs</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>¡Ahí lo tienes!</p>
+<p>Como Haskell soporta listas infinitas, en realidad nuestra recursión no tiene
+porque tener casos base. Pero si no los tiene, seguiríamos calculando algo
+infinitamente o bien produciendo una estructura infinita. Sin embargo, lo bueno
+de estas listas infinitas es que podemos cortarlas por donde queramos.
+<tt class="docutils literal"><span class="pre">repeat</span></tt> toma un elemento y devuelve una lista infinita que simplemente tiene
+ese elemento. Una implementación recursiva es extremadamente simple, mira:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">repeat&#39;</span> <span class="ow">::</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">repeat&#39;</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">repeat&#39;</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Llamando a <tt class="docutils literal"><span class="pre">repeat</span> <span class="pre">3</span></tt> nos daría una lista que tiene un <tt class="docutils literal"><span class="pre">3</span></tt> en su cabeza y
+luego tendría una lista infinita de treses en su cola. Así que <tt class="docutils literal"><span class="pre">repeat</span> <span class="pre">3</span></tt> se
+evaluaría a algo como <tt class="docutils literal"><span class="pre">3:(repeat</span> <span class="pre">3)</span></tt>, que es <tt class="docutils literal"><span class="pre">3:(3:(repeat</span> <span class="pre">3))</span></tt>, que es
+<tt class="docutils literal"><span class="pre">3:(3:(3:(repeat</span> <span class="pre">3)))</span></tt>, etc. <tt class="docutils literal"><span class="pre">repeat</span> <span class="pre">3</span></tt> nunca terminará su evaluación,
+mientras que <tt class="docutils literal"><span class="pre">take</span> <span class="pre">5</span> <span class="pre">(repeat</span> <span class="pre">3)</span></tt> nos devolverá un lista con cinco treses. Es
+igual que hacer <tt class="docutils literal"><span class="pre">replicate</span> <span class="pre">5</span> <span class="pre">3</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">zip</span></tt> toma dos listas y las combina en una. <tt class="docutils literal"><span class="pre">zip</span> <span class="pre">[1,2,3]</span> <span class="pre">[2,3]</span></tt> devuelve
+<tt class="docutils literal"><span class="pre">[(1,2),(2,3)]</span></tt> ya que trunca la lista más larga para que coincida con la más
+corta. ¿Qué pasa si combinamos algo con la lista vacía? Bueno, obtendríamos un
+una lista vacía. Así que es este es nuestro caso base. Sin embargo, <tt class="docutils literal"><span class="pre">zip</span></tt> toma
+dos listas como parámetros, así que en realidad tenemos dos casos base.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">zip&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)]</span>
+<span class="nf">zip&#39;</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">zip&#39;</span> <span class="kt">[]</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">zip&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="kt">:</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span><span class="kt">:</span><span class="n">zip&#39;</span> <span class="n">xs</span> <span class="n">ys</span>
+</pre></div>
+</div>
+<p>Los dos primeros patrones dicen que si la primera o la segunda lista están
+vacías, entonces obtenemos una lista vacía. Combinar <tt class="docutils literal"><span class="pre">[1,2,3]</span></tt> y
+<tt class="docutils literal"><span class="pre">['a','b']</span></tt> finalizará intentando combinar <tt class="docutils literal"><span class="pre">[3]</span></tt> y <tt class="docutils literal"><span class="pre">[]</span></tt>. El caso base
+aparecerá en escena y el resultado será <tt class="docutils literal"><span class="pre">(1,'a'):(2,'b'):[]</span></tt> que exactamente
+lo mismo que <tt class="docutils literal"><span class="pre">[(1,'a'),(2,'b')]</span></tt>.</p>
+<p>Vamos a implementar una función más de la biblioteca estándar, <tt class="docutils literal"><span class="pre">elem</span></tt>, que
+toma un elemento y una lista y busca si dicho elemento está en esa lista. El
+caso base, como la mayoría de las veces con las listas, es la lista vacía.
+Sabemos que una lista vacía no contiene elementos, así que lo más seguro es que
+no contenga el elemento que estamos buscando...</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">elem&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Eq</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<span class="nf">elem&#39;</span> <span class="n">a</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">False</span>
+<span class="nf">elem&#39;</span> <span class="n">a</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">a</span> <span class="o">==</span> <span class="n">x</span>    <span class="ow">=</span> <span class="kt">True</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="n">a</span> <span class="p">`</span><span class="n">elem&#39;</span><span class="p">`</span> <span class="n">xs</span>
+</pre></div>
+</div>
+<p>Bastante simple y previsible. Si la cabeza no es elemento que estamos buscando
+entonces buscamos en la cola. Si llegamos a una lista vacía, el resultado es
+falso.</p>
+</div>
+<div class="section" id="quicksort">
+<span id="id1"></span><h2>¡Quicksort!<a class="headerlink" href="#quicksort" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="Quickman" class="align-left" src="../_images/quickman.png" />
+<p>Tenemos una lista de elemento que pueden ser ordenados. Su tipo es miembro de la
+clase de tiposs <tt class="docutils literal"><span class="pre">Ord</span></tt>. Y ahora, queremos ordenarlos. Existe un algoritmo muy
+interesante para ordenarlos llamado quicksort. Es una forma muy inteligente de
+ordenar elementos. Mientras en algunos lenguajes imperativos puede tomar hasta
+10 líneas de código para implementar quicksort, en Haskell la implementación es
+mucho más corta y elegante. Quicksort se ha convertido en usa especie de pieza
+de muestra de Haskell. Por lo tanto, vamos a implementarlo, a pesar de que la
+implementación de quicksort en Haskell se considera muy cursi ya que todo el
+mundo lo hace en las presentaciones para mostrar lo elegante que puede llegar
+a ser haskell.</p>
+<p>Bueno, la definición de tipo va a ser <tt class="docutils literal"><span class="pre">quicksort</span> <span class="pre">::</span> <span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">[a]</span></tt>.
+Ninguna sorpresa. ¿Caso base? La lista vacía, como era de esperar. Ahora viene
+el algoritmo principal: una lista ordenada es una lista que tiene todos los
+elementos menores (o iguales) que la cabeza al principio (y esos valores están
+ordenados), luego viene la cabeza de la lista que estará en el medio y luego
+vienen los elementos que son mayores que la cabeza (que también estarán
+ordenados). Hemos dicho dos veces &#8220;ordenados&#8221;, así que probablemente
+tendremos que hacer dos llamadas recursivas. También hemos usado dos veces el
+verbo &#8220;es&#8221; para definir el algoritmo en lugar de &#8220;hace esto&#8221;, &#8220;hace aquello&#8221;,
+&#8220;entonces hace&#8221;... ¡Esa es la belleza de la programación funcional! ¿Cómo
+vamos a conseguir filtrar los elementos que son mayores y menores que la cabeza
+de la lista? Con listas por comprensión. Así que empecemos y definamos esta
+función:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">quicksort</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">quicksort</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">quicksort</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span>
+    <span class="kr">let</span> <span class="n">smallerSorted</span> <span class="ow">=</span> <span class="n">quicksort</span> <span class="p">[</span><span class="n">a</span> <span class="o">|</span> <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">biggerSorted</span> <span class="ow">=</span> <span class="n">quicksort</span> <span class="p">[</span><span class="n">a</span> <span class="o">|</span> <span class="n">a</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">x</span><span class="p">]</span>
+    <span class="kr">in</span>  <span class="n">smallerSorted</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span> <span class="n">biggerSorted</span>
+</pre></div>
+</div>
+<p>Vamos a ejecutar una pequeña prueba para ver si se comporta correctamente.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">quicksort</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">quicksort</span> <span class="s">&quot;the quick brown fox jumps over the lazy dog&quot;</span>
+<span class="s">&quot;        abcdeeefghhijklmnoooopqrrsttuuvwxyz&quot;</span>
+</pre></div>
+</div>
+<p>Bien, ¡Eso es de lo que estaba hablando! Así que si tenemos, digamos
+<tt class="docutils literal"><span class="pre">[5,1,9,4,6,7,3]</span></tt> y queremos ordenarlos, este algoritmo primero tomará la
+cabeza de la lista, que es 5 y lo pondrá en medio de dos listas que son los
+menores y los mayores de este. De esta forma tendremos
+<tt class="docutils literal"><span class="pre">(quicksort</span> <span class="pre">[1,4,3])</span> <span class="pre">++</span> <span class="pre">[5]</span> <span class="pre">++</span> <span class="pre">(quicksort</span> <span class="pre">[9,6,7])</span></tt>. Sabemos que cuando la
+lista este completamente ordenada, el número <tt class="docutils literal"><span class="pre">5</span></tt> permanecerá en la cuarta
+posición ya que hay tres números menores y tres números mayores que él. Ahora
+si ordenamos <tt class="docutils literal"><span class="pre">[1,4,3]</span></tt> y <tt class="docutils literal"><span class="pre">[9,6,7]</span></tt> ¡tendremos una lista ordenada! Ordenamos
+estas dos listas utilizando la misma función. Al final llegaremos a un punto en
+el que alcanzaremos listas vacías y las listas vacías ya están ordenadas
+de alguna forma. Aquí tienes una ilustración:</p>
+<img alt="Quicksort" class="align-center" src="../_images/quicksort.png" />
+<p>Un elemento que está en su posición correcta y no se moverá más está en naranja.
+Si los lees de izquierda a derecha verás que es la lista ordenada. Aunque
+elegimos comparar todos los elemento con la cabeza, podríamos haber elegido
+cualquier otro elemento. En quicksort, se llama pivote al elemento con el que
+comparamos. Estos son los de color verde. Elegimos la cabeza porque es muy
+fácil aplicarle un patrón. Los elementos que son más pequeños que el pivote son
+de color verde claro y los elementos que son mayores en negro. El gradiente
+amarillo representa la aplicación de quicksort.</p>
+</div>
+<div class="section" id="pensando-de-forma-recursiva">
+<h2>Pensando de forma recursiva<a class="headerlink" href="#pensando-de-forma-recursiva" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Hasta ahora hemos usado un poco la recursión, y como te habrás dado cuenta
+existen unos pasos comunes. Normalmente primero definimos los casos base y luego
+definimos una función que hace algo entre un elemento y la función aplicada al
+resto de elementos. No importa si este elemento es una lista, un árbol o
+cualquier otra estructura de datos. Un sumatorio es la suma del primer elemento
+más la suma del resto de elementos. Un productorio es el producto del primer
+elemento entre el producto del resto de elementos. El tamaño de una lista es
+1 más el tamaño del resto de la lista, etc.</p>
+<img alt="Cerebro" class="align-left" src="../_images/brain.png" />
+<p>Por supuesto también existen los casos base. Por lo general un caso base es un
+escenario en el que la aplicación de una recursión no tiene sentido. Cuando
+trabajamos con listas, los casos base suelen tratar con listas vacías. Cuando
+utilizamos árboles los casos base son normalmente los nodos que no tienen hijos.</p>
+<p>Es similar cuando tratamos con números. Normalmente hacemos algo con un número
+y luego aplicamos la función a ese número modificado. Ya hicimos funciones
+recursivas de este tipo como el del factorial de un número, la cual no tiene
+sentido con cero, ya que el factorial solo está definido para enteros positivos.
+A menudo el caso base resulta ser la identidad. La identidad de la
+multiplicación es 1 ya que si multiplicas algo por 1 obtienes el mismo
+resultado. También cuando realizamos sumatorios de listas, definimos como 0 al
+sumatorio de una lista vacía, ya que 0 es la identidad de la suma. En quicksort,
+el caso base es la lista vacía y la identidad es también la lista vacía, ya que
+si añades a una lista la lista vacía obtienes la misma lista ordenada.</p>
+<p>Así que cuanto pienses en resolver un problema de forma recursiva, intenta
+pensar donde no se aplica una solución recursiva y si puedes utilizar esto como
+un caso base. Piensa en las identidades, por donde deberías romper los
+parámetros (por ejemplo, las lista se rompen en cabeza y cola) y en que parte
+deberías aplicar la función recursiva.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="OrdenSuperior.html" title="Funciones de orden superior"
+             >siguiente</a></li>
+        <li class="right" >
+          <a href="Funciones.html" title="La sintaxis de las funciones"
+             >anterior</a> |</li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright Miran Lipovača.
+      Creado con <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+  </body>
+</html>
