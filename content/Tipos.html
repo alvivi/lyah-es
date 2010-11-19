@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Tipos y clases de tipos &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="La sintaxis de las funciones" href="Funciones.html" />
     <link rel="prev" title="Empezando" href="Empezando.html" /> 
@@ -49,7 +49,7 @@
 <h1>Tipos y clases de tipos<a class="headerlink" href="#tipos-y-clases-de-tipos" title="Enlazar permanentemente con este título">¶</a></h1>
 <div class="section" id="cree-en-el-tipo">
 <h2>Cree en el tipo<a class="headerlink" href="#cree-en-el-tipo" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="¡Vaca!" class="align-left" src="../_images/cow.png" />
+<img alt="¡Vaca!" class="align-left" src="../images/cow.png" />
 <p>Anteriormente mencionamos que Haskell tiene un sistema de tipos estático. Se
 conoce el tipo de cada expresión en tiempo de compilación, lo que produce código
 más seguro. Si escribes un programa donde intentas dividir un valor de tipo
@@ -81,7 +81,7 @@ dice su tipo. Vamos a dar un vistazo:</p>
 <span class="mi">4</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">::</span> <span class="kt">Bool</span>
 </pre></div>
 </div>
-<img alt="Bomba" class="align-right" src="../_images/bomb.png" />
+<img alt="Bomba" class="align-right" src="../images/bomb.png" />
 <p>Podemos ver que ejecutando el comando <tt class="docutils literal"><span class="pre">:t</span></tt> sobre una expresión se muestra esa
 misma expresión seguida de <tt class="docutils literal"><span class="pre">::</span></tt> y de su tipo. <tt class="docutils literal"><span class="pre">::</span></tt> se puede leer como <em>tiene
 el tipo</em>. Los tipos explícitos siempre se denotan con su primera letra en
@@ -189,7 +189,7 @@ verlo:</p>
 <span class="nf">head</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 </pre></div>
 </div>
-<img alt="Caja" class="align-left" src="../_images/box.png" />
+<img alt="Caja" class="align-left" src="../images/box.png" />
 <p>Hmmm... ¿Qué es <tt class="docutils literal"><span class="pre">a</span></tt>? ¿Es un tipo? Si recuerdas antes dijimos que los tipos
 deben comenzar con mayúsculas, así que no puede ser exactamente un tipo. Como no
 comienza con una mayúscula es en realidad una <strong>variable de tipo</strong>. Esto
@@ -217,7 +217,7 @@ primer componente y el valor que devuelve la función son del mismo tipo.</p>
 </div>
 <div class="section" id="clases-de-tipos-paso-a-paso-1a-parte">
 <span id="clases-de-tipo-1"></span><h2>Clases de tipos paso a paso (1ª parte)<a class="headerlink" href="#clases-de-tipos-paso-a-paso-1a-parte" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Clases" class="align-right" src="../_images/classes.png" />
+<img alt="Clases" class="align-right" src="../images/classes.png" />
 <p>Las clases de tipos son una especie de interfaz que define algún comportamiento.
 Si un tipo es parte de una clase de tipos, significa que ese tipo soporta e
 implementa el comportamiento que define la clase de tipos. Un montón de gente que

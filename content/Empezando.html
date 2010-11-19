@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Empezando &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Tipos y clases de tipos" href="Tipos.html" />
     <link rel="prev" title="Introducción" href="Introduccion.html" /> 
@@ -49,7 +49,7 @@
 <h1>Empezando<a class="headerlink" href="#empezando" title="Enlazar permanentemente con este título">¶</a></h1>
 <div class="section" id="preparados-listos-ya">
 <h2>¡Preparados, listos, ya!<a class="headerlink" href="#preparados-listos-ya" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Empezando" class="align-right" src="../_images/startingout.png" />
+<img alt="Empezando" class="align-right" src="../images/startingout.png" />
 <p>Muy bien ¡Vamos a empezar! Si eres esa clase de persona horrible que no lee las
 introducciones y te la has saltado, quizás quieras leer la última
 sección de la introducción de todos modos porque explica lo que necesitas para
@@ -146,7 +146,7 @@ tiempo. Por ejemplo, <tt class="docutils literal"><span class="pre">*</span></tt
 multiplica. Como ya has visto, lo llamamos haciendo un sándwich sobre él. Esto
 es lo que nosotros llamamos funciones infijas. Muchas funciones que no son
 usadas con números son prefijas. Vamos a ver alguna de ellas.</p>
-<img alt="Ring Ring!" class="align-right" src="../_images/ringring.png" />
+<img alt="Ring Ring!" class="align-right" src="../images/ringring.png" />
 <p>Las funciones son prefijas normalmente así que de ahora en adelante no vamos ha
 declarar explícitamente que una función está en forma prefija, simplemente lo
 asumiremos. En muchos lenguajes imperativos las funciones son llamadas
@@ -270,7 +270,7 @@ suficientemente grandes por si solos.</p>
                         <span class="kr">else</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span>
 </pre></div>
 </div>
-<img alt="Bebe" class="align-left" src="../_images/baby.png" />
+<img alt="Bebe" class="align-left" src="../images/baby.png" />
 <p>Aquí hemos introducido la sentencia if de Haskell. Probablemente ya estés
 familiarizado con la sentencia if de otros lenguajes. La diferencia entre la
 sentencia if de Haskell y la de los lenguajes imperativos es que la para else
@@ -308,7 +308,7 @@ después de que las hayamos definido, <tt class="docutils literal"><span class="
 </div>
 <div class="section" id="una-introduccion-a-las-listas">
 <h2>Una introducción a las listas<a class="headerlink" href="#una-introduccion-a-las-listas" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Lista" class="align-left" src="../_images/list.png" />
+<img alt="Lista" class="align-left" src="../images/list.png" />
 <p>Al igual que las listas de compra en la vida real, las listas en Haskell son muy
 útiles. Es la estructura de datos más utilizada y pueden ser utilizadas de
 múltiples formas diferentes para modelar y resolver un montón de problemas. Las
@@ -438,7 +438,7 @@ cabeza de la lista.</p>
 </ul>
 </blockquote>
 <p>Si pensamos en las listas como en un monstruo, esto es lo que pasa.</p>
-<img alt="Monstruo" class="align-center" src="../_images/listmonster.png" />
+<img alt="Monstruo" class="align-center" src="../images/listmonster.png" />
 <p>¿Pero que pasa si intentamos obtener la cabeza de una lista vacía?</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">head</span> <span class="kt">[]</span>
 <span class="o">***</span> <span class="kt">Exception:</span> <span class="kt">Prelude</span><span class="o">.</span><span class="n">head</span><span class="kt">:</span> <span class="n">empty</span> <span class="n">list</span>
@@ -541,7 +541,7 @@ Veremos más funciones de listas más adelante.</p>
 </div>
 <div class="section" id="texas-rangos">
 <h2>Texas Rangos<a class="headerlink" href="#texas-rangos" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Cowboy" class="align-right" src="../_images/cowboy.png" />
+<img alt="Cowboy" class="align-right" src="../images/cowboy.png" />
 <p>¿Qué pasa si queremos una lista con todos los números entre el 1 y el 20? Claro,
 podríamos simplemente escribirlos pero obviamente hacer esto no es una solución
 para los señores que demandan la excelencia de sus lenguajes de programación.
@@ -623,16 +623,16 @@ de elementos de antemano. <tt class="docutils literal"><span class="pre">replica
 </div>
 <div class="section" id="soy-una-lista-por-comprension">
 <h2>Soy una lista por comprensión<a class="headerlink" href="#soy-una-lista-por-comprension" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Kermit" class="align-left" src="../_images/kermit.png" />
+<img alt="Kermit" class="align-left" src="../images/kermit.png" />
 <p>Si alguna vez tuviste clases de matemáticas, probablemente te toparas con los
 conjuntos por comprensión. Normalmente son utilizados para construir conjuntos
 más específicos a partir de otros más generales. Un conjunto por comprensión
 que contenga los diez primeros números naturales pares sería
-<img class="math" src="../_images/math/3507873edf12a9d2269271876dbc11944cb69732.png" alt="\mathrm{\mathsf{\mathrm{S=\{2\cdot x\left|\: x\in\mathbb{N},\: x\leq10\right.\}}}}"/>.
+<img class="math" src="../images/math/3507873edf12a9d2269271876dbc11944cb69732.png" alt="\mathrm{\mathsf{\mathrm{S=\{2\cdot x\left|\: x\in\mathbb{N},\: x\leq10\right.\}}}}"/>.
 La parte anterior al separador se llama la función de salida,
-<img class="math" src="../_images/math/c3960a2f7a4ca653275125c3a39cd1ae6436ee98.png" alt="\mathrm{\mathsf{\mathrm{x}}}"/> es la variable,
-<img class="math" src="../_images/math/02ba68b5a771d6994066f84bdaa1827ec275fcce.png" alt="\mathrm{\mathsf{\mathrm{\mathbb{N}}}}"/> es el conjunto de entrada y
-<img class="math" src="../_images/math/6c038624e63d0c51c57e538dc4f8894ad6ee7a2b.png" alt="\mathrm{\mathsf{\mathrm{x\leq10}}}"/> es el predicado. Esto significa que
+<img class="math" src="../images/math/c3960a2f7a4ca653275125c3a39cd1ae6436ee98.png" alt="\mathrm{\mathsf{\mathrm{x}}}"/> es la variable,
+<img class="math" src="../images/math/02ba68b5a771d6994066f84bdaa1827ec275fcce.png" alt="\mathrm{\mathsf{\mathrm{\mathbb{N}}}}"/> es el conjunto de entrada y
+<img class="math" src="../images/math/6c038624e63d0c51c57e538dc4f8894ad6ee7a2b.png" alt="\mathrm{\mathsf{\mathrm{x\leq10}}}"/> es el predicado. Esto significa que
 el conjunto contiene todos los dobles de los número naturales que cumplen el
 predicado.</p>
 <p>Si quisiéramos escribir esto en Haskell, podríamos usar algo como
@@ -752,7 +752,7 @@ especialmente si están anidadas.</p>
 </div>
 <div class="section" id="tuplas">
 <h2>Tuplas<a class="headerlink" href="#tuplas" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Tupla" class="align-right" src="../_images/tuple.png" />
+<img alt="Tupla" class="align-right" src="../images/tuple.png" />
 <p>De alguna forma, las tuplas son parecidas a las listas. Ambas son una forma de
 almacenar varios valores en un solo valor. Sin embargo, hay unas pocas
 diferencias fundamentales. Una lista de números es una lista de números. Ese es
@@ -860,7 +860,7 @@ finitas e infinitas:</p>
 <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;apple&quot;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;orange&quot;</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="s">&quot;cherry&quot;</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;mango&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
-<img alt="Pythag" class="align-center" src="../_images/pythag.png" />
+<img alt="Pythag" class="align-center" src="../images/pythag.png" />
 <p>He aquí un problema que combina las tuplas con las listas por comprensión: ¿Qué
 triángulo recto cuyos lados miden enteros menores que 10 tienen un perímetro
 igual a 24? Primero, vamos a intentar generar todos los triángulos con lados

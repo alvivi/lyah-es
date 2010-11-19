@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Recursión &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Funciones de orden superior" href="OrdenSuperior.html" />
     <link rel="prev" title="La sintaxis de las funciones" href="Funciones.html" /> 
@@ -49,7 +49,7 @@
 <h1>Recursión<a class="headerlink" href="#recursion" title="Enlazar permanentemente con este título">¶</a></h1>
 <div class="section" id="hola-recursion">
 <h2>¡Hola recursión!<a class="headerlink" href="#hola-recursion" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Rusia sovietica" class="align-left" src="../_images/recursion.png" />
+<img alt="Rusia sovietica" class="align-left" src="../images/recursion.png" />
 <p>En el capítulo anterior ya mencionamos la recursión. En este capítulo veremos
 más detenidamente este tema, el porqué es importante en Haskell y como podemos
 crear soluciones a problemas de forma elegante y concisa.</p>
@@ -137,7 +137,7 @@ de ellos. Así es como podríamos reescribir la función usando <tt class="docut
 </div>
 <p>¿Te parece elegante eso? En esencia, el máximo de una lista es el máximo de su
 primer elemento y el máximo del resto de sus elementos.</p>
-<img alt="Máximo" class="align-center" src="../_images/maxs.png" />
+<img alt="Máximo" class="align-center" src="../images/maxs.png" />
 </div>
 <div class="section" id="unas-cuantas-funciones-recursivas-mas">
 <h2>Unas cuantas funciones recursivas más<a class="headerlink" href="#unas-cuantas-funciones-recursivas-mas" title="Enlazar permanentemente con este título">¶</a></h2>
@@ -173,7 +173,7 @@ esto.</p>
 <span class="nf">take&#39;</span> <span class="n">n</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">take&#39;</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">xs</span>
 </pre></div>
 </div>
-<img alt="Pintor" class="align-right" src="../_images/painter.png" />
+<img alt="Pintor" class="align-right" src="../images/painter.png" />
 <p>El primer patrón indica que si queremos obtener 0 o un número negativo de
 elementos, obtenemos una lista vacía. Date cuenta de que estamos usando <tt class="docutils literal"><span class="pre">_</span></tt>
 para enlazar la lista ya que realmente no nos importa en este patrón. Además
@@ -246,7 +246,7 @@ falso.</p>
 </div>
 <div class="section" id="quicksort">
 <span id="id1"></span><h2>¡Quicksort!<a class="headerlink" href="#quicksort" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Quickman" class="align-left" src="../_images/quickman.png" />
+<img alt="Quickman" class="align-left" src="../images/quickman.png" />
 <p>Tenemos una lista de elemento que pueden ser ordenados. Su tipo es miembro de la
 clase de tiposs <tt class="docutils literal"><span class="pre">Ord</span></tt>. Y ahora, queremos ordenarlos. Existe un algoritmo muy
 interesante para ordenarlos llamado quicksort. Es una forma muy inteligente de
@@ -296,7 +296,7 @@ si ordenamos <tt class="docutils literal"><span class="pre">[1,4,3]</span></tt> 
 estas dos listas utilizando la misma función. Al final llegaremos a un punto en
 el que alcanzaremos listas vacías y las listas vacías ya están ordenadas
 de alguna forma. Aquí tienes una ilustración:</p>
-<img alt="Quicksort" class="align-center" src="../_images/quicksort.png" />
+<img alt="Quicksort" class="align-center" src="../images/quicksort.png" />
 <p>Un elemento que está en su posición correcta y no se moverá más está en naranja.
 Si los lees de izquierda a derecha verás que es la lista ordenada. Aunque
 elegimos comparar todos los elemento con la cabeza, podríamos haber elegido
@@ -316,7 +316,7 @@ cualquier otra estructura de datos. Un sumatorio es la suma del primer elemento
 más la suma del resto de elementos. Un productorio es el producto del primer
 elemento entre el producto del resto de elementos. El tamaño de una lista es
 1 más el tamaño del resto de la lista, etc.</p>
-<img alt="Cerebro" class="align-left" src="../_images/brain.png" />
+<img alt="Cerebro" class="align-left" src="../images/brain.png" />
 <p>Por supuesto también existen los casos base. Por lo general un caso base es un
 escenario en el que la aplicación de una recursión no tiene sentido. Cuando
 trabajamos con listas, los casos base suelen tratar con listas vacías. Cuando

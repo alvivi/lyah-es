@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Introducción &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Empezando" href="Empezando.html" />
     <link rel="prev" title="¡Aprende Haskell por el bien de todos!" href="../index.html" /> 
@@ -62,7 +62,7 @@ hacia otro. Así, yendo a través de varios documentos, fui capaz de juntar toda
 las piezas y entonces todo encajó. De modo que, esto es un intento más de añadir
 otro útil documento para aprender Haskell de forma que tengas más oportunidades
 de encontrar uno que te guste.</p>
-<img alt="pájaro" class="align-left" src="../_images/bird.png" />
+<img alt="pájaro" class="align-left" src="../images/bird.png" />
 <p>Esta guía está dirigida a personas que tengan experiencia en lenguajes de
 programación imperativa (C, C++, Java, Python...) pero que no hayan programado antes
 en ningún lenguaje funcional (Haskell, ML, OCaml...). Aunque apuesto que incluso
@@ -81,7 +81,7 @@ diferente, lo cual nos lleva a la siguiente sección...</p>
 </div>
 <div class="section" id="entonces-que-es-haskell">
 <h2>Entonces ¿Qué es Haskell?<a class="headerlink" href="#entonces-que-es-haskell" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="f(x)" class="align-right" src="../_images/fx.png" />
+<img alt="f(x)" class="align-right" src="../images/fx.png" />
 <p>Haskell es un <strong>lenguaje de programación puramente funcional</strong>. En los lenguajes
 imperativos obtienes los resultados dándole al computador una secuencia de
 tareas que luego éste ejecuta. Mientras las ejecuta, puede cambiar de estado.
@@ -106,7 +106,7 @@ está garantizado que obtendremos el mismo resultado. Esto es llamado
 comportamiento de un programa, sino que también te permite deducir fácilmente
 (he incluso demostrar) que una función es correcta y así poder construir
 funciones más complejas simplemente enlazando funciones simples.</p>
-<img alt="perezoso" class="align-right" src="../_images/lazy.png" />
+<img alt="perezoso" class="align-right" src="../images/lazy.png" />
 <p>Haskell es <strong>perezoso</strong>. Esto significa que a menos que le especifiques lo
 contrario, Haskell no ejecutará funciones ni calculará cosas hasta que se
 vea realmente forzado a mostrar un resultado. Esto funciona bien junto con la
@@ -129,7 +129,7 @@ Así que, solo hace un recorrido a través de la lista y solo cuando lo necesita
 De esta forma cuando quieres algo de un lenguaje perezoso, simplemente puedes
 tomar los datos iniciales y eficientemente transformarlos y ensamblarlos hasta
 que se parezca hasta lo que quieres obtener al final.</p>
-<img alt="bote" class="align-right" src="../_images/boat.png" />
+<img alt="bote" class="align-right" src="../images/boat.png" />
 <p>Haskell es un lenguaje con <strong>tipos estáticos</strong>. Cuando compilas tu programa,
 el compilador sabe que piezas del código son un entero, cuales una cadena, etc..
 Gracias a esto un montón de posibles errores son capturados en tiempo de

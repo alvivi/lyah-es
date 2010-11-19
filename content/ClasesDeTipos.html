@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Creando nuestros propios tipos y clases de tipos &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Entrada y salida" href="EntradaSalida.html" />
     <link rel="prev" title="Módulos" href="Modulos.html" /> 
@@ -70,7 +70,7 @@ la primera letra en mayúsculas.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Int</span> <span class="ow">=</span> <span class="o">-</span><span class="mi">2147483648</span> <span class="o">|</span> <span class="o">-</span><span class="mi">2147483647</span> <span class="o">|</span> <span class="o">...</span> <span class="o">|</span> <span class="o">-</span><span class="mi">1</span> <span class="o">|</span> <span class="mi">0</span> <span class="o">|</span> <span class="mi">1</span> <span class="o">|</span> <span class="mi">2</span> <span class="o">|</span> <span class="o">...</span> <span class="o">|</span> <span class="mi">2147483647</span>
 </pre></div>
 </div>
-<img alt="Hombre de las cavernas" class="align-left" src="../_images/caveman.png" />
+<img alt="Hombre de las cavernas" class="align-left" src="../images/caveman.png" />
 <p>El primer y el último constructor de datos son el mínimo y el máximo valor
 posible del tipo <tt class="docutils literal"><span class="pre">Int</span></tt>. En realidad no está definido así, los tres puntos
 están ahí porque hemos omitido una buena cantidad de números, así que esto
@@ -257,7 +257,7 @@ usuarios del módulo no podrán usar el ajuste de patrones sobre ese tipo.</p>
 </div>
 <div class="section" id="sintaxis-de-registro">
 <h2>Sintaxis de registro<a class="headerlink" href="#sintaxis-de-registro" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Tocadiscos" class="align-right" src="../_images/record.png" />
+<img alt="Tocadiscos" class="align-right" src="../images/record.png" />
 <p>Bien, se nos ha dado la tarea de crear un tipo que describa a una persona.
 La información que queremos almacenar de cada persona es: nombre, apellidos,
 edad, altura, número de teléfono y el sabor de su helado favorito. No se nada
@@ -380,7 +380,7 @@ como un tipo que ya conocemos es implementado.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Maybe</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Nothing</span> <span class="o">|</span> <span class="kt">Just</span> <span class="n">a</span>
 </pre></div>
 </div>
-<img alt="Yeti" class="align-left" src="../_images/yeti.png" />
+<img alt="Yeti" class="align-left" src="../images/yeti.png" />
 <p>La <tt class="docutils literal"><span class="pre">a</span></tt> es un parámetro de tipo. Debido a que hay un parámetro de tipo
 involucrado en esta definición, llamamos a <tt class="docutils literal"><span class="pre">Maybe</span></tt> un constructor de tipos.
 Dependiendo de lo que queramos que este tipo contenga cuando un valor no es
@@ -479,7 +479,7 @@ parámetro <tt class="docutils literal"><span class="pre">c</span></tt>.</p>
 <span class="kt">Car</span> <span class="s">&quot;Ford&quot;</span> <span class="s">&quot;Mustang&quot;</span> <span class="s">&quot;nineteen sixty seven&quot;</span> <span class="ow">::</span> <span class="kt">Car</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span>
 </pre></div>
 </div>
-<img alt="Suricato" class="align-right" src="../_images/meekrat.png" />
+<img alt="Suricato" class="align-right" src="../images/meekrat.png" />
 <p>A la hora de la verdad, acabaríamos utilizando <tt class="docutils literal"><span class="pre">Car</span> <span class="pre">String</span> <span class="pre">String</span> <span class="pre">Int</span></tt> la
 mayor parte del tiempo y nos daríamos cuenta de que parametrizar el tipo
 <tt class="docutils literal"><span class="pre">Car</span></tt> realmente no importa. Normalmente utilizamos los parámetros de tipo
@@ -568,7 +568,7 @@ un poco con los vectores:</p>
 </div>
 <div class="section" id="instancias-derivadas">
 <h2>Instancias derivadas<a class="headerlink" href="#instancias-derivadas" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Gob" class="align-right" src="../_images/gob.png" />
+<img alt="Gob" class="align-right" src="../images/gob.png" />
 <p>En la sección <a class="reference internal" href="Tipos.html#clases-de-tipo-1"><em>Clases de tipos paso a paso (1ª parte)</em></a>, explicamos las bases de las clases de
 tipo. Dijimos que una clase de tipos es una especie de interfaz que define un
 comportamiento. Un tipo puede ser una <strong>instancia</strong> de esa clase si soporta
@@ -799,7 +799,7 @@ define la librería estándar <tt class="docutils literal"><span class="pre">Str
 <div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">String</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span>
 </pre></div>
 </div>
-<img alt="Gallina" class="align-left" src="../_images/chicken.png" />
+<img alt="Gallina" class="align-left" src="../images/chicken.png" />
 <p>Acabamos de intrudir la palabra clave <tt class="docutils literal"><span class="pre">type</span></tt>. Esta palabra clave podría
 inducir a errores a algunos, ya que en realidad no estamos haciendo haciendo
 nada nuevo (lo hacemos con la palabra clave <tt class="docutils literal"><span class="pre">data</span></tt>). Simplemente estamos
@@ -1027,7 +1027,7 @@ Ahora, tenemos información acerca del fallo en nuestro tipo del resultado.</p>
 </div>
 <div class="section" id="estructuras-de-datos-recursivas">
 <h2>Estructuras de datos recursivas<a class="headerlink" href="#estructuras-de-datos-recursivas" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Hombre cool" class="align-left" src="../_images/thefonz.png" />
+<img alt="Hombre cool" class="align-left" src="../images/thefonz.png" />
 <p>Como ya hemos visto, un costructor de un tipo de dato algebraico puede tener
 (o no tener) varios campos y cada uno de estos debe ser un tipo concreto.
 Teniendo esto en cuenta, podemos crear tipos cuyos campos de constructor sean
@@ -1133,7 +1133,7 @@ sucede para <tt class="docutils literal"><span class="pre">[]</span></tt>. Ya qu
 constructores de datos, podemos ajustar patrones como los constructores
 prefijos normales, constructores infijos o cosas como <tt class="docutils literal"><span class="pre">8</span></tt> o <tt class="docutils literal"><span class="pre">'a'</span></tt>, que
 al fin y al cabo son constructores de tipos númericos y caracteres.</p>
-<img alt="Árbol binario" class="align-left" src="../_images/binarytree.png" />
+<img alt="Árbol binario" class="align-left" src="../images/binarytree.png" />
 <p>Vamos a implementar un árbol binario de búsqueda. Si no estás familiarizado
 con los árboles binarios de búsqueda de otros lenguajes como <em>C</em>, aquí tienes
 una expliación de lo que son: un elemento apunta a otros dos elementeos, uno
@@ -1259,7 +1259,7 @@ valores booleanos hasta enumeraciónes de los días de la semana, e incluso
 </div>
 <div class="section" id="clases-de-tipos-paso-a-paso-2a-parte">
 <h2>Clases de tipos paso a paso (2ª parte)<a class="headerlink" href="#clases-de-tipos-paso-a-paso-2a-parte" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Semáforo" class="align-right" src="../_images/trafficlight.png" />
+<img alt="Semáforo" class="align-right" src="../images/trafficlight.png" />
 <p>Hasta ahora hemos aprendido a utilizar algunas clases de tipos estándar de
 Haskell y hemos visto que tipos son miembros de ellas. También hemos aprendido
 a crear automáticamente instancias de nuestros tipos para las clases de tipos
@@ -1494,7 +1494,7 @@ y nos mostrará también una lista con los tipos que forman parte de esta clase.
 </div>
 <div class="section" id="la-clase-de-tipos-yes-no">
 <h2>La clase de tipos Yes-No<a class="headerlink" href="#la-clase-de-tipos-yes-no" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Sí y no" class="align-left" src="../_images/yesno.png" />
+<img alt="Sí y no" class="align-left" src="../images/yesno.png" />
 <p>En JavaScript y otros lenguajes débilmente tipados, puedes poner casi
 cualquier cosa dentro de una expresión. Por ejemplo, puedes hacer todo lo
 siguiente: <tt class="docutils literal"><span class="pre">if</span> <span class="pre">(0)</span> <span class="pre">alert(&quot;YEAH!&quot;)</span> <span class="pre">else</span> <span class="pre">alert(&quot;NO!&quot;)</span></tt>, <tt class="docutils literal"><span class="pre">if</span> <span class="pre">(&quot;&quot;)</span> <span class="pre">alert</span>
@@ -1630,7 +1630,7 @@ implementada? Vamos a echar una ojeada.</p>
     <span class="n">fmap</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="n">b</span>
 </pre></div>
 </div>
-<img alt="Functor" class="align-right" src="../_images/functor.png" />
+<img alt="Functor" class="align-right" src="../images/functor.png" />
 <p>De acuerdo. Hemos visto que define una función, <tt class="docutils literal"><span class="pre">fmap</span></tt>, y no proporciona
 ninguna implementación por defecto para ella. El tipo de <tt class="docutils literal"><span class="pre">fmap</span></tt> es
 interesante. En las definiciones de clases de tipos que hemos visto hasta
@@ -1800,7 +1800,7 @@ la leyes de los functores con más detalle en un próximo capítulo.</p>
 </div>
 <div class="section" id="familias-y-artes-marciales">
 <h2>Familias y artes marciales<a class="headerlink" href="#familias-y-artes-marciales" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Typefoo" class="align-right" src="../_images/typefoo.png" />
+<img alt="Typefoo" class="align-right" src="../images/typefoo.png" />
 <p>Los constructores de tipos toman otros tipos como parámetros y terminan
 produciendo tipos concretos. Esto me recuerda a las funciones, las cuales
 toman valores como parámetros y producen valores. Hemos visto que los

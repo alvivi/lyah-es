@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Funciones de orden superior &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Módulos" href="Modulos.html" />
     <link rel="prev" title="Recursión" href="Recursion.html" /> 
@@ -47,7 +47,7 @@
             
   <div class="section" id="funciones-de-orden-superior">
 <h1>Funciones de orden superior<a class="headerlink" href="#funciones-de-orden-superior" title="Enlazar permanentemente con este título">¶</a></h1>
-<img alt="Sol" class="align-right" src="../_images/sun.png" />
+<img alt="Sol" class="align-right" src="../images/sun.png" />
 <p>Las funciones de Haskell pueden tomar funciones como parámetros y devolver
 funciones como resultado. Una función que hace ambas cosas o alguna de ellas es
 llamada función de orden superior. Las funciones de orden superior no son
@@ -75,7 +75,7 @@ siguientes dos llamadas son equivalentes:</p>
 <span class="mi">5</span>
 </pre></div>
 </div>
-<img alt="Haskell Curry" class="align-left" src="../_images/curry.png" />
+<img alt="Haskell Curry" class="align-left" src="../images/curry.png" />
 <p>El poner un espacio entre dos cosas es sencillamente <strong>aplicar una función</strong>. El
 espacio es una especie de operador y tiene el orden de preferencia mayor. Vamos
 a examinar el tipo de <tt class="docutils literal"><span class="pre">max</span></tt>. Es <tt class="docutils literal"><span class="pre">max</span> <span class="pre">::</span> <span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt>. Esto
@@ -188,7 +188,7 @@ y la aplique dos veces a algo.</p>
 <span class="nf">applyTwice</span> <span class="n">f</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="Rocktopus" class="align-right" src="../_images/bonus.png" />
+<img alt="Rocktopus" class="align-right" src="../images/bonus.png" />
 <p>Antes de nada, fíjate en su declaración de tipo. Antes, no necesitábamos usar
 paréntesis ya que <tt class="docutils literal"><span class="pre">-&gt;</span></tt> es naturalmente asociativo por la derecha. Sin embargo,
 aquí está la excepción. Esto indica que el primer parámetro es una función que
@@ -379,7 +379,7 @@ legible usando <tt class="docutils literal"><span class="pre">filter</span></tt>
     <span class="kr">in</span>  <span class="n">smallerSorted</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span> <span class="n">biggerSorted</span>
 </pre></div>
 </div>
-<img alt="Mapa" class="align-left" src="../_images/map.png" />
+<img alt="Mapa" class="align-left" src="../images/map.png" />
 <p>Mapear y filtrar son el pan de cada día de todas las herramientas de un
 programador funcional. No importa si utilizas las funciones <tt class="docutils literal"><span class="pre">map</span></tt> y <tt class="docutils literal"><span class="pre">filter</span></tt>
 o listas por comprensión. Recuerda como resolvimos el problema de encontrar
@@ -511,7 +511,7 @@ si escribiéramos <tt class="docutils literal"><span class="pre">(4*)</span> <sp
 </div>
 <div class="section" id="lambdas">
 <h2>Lambdas<a class="headerlink" href="#lambdas" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Lambda" class="align-right" src="../_images/lambda.png" />
+<img alt="Lambda" class="align-right" src="../images/lambda.png" />
 <p>Las lambdas son funciones anónimas que suelen ser usadas cuando necesitamos
 una función una sola vez. Normalmente creamos funciones lambda con el único
 propósito de pasarlas a funciones de orden superior. Para crear una lambda
@@ -531,7 +531,7 @@ lambda:</p>
 <p>Las lambdas son expresiones, ese es el porqué podemos simplemente pasarlas así.
 La expresión <tt class="docutils literal"><span class="pre">(\xs</span> <span class="pre">-&gt;</span> <span class="pre">length</span> <span class="pre">xs</span> <span class="pre">&gt;</span> <span class="pre">15)</span></tt> devuelve una función que nos dice si
 el tamaño de una lista es mayor que 15.</p>
-<img alt="Oveja" class="align-left" src="../_images/lamb.png" />
+<img alt="Oveja" class="align-left" src="../images/lamb.png" />
 <p>Es muy común que la gente que no está muy acostumbrada a como funciona la
 currificación y la aplicación parcial usen lambdas cuando no deben. Por ejemplo,
 la expresión <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(+3)</span> <span class="pre">[1,6,3,2]</span></tt> y <tt class="docutils literal"><span class="pre">map</span> <span class="pre">(\x</span> <span class="pre">-&gt;</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">3)</span> <span class="pre">[1,6,3,2]</span></tt> son
@@ -587,7 +587,7 @@ parámetro.</p>
 </div>
 <div class="section" id="pliegues-y-papiroflexia">
 <h2>Pliegues y papiroflexia<a class="headerlink" href="#pliegues-y-papiroflexia" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Pajarita" class="align-right" src="../_images/origami.png" />
+<img alt="Pajarita" class="align-right" src="../images/origami.png" />
 <p>Volviendo a cuando tratábamos con la recursión, nos dimos cuenta de que muchas
 funciones operaban con listas. Solíamos tener un caso base que era la lista
 vacía. Debíamos usar un patrón <tt class="docutils literal"><span class="pre">x:xs</span></tt> y hacíamos alguna operación con un solo
@@ -618,7 +618,7 @@ en lugar de una recursión explícita.</p>
 <span class="mi">11</span>
 </pre></div>
 </div>
-<img alt="Pliegue a izquierdas" class="align-left" src="../_images/foldl.png" />
+<img alt="Pliegue a izquierdas" class="align-left" src="../images/foldl.png" />
 <p>Vamos a dar un vistazo a como funciona este pliegue. <tt class="docutils literal"><span class="pre">\acc</span> <span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">acc</span> <span class="pre">+</span> <span class="pre">x</span></tt> es
 la función binaria. <tt class="docutils literal"><span class="pre">0</span></tt> es el valor inicial y <tt class="docutils literal"><span class="pre">xs</span></tt> es la lista que debe ser
 plegada. Primero, <tt class="docutils literal"><span class="pre">0</span></tt> se utiliza como el parámetro <tt class="docutils literal"><span class="pre">acc</span></tt> en la función
@@ -690,7 +690,7 @@ pliegue por la izquierda. Sería algo como <tt class="docutils literal"><span cl
 <span class="pre">[f</span> <span class="pre">x])</span> <span class="pre">[]</span> <span class="pre">xs</span></tt>, pero la cuestión es que la función <tt class="docutils literal"><span class="pre">++</span></tt> es bastante menos
 eficiente que <tt class="docutils literal"><span class="pre">:</span></tt>, así que normalmente usamos pliegues por la derecha cuando
 construimos listas a partir de una lista.</p>
-<img alt="Lavadora" class="align-right" src="../_images/washmachine.png" />
+<img alt="Lavadora" class="align-right" src="../images/washmachine.png" />
 <p>Si pones del revés una lista, puedes hacer un pliegue por la derecha como si
 fuera un pliegue por la izquierda y viceversa. A veces ni siquiera tienes que
 hacerlo. La función <tt class="docutils literal"><span class="pre">sum</span></tt> por ejemplo puede ser implementada tanto con un
@@ -811,7 +811,7 @@ función. Antes de nada vamos a ver como está definida:</p>
 <span class="nf">f</span> <span class="o">$</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span>
 </pre></div>
 </div>
-<img alt="Dollar" class="align-left" src="../_images/dollar.png" />
+<img alt="Dollar" class="align-left" src="../images/dollar.png" />
 <p>¿Pero qué...? ¿Para qué queremos un operador tan inútil? ¡Es simplemente la
 aplicación de una función! Bueno, casi, pero no solo eso. Mientras que la
 aplicación de funciones normal (un espacio entre dos cosas) tiene un alto orden
@@ -847,7 +847,7 @@ esta forma, podemos, por ejemplo, mapear una lista de funciones:</p>
 <div class="section" id="composicion-de-funciones">
 <h2>Composición de funciones<a class="headerlink" href="#composicion-de-funciones" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>En matemáticas la composición de funciones está definida como:
-<img class="math" src="../_images/math/f7ea22ef62e9e9ed85c0b5d85a22d7a02f994aa8.png" alt="(f\circ{}g)x=f(g(x))"/>, que significa que al componer dos funciones se
+<img class="math" src="../images/math/f7ea22ef62e9e9ed85c0b5d85a22d7a02f994aa8.png" alt="(f\circ{}g)x=f(g(x))"/>, que significa que al componer dos funciones se
 crea una nueva que, cuando se llama con un parámetro, digamos <em>x</em>, es
 equivalente a llamar a <em>g</em> con <em>x</em> y luego llamar a <em>f</em> con el resultado
 anterior.</p>
@@ -857,7 +857,7 @@ composición de funciones con la función <tt class="docutils literal"><span cla
 <span class="nf">f</span> <span class="o">.</span> <span class="n">g</span> <span class="ow">=</span> <span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<img alt="Notas" class="align-left" src="../_images/notes.png" />
+<img alt="Notas" class="align-left" src="../images/notes.png" />
 <p>Fíjate en la declaración de tipo. <tt class="docutils literal"><span class="pre">f</span></tt> debe tener como parámetro un valor con
 el mismo tipo que el valor devuelto por <tt class="docutils literal"><span class="pre">g</span></tt>. Así que la función resultante
 toma un parámetro del mismo tipo que toma <tt class="docutils literal"><span class="pre">g</span></tt> y devuelve un valor del mismo

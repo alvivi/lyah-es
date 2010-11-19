@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Entrada y salida &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="prev" title="Creando nuestros propios tipos y clases de tipos" href="ClasesDeTipos.html" /> 
   </head>
@@ -43,7 +43,7 @@
             
   <div class="section" id="entrada-y-salida">
 <h1>Entrada y salida<a class="headerlink" href="#entrada-y-salida" title="Enlazar permanentemente con este título">¶</a></h1>
-<img alt="Secuestrador de perros" class="align-right" src="../_images/dognap.png" />
+<img alt="Secuestrador de perros" class="align-right" src="../images/dognap.png" />
 <p>Ya hemos mencionado que Haskell es un lenguaje de programación puramente
 funcional. Mientras que en un lenguaje imperativo normalmente consigues
 resultados dando al computador una serie de pasos ha ejecutar, la programación
@@ -80,7 +80,7 @@ ofrece la pureza, como la evaluación perezosa, seguridad y modularidad
 mientras nos comunicamos con el mundo exterior.</p>
 <div class="section" id="hola-mundo">
 <h2>¡Hola mundo!<a class="headerlink" href="#hola-mundo" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="¡Hola mundo!" class="align-left" src="../_images/helloworld.png" />
+<img alt="¡Hola mundo!" class="align-left" src="../images/helloworld.png" />
 <p>Hasta ahora, siempre hemos cargado nuestras funciones en GHCi para probarlas y
 jugar con ellas. También hemos explorado las funciones de la librería estándar
 de esta forma. Pero ahora, después de ocho capítulos, por fin vamos a escribir
@@ -168,7 +168,7 @@ el tipo de <tt class="docutils literal"><span class="pre">getLine</span></tt>.</
 <span class="go">getLine :: IO String</span>
 </pre></div>
 </div>
-<img alt="Caja con patas" class="align-left" src="../_images/luggage.png" />
+<img alt="Caja con patas" class="align-left" src="../images/luggage.png" />
 <p>Vale. <tt class="docutils literal"><span class="pre">getLine</span></tt> es una acción <tt class="docutils literal"><span class="pre">IO</span></tt> que contiene un resultado del tipo
 <tt class="docutils literal"><span class="pre">String</span></tt>. Parece que tiene sentido ya que esperará a que el usuario escriba
 algo en la terminal y luego ese algo será representado con una cadena.
@@ -714,7 +714,7 @@ por pantalla dicha cadena.</p>
 </div>
 <div class="section" id="ficheros-y-flujos-de-datos">
 <h2>Ficheros y flujos de datos<a class="headerlink" href="#ficheros-y-flujos-de-datos" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Corrientes" class="align-right" src="../_images/streams.png" />
+<img alt="Corrientes" class="align-right" src="../images/streams.png" />
 <p><tt class="docutils literal"><span class="pre">getChar</span></tt> es una acción de E/S que lee un solo carácter desde la terminal.
 <tt class="docutils literal"><span class="pre">getLine</span></tt> es una acción de E/S que lee una línea desde la terminal. Estas
 funciones son bastante sencillas y la mayoría de lenguajes tienen funciones
@@ -1030,7 +1030,7 @@ manipulador como resultado.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">IOMode</span> <span class="ow">=</span> <span class="kt">ReadMode</span> <span class="o">|</span> <span class="kt">WriteMode</span> <span class="o">|</span> <span class="kt">AppendMode</span> <span class="o">|</span> <span class="kt">ReadWriteMode</span>
 </pre></div>
 </div>
-<img alt="Preso" class="align-left" src="../_images/file.png" />
+<img alt="Preso" class="align-left" src="../images/file.png" />
 <p>De la misma forma que aquel tipo que creamos que representaba los siete días
 de la semana, este tipo es una enumeración que representa lo que queremos
 hacer con un fichero abierto. Muy simple. Fíjate que el tipo es <tt class="docutils literal"><span class="pre">IOMode</span></tt> y
@@ -1106,7 +1106,7 @@ Así sería como implementaríamos la función <tt class="docutils literal"><spa
     <span class="n">return</span> <span class="n">result</span>
 </pre></div>
 </div>
-<img alt="Edd" class="align-right" src="../_images/edd.png" />
+<img alt="Edd" class="align-right" src="../images/edd.png" />
 <p>Sabemos que el resultado debe ser una acción de E/S así que podemos empezar
 directamente con un <tt class="docutils literal"><span class="pre">do</span></tt>. Primero abrimos el fichero y obtenemos el
 manipulador. Luego aplicamos <tt class="docutils literal"><span class="pre">handle</span></tt> a nuestra función y obtenemos una
@@ -1380,7 +1380,7 @@ sistema operativo que nos diga donde podemos ubicar nuestro fichero temporal
 </div>
 <div class="section" id="parametros-de-la-linea-de-comandos">
 <h2>Parámetros de la línea de comandos<a class="headerlink" href="#parametros-de-la-linea-de-comandos" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Parámetros" class="align-right" src="../_images/arguments.png" />
+<img alt="Parámetros" class="align-right" src="../images/arguments.png" />
 <p>Prácticamente es una obligación trabajar con parámetros de la línea de
 comandos cuando estamos creando un programa que se ejecuta en la terminal. Por
 suerte, la biblioteca estándar de Haskell tiene una buena forma de obtener los
@@ -1600,7 +1600,7 @@ renombramos el fichero temporal a <tt class="docutils literal"><span class="pre"
     <span class="n">renameFile</span> <span class="n">tempName</span> <span class="n">fileName</span>
 </pre></div>
 </div>
-<img alt="Ensalada" class="align-left" src="../_images/salad.png" />
+<img alt="Ensalada" class="align-left" src="../images/salad.png" />
 <p>Resumiendo: creamos una lista de asociación que asocie los comandos con
 funciones que tomen argumentos de la línea de comandos y devuelvan acciones
 de E/S. Vemos que comando quiere ejecutar el usuario y obtenemos la función
@@ -1648,7 +1648,7 @@ cual veremos dentro de poco.</p>
 </div>
 <div class="section" id="aleatoriedad">
 <h2>Aleatoriedad<a class="headerlink" href="#aleatoriedad" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Aleatorio" class="align-right" src="../_images/random.png" />
+<img alt="Aleatorio" class="align-right" src="../images/random.png" />
 <p>Muchas veces mientras programamos, necesitamos obtener algunos datos
 aleatorios. Quizá estemos haciendo un juego en el que se tenga que lanzar un
 dado o quizá necesitemos generar algunos datos para comprobar nuestro
@@ -1942,7 +1942,7 @@ el que estamos pensado.</p>
         <span class="n">askForNumber</span> <span class="n">newGen</span>
 </pre></div>
 </div>
-<img alt="Sota de diamantes" class="align-left" src="../_images/jackofdiamonds.png" />
+<img alt="Sota de diamantes" class="align-left" src="../images/jackofdiamonds.png" />
 <p>Hemos creado la función <tt class="docutils literal"><span class="pre">askForNumber</span></tt>, que toma un generador de valores
 aleatorios y devuelve una acción de E/S que preguntará al usuario por un
 número y le dirá si ha acertado o no. Dentro de esta función, primero
@@ -2016,7 +2016,7 @@ una función que podemos reutilizar.</p>
 </div>
 <div class="section" id="cadenas-de-bytes">
 <h2>Cadenas de bytes<a class="headerlink" href="#cadenas-de-bytes" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Como un cadena normal, solo que muerde..." class="align-right" src="../_images/chainchomp.png" />
+<img alt="Como un cadena normal, solo que muerde..." class="align-right" src="../images/chainchomp.png" />
 <p>Las listas son unas estructuras de datos estupendas además útiles. Hasta ahora
 las hemos utilizado en cualquier sitio. Hay una multitud de funciones que
 operan con ellas y la evaluación perezosa de Haskell nos permite
@@ -2196,7 +2196,7 @@ objetivos.</p>
 </div>
 <div class="section" id="excepciones">
 <h2>Excepciones<a class="headerlink" href="#excepciones" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="¡Árbol va!" class="align-left" src="../_images/timber.png" />
+<img alt="¡Árbol va!" class="align-left" src="../images/timber.png" />
 <p>Todos los lenguajes tienen procedimientos, funciones o trozos de código que
 fallan de alguna forma. Es una ley de vida. Lenguajes diferentes tienen
 formas diferentes de manejar estos fallos. En <em>C</em>, solemos utilizar un valor
@@ -2239,7 +2239,7 @@ pueden fallar. <tt class="docutils literal"><span class="pre">div</span></tt> pu
 <span class="go">*** Exception: Prelude.head: empty list</span>
 </pre></div>
 </div>
-<img alt="¡Alto ahí cirminal!" class="align-left" src="../_images/police.png" />
+<img alt="¡Alto ahí cirminal!" class="align-left" src="../images/police.png" />
 <p>El código puro puede lanzar excepciones, pero solo pueden ser capturadas en
 las partes de E/S de nuestro código (cuando estamos dentro de un bloque <tt class="docutils literal"><span class="pre">do</span></tt>
 que es alcanzado por <tt class="docutils literal"><span class="pre">main</span></tt>). Esto ocurre así porque no sabemos cuando (o
@@ -2323,7 +2323,7 @@ acción de E/S que le pasemos a <tt class="docutils literal"><span class="pre">c
 al manipulador que decide que hacer. Así que el resultado final será una
 acción que o bien actuará como su primer parámetro o bien hará lo que diga el
 manipulador en caso de que la primera acción de E/S lance una excepción.</p>
-<img alt="Cachorrito" class="align-right" src="../_images/puppy.png" />
+<img alt="Cachorrito" class="align-right" src="../images/puppy.png" />
 <p>Si te es familiar los bloques <em>try-catch</em> de lenguajes como <em>Java</em> o <em>Python</em>,
 la función <tt class="docutils literal"><span class="pre">catch</span></tt> es similar a ellos. El primer parámetro es lo que hay que
 intentar hacer, algo así como lo que hay dentro de un bloque <em>try</em>. El segundo

@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>Módulos &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,11 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/translations.js"></script>
-    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <script type="text/javascript" src="../static/translations.js"></script>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Creando nuestros propios tipos y clases de tipos" href="ClasesDeTipos.html" />
     <link rel="prev" title="Funciones de orden superior" href="OrdenSuperior.html" /> 
@@ -49,7 +49,7 @@
 <h1>Módulos<a class="headerlink" href="#modulos" title="Enlazar permanentemente con este título">¶</a></h1>
 <div class="section" id="cargando-modulos">
 <h2>Cargando módulos<a class="headerlink" href="#cargando-modulos" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Módulos" class="align-right" src="../_images/modules.png" />
+<img alt="Módulos" class="align-right" src="../images/modules.png" />
 <p>Un módulo de Haskell es una colección de funciones, tipos y clases de tipos
 relacionadas entre si. Un programa Haskell es una colección de módulos donde
 el módulo principal carga otros módulos y utiliza las funciones definidas
@@ -186,8 +186,8 @@ como una matriz 2D, las columnas se convierten en filas y viceversa.</p>
 <span class="p">[</span><span class="s">&quot;htg&quot;</span><span class="p">,</span><span class="s">&quot;ehu&quot;</span><span class="p">,</span><span class="s">&quot;yey&quot;</span><span class="p">,</span><span class="s">&quot;rs&quot;</span><span class="p">,</span><span class="s">&quot;e&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Supongamos que tenemos los polinomios <img class="math" src="../_images/math/90d1ec6f48a98d2b9f2c200c11bcbd470a2b5965.png" alt="3x^{2} + 5x + 9"/>,
-<img class="math" src="../_images/math/9ead7c768f7b1304eca3610904a3ccc777abc9d6.png" alt="10x^{3} + 9"/> y <img class="math" src="../_images/math/e9268878e310aacd2eb5cd8322c4ac757f321d80.png" alt="8x^{3} + 5x^{2} + x - 1"/> y queremos sumarlos.
+<p>Supongamos que tenemos los polinomios <img class="math" src="../images/math/90d1ec6f48a98d2b9f2c200c11bcbd470a2b5965.png" alt="3x^{2} + 5x + 9"/>,
+<img class="math" src="../images/math/9ead7c768f7b1304eca3610904a3ccc777abc9d6.png" alt="10x^{3} + 9"/> y <img class="math" src="../images/math/e9268878e310aacd2eb5cd8322c4ac757f321d80.png" alt="8x^{3} + 5x^{2} + x - 1"/> y queremos sumarlos.
 Podemos usar las listas <tt class="docutils literal"><span class="pre">[0,3,5,9]</span></tt>, <tt class="docutils literal"><span class="pre">[10,0,0,9]</span></tt> y <tt class="docutils literal"><span class="pre">[8,5,1,-1]</span></tt> para
 representarlos en Haskell. Ahora, para sumarlos lo único que tenemos que
 hacer es:</p>
@@ -199,7 +199,7 @@ hacer es:</p>
 primera fila, los cuadrados en la segunda fila, etc. Al mapear <tt class="docutils literal"><span class="pre">sum</span></tt>
 sobre esto produce el resultado que buscamos.</p>
 </li>
-<li><img alt="Listas lego" class="first align-right" src="../_images/legolists.png" />
+<li><img alt="Listas lego" class="first align-right" src="../images/legolists.png" />
 <p><tt class="docutils literal"><span class="pre">foldl'</span></tt> y <tt class="docutils literal"><span class="pre">foldl1'</span></tt> son versiones estrictas de sus respectivas
 versiones perezosas. Cuando usamos pliegues perezosos sobre listas
 muy grandes solemos obtener errores de desbordamiento de pila. El motivo
@@ -728,7 +728,7 @@ solemos utilizar <tt class="docutils literal"><span class="pre">compare</span> <
 </div>
 <div class="section" id="data-char">
 <h2>Data.Char<a class="headerlink" href="#data-char" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="¡Caracteres lego!" class="align-right" src="../_images/legochar.png" />
+<img alt="¡Caracteres lego!" class="align-right" src="../images/legochar.png" />
 <p>El módulo <tt class="docutils literal"><span class="pre">Data.Char</span></tt> contiene lo que su nombre sugiere. Exporta funciones
 que tratan con caracteres. También es útil cuando mapeamos o filtramos
 cadenas ya que al fin y al cabo son listas de caracteres.</p>
@@ -977,7 +977,7 @@ pero toma un poco más de tiempo leer una recursión explícita.</p>
 <span class="kt">Nothing</span>
 </pre></div>
 </div>
-<img alt="¡Mapa lego!" class="align-left" src="../_images/legomap.png" />
+<img alt="¡Mapa lego!" class="align-left" src="../images/legomap.png" />
 <p>¡Funciona perfectamente! Si tenemos el número de una chica obtenemos dicho
 <tt class="docutils literal"><span class="pre">Just</span> <span class="pre">número</span></tt>, en otro caso obtenemos <tt class="docutils literal"><span class="pre">Nothing</span></tt>.</p>
 <p>Acabamos de implementar la función <tt class="docutils literal"><span class="pre">lookup</span></tt> del módulo <tt class="docutils literal"><span class="pre">Data.List</span></tt>. Si
@@ -1181,7 +1181,7 @@ un lista completa de las funciones que contiene en su
 </div>
 <div class="section" id="data-set">
 <h2>Data.Set<a class="headerlink" href="#data-set" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Conjuntos lego" class="align-right" src="../_images/legosets.png" />
+<img alt="Conjuntos lego" class="align-right" src="../images/legosets.png" />
 <p>El módulo <tt class="docutils literal"><span class="pre">Data.Set</span></tt> nos ofrece operaciones con conjuntos. Conjuntos como
 los conjuntos en matemáticas. Los <tt class="docutils literal"><span class="pre">conjuntos</span></tt> son un tipo de datos mezcla
 entre las lista y los diccionarios. Todos los elementos de un conjunto son
@@ -1296,7 +1296,7 @@ lista mientras que <tt class="docutils literal"><span class="pre">setNub</span><
 </div>
 <div class="section" id="creando-nuestros-propios-modulos">
 <h2>Creando nuestros propios módulos<a class="headerlink" href="#creando-nuestros-propios-modulos" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Creando módulos" class="align-right" src="../_images/making_modules.png" />
+<img alt="Creando módulos" class="align-right" src="../images/making_modules.png" />
 <p>Hasta ahora hemos visto unos cuantos módulos interesantes, pero ¿Cómo creamos
 nuestros propios módulos? Casi todo lenguaje de programación te permite que
 dividas tu código en varios ficheros y Haskell no es diferente. Cuando creamos
