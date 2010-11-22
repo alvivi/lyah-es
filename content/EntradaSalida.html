@@ -421,7 +421,7 @@ también tiene un <tt class="docutils literal"><span class="pre">do</span></tt>.
 algunas funciones que son útiles a la hora de trabajar con <tt class="docutils literal"><span class="pre">IO</span></tt>.</p>
 <blockquote>
 <ul>
-<li><p class="first"><em class="dfn">putStr</em> es muy parecido a <tt class="docutils literal"><span class="pre">putStrLn</span></tt> en el sentido de que toma una
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">putStr</span></tt> es muy parecido a <tt class="docutils literal"><span class="pre">putStrLn</span></tt> en el sentido de que toma una
 cadena y devuelve una acción que imprimirá esa cadena por la terminal, solo
 que <tt class="docutils literal"><span class="pre">putStr</span></tt> no salta a una nueva línea después de imprimir la cadena tal
 y como <tt class="docutils literal"><span class="pre">putStrLn</span></tt> hace.</p>
@@ -438,7 +438,7 @@ y como <tt class="docutils literal"><span class="pre">putStrLn</span></tt> hace.
 la acción <tt class="docutils literal"><span class="pre">IO</span></tt> es la unidad. Un valor inútil, por lo que no tiene sentido
 ligarlo a nada.</p>
 </li>
-<li><p class="first"><em class="dfn">putChar</em> toma un carácter y devuelve una acción <tt class="docutils literal"><span class="pre">IO</span></tt> que lo imprimirá
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">putChar</span></tt> toma un carácter y devuelve una acción <tt class="docutils literal"><span class="pre">IO</span></tt> que lo imprimirá
 por la terminal.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>   <span class="n">putChar</span> <span class="sc">&#39;t&#39;</span>
             <span class="n">putChar</span> <span class="sc">&#39;e&#39;</span>
@@ -467,7 +467,7 @@ lo hacemos en el código puro. Al igual que en el código puro, definimos el
 caso base y luego pensamos que es realmente el resultado. Es una acción que
 primero imprime el primer carácter y luego imprime el resto de la cadena.</p>
 </li>
-<li><p class="first"><em class="dfn">print</em> toma un valor de cualquier tipo que sea miembro de la clase
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">print</span></tt> toma un valor de cualquier tipo que sea miembro de la clase
 <tt class="docutils literal"><span class="pre">Show</span></tt> (por lo que sabemos que se puede representar como una cadena),
 llama a <tt class="docutils literal"><span class="pre">show</span></tt> con ese valor para obtener su representación y luego
 muestra esa cadena por la terminal. Básicamente es <tt class="docutils literal"><span class="pre">putStrLn</span> <span class="pre">.</span> <span class="pre">show</span></tt>.
@@ -508,7 +508,7 @@ solemos querer las dobles comillas que rodean la representación de una
 cadena, pero para mostrar valores de cualquier otro tipo se suele utilizar
 <tt class="docutils literal"><span class="pre">print</span></tt>.</p>
 </li>
-<li><p class="first"><em class="dfn">getChar</em> es una acción <tt class="docutils literal"><span class="pre">IO</span></tt> que lee un carácter por la entrada
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">getChar</span></tt> es una acción <tt class="docutils literal"><span class="pre">IO</span></tt> que lee un carácter por la entrada
 estándar (teclado). Por ello, su tipo es <tt class="docutils literal"><span class="pre">getChar</span> <span class="pre">::</span> <span class="pre">IO</span> <span class="pre">Char</span></tt>, ya que
 el resultado contenido dentro de la acción <tt class="docutils literal"><span class="pre">IO</span></tt> es un carácter. Ten en
 cuenta que debido al <em>buffering</em>, la acción de leer un carácter no se
@@ -538,7 +538,7 @@ Una vez pulsamos intro, actúa como si hubiéramos escrito esos caracteres
 desde el principio. Intenta jugar un poco con este programa para entender
 como funciona.</p>
 </li>
-<li><p class="first">La función <em class="dfn">when</em> se encuentra en el módulo <tt class="docutils literal"><span class="pre">Control.Monad</span></tt> (para
+<li><p class="first">La función <tt class="xref cpp cpp-member docutils literal"><span class="pre">when</span></tt> se encuentra en el módulo <tt class="docutils literal"><span class="pre">Control.Monad</span></tt> (para
 acceder a ella haz <tt class="docutils literal"><span class="pre">import</span> <span class="pre">Control.Monad</span></tt>). Es interesante ya que dentro
 de un bloque <tt class="docutils literal"><span class="pre">do</span></tt> parece como si fuese una sentencia de control de flujo,
 pero en realidad es una función normal. Toma un valor booleano y una acción
@@ -561,7 +561,7 @@ else return ()`</cite>. También existe la función <tt class="docutils literal"
 igual a <tt class="docutils literal"><span class="pre">when</span></tt> solo que devuleve la acción original cuando ecuentra
 <tt class="xref docutils literal"><span class="pre">False</span></tt> en lugar de <tt class="xref docutils literal"><span class="pre">True</span></tt>.</p>
 </li>
-<li><p class="first"><em class="dfn">sequence</em> toma una lista de acciones <tt class="docutils literal"><span class="pre">IO</span></tt> y devuevle una acción que
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">sequence</span></tt> toma una lista de acciones <tt class="docutils literal"><span class="pre">IO</span></tt> y devuevle una acción que
 realizará todas esas acciones una detrás de otra. El resultado contenido en
 la acción <tt class="docutils literal"><span class="pre">IO</span></tt> será una lista con todos los resultados de todas las
 acciones <tt class="docutils literal"><span class="pre">IO</span></tt> que fueron ejecutadas. Su tipo es <tt class="docutils literal"><span class="pre">sequence</span> <span class="pre">::</span> <span class="pre">[IO</span> <span class="pre">a]</span> <span class="pre">-&gt;`</span>
@@ -608,7 +608,7 @@ si es impreso por pantalla, ya que <tt class="docutils literal"><span class="pre
 </li>
 <li><p class="first">Como mapear una función que devuelve una acción <tt class="docutils literal"><span class="pre">IO</span></tt> sobre una lista y
 luego secuenciarla es algo muy común, se introducieron las funciones
-auxiliares <em class="dfn">mapM</em> y <em class="dfn">mapM_</em>. <tt class="docutils literal"><span class="pre">mapM</span></tt> toma una función y una lista,
+auxiliares <tt class="xref cpp cpp-member docutils literal"><span class="pre">mapM</span></tt> y <tt class="xref cpp cpp-member docutils literal"><span class="pre">mapM_</span></tt>. <tt class="docutils literal"><span class="pre">mapM</span></tt> toma una función y una lista,
 mapea la función sobre la lista y luego la secuencia. <tt class="docutils literal"><span class="pre">mapM_</span></tt> hace lo
 mismo, solo que después se deshace del resultado. Normalmente utilizamos
 <tt class="docutils literal"><span class="pre">mapM_</span></tt> cuando no nos importa el resultado de las acciones secuenciadas.</p>
@@ -624,7 +624,7 @@ mismo, solo que después se deshace del resultado. Normalmente utilizamos
 </pre></div>
 </div>
 </li>
-<li><p class="first"><em class="dfn">forever</em> toma una acción <tt class="docutils literal"><span class="pre">IO</span></tt> y devuelve otra acción <tt class="docutils literal"><span class="pre">IO</span></tt> que
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">forever</span></tt> toma una acción <tt class="docutils literal"><span class="pre">IO</span></tt> y devuelve otra acción <tt class="docutils literal"><span class="pre">IO</span></tt> que
 simplemente repetirá la primera acción indefinidamente. Está situada en
 <tt class="docutils literal"><span class="pre">Control.Monad</span></tt>. Este pequeño programa preguntará al usuario por una
 cadena y luego la devolverá en mayúsculas, indefinidamente:</p>
@@ -638,7 +638,7 @@ cadena y luego la devolverá en mayúsculas, indefinidamente:</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first"><em class="dfn">forM</em> (situado en <tt class="docutils literal"><span class="pre">Control.Monad</span></tt>) es como <tt class="docutils literal"><span class="pre">mapM</span></tt> solo que tiene
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">forM</span></tt> (situado en <tt class="docutils literal"><span class="pre">Control.Monad</span></tt>) es como <tt class="docutils literal"><span class="pre">mapM</span></tt> solo que tiene
 sus parámetros cambiados de sitio. El primer parámetro es la lista y el
 segundo la función a mapear sobre la lista, la cual luego será secuenciada
 ¿Para qué es útil? Bueno, con un uso creativo de funciones lambda y la
@@ -718,7 +718,7 @@ por pantalla dicha cadena.</p>
 <p><tt class="docutils literal"><span class="pre">getChar</span></tt> es una acción de E/S que lee un solo carácter desde la terminal.
 <tt class="docutils literal"><span class="pre">getLine</span></tt> es una acción de E/S que lee una línea desde la terminal. Estas
 funciones son bastante sencillas y la mayoría de lenguajes tienen funciones
-o sentencias similares. Pero ahora vamos a ver <em class="dfn">getContents</em>.
+o sentencias similares. Pero ahora vamos a ver <tt class="xref cpp cpp-member docutils literal"><span class="pre">getContents</span></tt>.
 <tt class="docutils literal"><span class="pre">getContents</span></tt> es una acción de E/S que lee cualquier cosa de la entrada
 estándar hasta que encuentre un carácter de fin de fichero. Su tipo es
 <tt class="docutils literal"><span class="pre">getContents</span> <span class="pre">::</span> <span class="pre">IO</span> <span class="pre">String</span></tt>. Lo bueno de <tt class="docutils literal"><span class="pre">getContents</span></tt> es que realiza una
@@ -874,7 +874,7 @@ cadena, devolviendo <tt class="docutils literal"><span class="pre">&quot;short\n
 <tt class="docutils literal"><span class="pre">shortlinesonly</span></tt>, de forma que obtenemos únicamente las líneas cortas.</p>
 <p>Este patrón de tomar una cadena como entrada, transformarla con una función y
 mostrar el resultado de esa transformación es tan común que existe una función
-que hace esto más fácil, la función <em class="dfn">interact</em>. <tt class="docutils literal"><span class="pre">interact</span></tt> toma una
+que hace esto más fácil, la función <tt class="xref cpp cpp-member docutils literal"><span class="pre">interact</span></tt>. <tt class="docutils literal"><span class="pre">interact</span></tt> toma una
 función del tipo <tt class="docutils literal"><span class="pre">String</span> <span class="pre">-&gt;</span> <span class="pre">String</span></tt> como parámetro y devuelve una acción de
 E/S que tomara la entrada del programa, ejecutará la función sobre ella y
 mostrará por pantalla el resultado de esta función. Vamos a modificar nuestro
@@ -1016,7 +1016,7 @@ objetivo enfatizar su desacuerdo, mientras que la cuarta nos sugiere que
 busquemos una nueva novia.</p>
 <p>¡Genial! Ahora vamos a analizar nuestro programa línea a línea. El programa
 tiene varias acciones de E/S unidas en un bloque <tt class="docutils literal"><span class="pre">do</span></tt>. En la primera línea
-del bloque <tt class="docutils literal"><span class="pre">do</span></tt> vemos que hay una función nueva llamada <em class="dfn">openFile</em>. Su
+del bloque <tt class="docutils literal"><span class="pre">do</span></tt> vemos que hay una función nueva llamada <tt class="xref cpp cpp-member docutils literal"><span class="pre">openFile</span></tt>. Su
 tipo es el siguiente: <tt class="docutils literal"><span class="pre">openFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">IOMode</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">Handle</span></tt>. Si lo
 lees en voz alta dice: <tt class="docutils literal"><span class="pre">openFile</span></tt> toma la ruta de un fichero y un <tt class="docutils literal"><span class="pre">IOMode</span></tt>
 y devuelve una acción de E/S que abrirá el fichero indicado y contendrá un
@@ -1044,7 +1044,7 @@ fichero. Lo usaremos para manipular el fichero de forma que sepamos de donde
 leer y escribir datos. Sería un poco estúpido abrir un fichero y no ligar el
 manipulador ya que no podríamos hacer nada con ese fichero. En nuestro caso
 ligamos el manipulador a <tt class="docutils literal"><span class="pre">handle</span></tt>.</p>
-<p>En la siguiente línea vemos una función llamada <em class="dfn">hGetContents</em>. Toma un
+<p>En la siguiente línea vemos una función llamada <tt class="xref cpp cpp-member docutils literal"><span class="pre">hGetContents</span></tt>. Toma un
 <tt class="docutils literal"><span class="pre">Handle</span></tt>, de forma que sabe de donde tiene que leer el contenido, y devuelve
 una <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">String</span></tt>, una acción de E/S que contiene como resultado el contenido
 del fichero. Esta función se parece mucho a <tt class="docutils literal"><span class="pre">getContents</span></tt>. La única
@@ -1066,11 +1066,11 @@ gran libro y cada fichero fuera un capítulo del libro, el manipulador sería
 como un marcador que nos indica por donde estamos leyendo (o escribiendo) en
 un capítulo, mientras que el contenido sería el capítulo en si.</p>
 <p>Con <tt class="docutils literal"><span class="pre">putStr</span> <span class="pre">contents</span></tt> simplemente mostramos el contenido del fichero por
-la salida estándar. Luego ejecutamos <em class="dfn">hClose</em>, el cual toma un
+la salida estándar. Luego ejecutamos <tt class="xref cpp cpp-member docutils literal"><span class="pre">hClose</span></tt>, el cual toma un
 manipulador y devuelve una acción de E/S que cierra el fichero ¡Tienes que
 cerrar tu mismo cada fichero que abras con <tt class="docutils literal"><span class="pre">openFile</span></tt>!</p>
 <p>Otra forma de hacer lo que mismo que acabamos de hacer es utilizando la
-función <em class="dfn">withFile</em>, cuya declaración de tipo es <tt class="docutils literal"><span class="pre">withFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span>
+función <tt class="xref cpp cpp-member docutils literal"><span class="pre">withFile</span></tt>, cuya declaración de tipo es <tt class="docutils literal"><span class="pre">withFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span>
 <span class="pre">IOMode</span> <span class="pre">-&gt;</span> <span class="pre">(Handle</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">a</span></tt>. Toma la ruta de un fichero, un
 <tt class="docutils literal"><span class="pre">IOMode</span></tt> y luego toma una función que a su vez toma un manipulador y
 devuelve una acción de E/S. <tt class="docutils literal"><span class="pre">withFile</span></tt> devuelve una acción de E/S que
@@ -1120,8 +1120,8 @@ de forma que contenga como resultado el número de líneas que ha leído, la
 acción resultante de <tt class="docutils literal"><span class="pre">withFile'</span></tt> también tendrá como resultado el número de
 líneas leidas.</p>
 <p>De la misma forma que <tt class="docutils literal"><span class="pre">hGetContents</span></tt> funciona igual que <tt class="docutils literal"><span class="pre">getContents</span></tt> pero
-sobre el fichero indicado, existen también <em class="dfn">hGetLine</em>, <em class="dfn">hPutStr</em>,
-<em class="dfn">hPutStrLn</em>, <em class="dfn">hGetChar</em>, etc. Funcionan exactamente igual que sus
+sobre el fichero indicado, existen también <tt class="xref cpp cpp-member docutils literal"><span class="pre">hGetLine</span></tt>, <tt class="xref cpp cpp-member docutils literal"><span class="pre">hPutStr</span></tt>,
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">hPutStrLn</span></tt>, <tt class="xref cpp cpp-member docutils literal"><span class="pre">hGetChar</span></tt>, etc. Funcionan exactamente igual que sus
 homónimas, solo que toman un manipulador como parámetro y operar sobre el
 fichero indicado en lugar de sobre la entrada o salida estándar. Por ejemplo,
 <tt class="docutils literal"><span class="pre">putStrLn</span></tt> es una función que toma una cadena y devuelve una acción de E/S
@@ -1134,7 +1134,7 @@ que lee una línea de su fichero.</p>
 que tenemos estas tres pequeñas funciones que hacen nuestra vida más fácil:</p>
 <blockquote>
 <ul>
-<li><p class="first"><em class="dfn">readFile</em> tiene la declaración de tipo <tt class="docutils literal"><span class="pre">readFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">IO</span>
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">readFile</span></tt> tiene la declaración de tipo <tt class="docutils literal"><span class="pre">readFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">IO</span>
 <span class="pre">String</span></tt>. Recueda, <tt class="docutils literal"><span class="pre">FilePath</span></tt> es solo un sinónimo de <tt class="docutils literal"><span class="pre">String</span></tt>.
 <tt class="docutils literal"><span class="pre">readFile</span></tt> toma la ruta de un fichero y devuelve un acción de E/S que
 leerá ese fichero (de forma perezosa) y ligará sus contenidos a una cadena.
@@ -1152,7 +1152,7 @@ ejemplo anterior utilizando <tt class="docutils literal"><span class="pre">readF
 no podemos cerrarlo manualmente, así que Haskell se encarga de cerrarlo por
 nosotros cuando utilizamos <tt class="docutils literal"><span class="pre">readFile</span></tt>.</p>
 </li>
-<li><p class="first"><em class="dfn">writeFile</em> tiene el tipo <tt class="docutils literal"><span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">String</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">()</span></tt>. Toma la
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">writeFile</span></tt> tiene el tipo <tt class="docutils literal"><span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">String</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">()</span></tt>. Toma la
 ruta de un fichero y una cadena que escribir en ese fichero y devuelve una
 acción de E/S que se encargará de escribirla. En caso de que el fichero
 indicado ya exista, sobreescribirá el fichero desde el incio. Aquí tienes
@@ -1175,7 +1175,7 @@ en <tt class="docutils literal"><span class="pre">girlfriendcaps.txt</span></tt>
 </pre></div>
 </div>
 </li>
-<li><p class="first"><em class="dfn">appendFile</em> tiene el mismo tipo que <tt class="docutils literal"><span class="pre">writeFile</span></tt>, solo que
+<li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">appendFile</span></tt> tiene el mismo tipo que <tt class="docutils literal"><span class="pre">writeFile</span></tt>, solo que
 <tt class="docutils literal"><span class="pre">appendFile</span></tt> no sobreescribe el fichero desde el principio en caso de que
 el fichero indicado ya exista, sino que añade contiendo al final del
 fichero.</p>
@@ -1248,7 +1248,7 @@ no es muy eficiente ya que tiene que acceder al disco muchas veces.</p>
 <p>Leer ficheros con bloques grandes nos puede ayudar si queremos minimizar el
 acceso a disco o cuando nuestro fichero en realidad es un rescurso de una red
 muy lenta.</p>
-<p>También podemos utilizr <em class="dfn">hFlush</em>, que es una función que toma un
+<p>También podemos utilizr <tt class="xref cpp cpp-member docutils literal"><span class="pre">hFlush</span></tt>, que es una función que toma un
 manipulador y devuelve una acción de E/S que vaciará el búfer del fichero
 asociado al manipulador. Cuando usamos un búfer de líneas, el búfer se vacía
 depués de cada línea. Cuando utilizmos un búfer de bloques, el búfer se vacía
@@ -1303,7 +1303,7 @@ nuevas que se encuentran en <tt class="docutils literal"><span class="pre">Syste
 <p>Primero abrirmos el fichero <tt class="docutils literal"><span class="pre">todo.txt</span></tt> en modo lectura y ligamos el
 manipulador a <tt class="docutils literal"><span class="pre">handle</span></tt>.</p>
 <p>A continuación, utilizamos una función que aún no conocemos y que proviene
-de <tt class="docutils literal"><span class="pre">System.IO</span></tt>, <em class="dfn">openTempFile</em>. Su nombre es bastante auto descriptivo.
+de <tt class="docutils literal"><span class="pre">System.IO</span></tt>, <tt class="xref cpp cpp-member docutils literal"><span class="pre">openTempFile</span></tt>. Su nombre es bastante auto descriptivo.
 Toma la ruta de un directorio temporal y una plantilla para nombres para un
 fichero y abre un fichero temporal. Hemos utilizado <tt class="docutils literal"><span class="pre">&quot;.&quot;</span></tt> para el directorio
 temporal porque <tt class="docutils literal"><span class="pre">&quot;.&quot;</span></tt> representa el directorio actual en cualquier S.O.
@@ -1344,9 +1344,9 @@ hemos abierto. El fichero original permanece sin cambios y el fichero temporal
 ahora contiene todas las tareas que contiene el original, excepto la que
 queremos eliminar.</p>
 <p>Después de cerrar ambos archivos, tanto el original como el temporal,
-eliminamos el original con <em class="dfn">removeFile</em>, que, como puedes ver, toma la
+eliminamos el original con <tt class="xref cpp cpp-member docutils literal"><span class="pre">removeFile</span></tt>, que, como puedes ver, toma la
 ruta de un fichero y lo elimina. Después de eliminar el <tt class="docutils literal"><span class="pre">todo.txt</span></tt> original,
-utilizamos <em class="dfn">renameFile</em> para renombrar el fichero temporal a
+utilizamos <tt class="xref cpp cpp-member docutils literal"><span class="pre">renameFile</span></tt> para renombrar el fichero temporal a
 <tt class="docutils literal"><span class="pre">todo.txt</span></tt>. Ten cuidad, tanto <tt class="docutils literal"><span class="pre">removeFile</span></tt> como <tt class="docutils literal"><span class="pre">renameFile</span></tt> (ambas
 contenidas en <tt class="docutils literal"><span class="pre">System.Directory</span></tt>) toman rutas de ficheros y no
 manipuladores.</p>
@@ -1405,10 +1405,10 @@ usuario una vez se haya ejecutado. Y que mejor forma de que el usuario diga al
 programa que quiere que haga cuando se ejecute que con los parámetros de la
 línea de comandos.</p>
 <p>El módulo <tt class="docutils literal"><span class="pre">System.Environment</span></tt> tiene dos acciones de E/S muy interesante.
-Una es <em class="dfn">getArgs</em>, cuya declaración de tipo es <tt class="docutils literal"><span class="pre">getArgs</span> <span class="pre">::</span> <span class="pre">IO</span> <span class="pre">[String]</span></tt>
+Una es <tt class="xref cpp cpp-member docutils literal"><span class="pre">getArgs</span></tt>, cuya declaración de tipo es <tt class="docutils literal"><span class="pre">getArgs</span> <span class="pre">::</span> <span class="pre">IO</span> <span class="pre">[String]</span></tt>
 y es una acción de E/S que obtendrá los parámetros con los que el programa fue
 ejecutado y el resultado que contiene son dichos parámetros en forma de lista.
-<em class="dfn">getProgName</em> tiene el tipo <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">String</span></tt> y es una acción de E/S que
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">getProgName</span></tt> tiene el tipo <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">String</span></tt> y es una acción de E/S que
 contiene el nombre del programa.</p>
 <p>Aquí tienes un pequeño programa que demuestra el comportamiento de estas
 funciones:</p>
@@ -1686,10 +1686,10 @@ que tome como parámetro esa aleatoriedad y devuelva un número (o cualquier
 otro tipo de dato) basándose en ella.</p>
 <p>Utilizaremos el módulo <tt class="docutils literal"><span class="pre">System.Random</span></tt>. Contiene todas las funciones que
 calmaran nuestra sed de aleatoriedad. Vamos a jugar con una de las funciones
-que exporta, llamada <em class="dfn">random</em>. Su declaración de tipo es <tt class="docutils literal"><span class="pre">random</span> <span class="pre">::</span>
+que exporta, llamada <tt class="xref cpp cpp-member docutils literal"><span class="pre">random</span></tt>. Su declaración de tipo es <tt class="docutils literal"><span class="pre">random</span> <span class="pre">::</span>
 <span class="pre">(RandomGen</span> <span class="pre">g,</span> <span class="pre">Random</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">g</span> <span class="pre">-&gt;</span> <span class="pre">(a,</span> <span class="pre">g)</span></tt> ¡Wau! Hay nuevas clases de tipos en
-esta declaración. La clase de tipos <em class="dfn">RandomGen</em> es para tipos que pueden
-actuar como fuentes de aleatoriedad. La clase de tipos <em class="dfn">Random</em> es para
+esta declaración. La clase de tipos <tt class="xref cpp cpp-class docutils literal"><span class="pre">RandomGen</span></tt> es para tipos que pueden
+actuar como fuentes de aleatoriedad. La clase de tipos <tt class="xref cpp cpp-class docutils literal"><span class="pre">Random</span></tt> es para
 tipos que pueden tener datos aleatorios. Un dato booleano puede tener valores
 aleatorios, <tt class="xref docutils literal"><span class="pre">True</span></tt> o <tt class="xref docutils literal"><span class="pre">False</span></tt>. Un número también puede tomar un conjunto
 de diferentes valores alotarios ¿Puede el tipo función tomar valores
@@ -1700,11 +1700,11 @@ de aleatoriedad) y devuelve un valor aleatorio y un nuevo generador aleatorio
 enseguida.</p>
 <p>Para utilizar la función <tt class="docutils literal"><span class="pre">random</span></tt>, primero tenemos que obtener uno de esos
 generadores aleatorios. El módulo <tt class="docutils literal"><span class="pre">System.Random</span></tt> exporta un tipo
-interensante llamado <em class="dfn">StdGen</em> que posee una instancia para la clase de
+interensante llamado <tt class="xref cpp cpp-type docutils literal"><span class="pre">StdGen</span></tt> que posee una instancia para la clase de
 tipos <tt class="docutils literal"><span class="pre">RandomGen</span></tt>. Podemos crear un <tt class="docutils literal"><span class="pre">StdGen</span></tt> manualmente o podemos decirle
 al sistema que nos de uno basandose en un motón de cosas aleatorias.</p>
 <p>Para crear manualmente un generador aletario, utilizamos la función
-<em class="dfn">mkStdGen</em>. Tiene el tipo <tt class="docutils literal"><span class="pre">Int</span> <span class="pre">-&gt;</span> <span class="pre">StdGen</span></tt>. Toma un entero y basándose
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">mkStdGen</span></tt>. Tiene el tipo <tt class="docutils literal"><span class="pre">Int</span> <span class="pre">-&gt;</span> <span class="pre">StdGen</span></tt>. Toma un entero y basándose
 en eso, nos devuelve un generador aleatorio. Bien, vamos a intentar utilizar
 el tandem <tt class="docutils literal"><span class="pre">random</span></tt> <tt class="docutils literal"><span class="pre">mkStdGen</span></tt> para obtener un número aleatorio.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; random (mkStdGen 100)</span>
@@ -1787,7 +1787,7 @@ debe a que ya hemos especificado en la declaración de tipo de la función que
 queremos valores booleanos. Por este motivo Haskell puede inferir que queremos
 valores booleanos.</p>
 <p>¿Y qué pasaría si quisiéramos lanzar la moneda cuatro veces? ¿Y cinco? Bien,
-para eso tenemos la función llamada <em class="dfn">randoms</em> que toma un generador y
+para eso tenemos la función llamada <tt class="xref cpp cpp-member docutils literal"><span class="pre">randoms</span></tt> que toma un generador y
 devulve una secuencia infinita de valores aletorios.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; take 5 $ randoms (mkStdGen 11) :: [Int]</span>
 <span class="go">[-1807975507,545074951,-1015194702,-1622477312,-502893664]</span>
@@ -1828,7 +1828,7 @@ cuando generamos los <tt class="docutils literal"><span class="pre">n-1</span></
 <p>¿Y si queremos obtener un valor aleatorio dentro de un determindo rango? Todos
 los enteros que hemos generador hasta ahora son escandalosamente grandes o
 pequeños ¿Y si queremos lanzar un dado? Bueno, para eso utilizamos
-<em class="dfn">randomR</em>. Su declaración de tipo es <tt class="docutils literal"><span class="pre">randomR</span> <span class="pre">::</span> <span class="pre">(RandomGen</span> <span class="pre">g,</span> <span class="pre">Random</span> <span class="pre">a)</span>
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">randomR</span></tt>. Su declaración de tipo es <tt class="docutils literal"><span class="pre">randomR</span> <span class="pre">::</span> <span class="pre">(RandomGen</span> <span class="pre">g,</span> <span class="pre">Random</span> <span class="pre">a)</span>
 <span class="pre">::</span> <span class="pre">(a,</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">g</span> <span class="pre">-&gt;</span> <span class="pre">(a,</span> <span class="pre">g)</span></tt>, lo que significa que tiene comportamiento similar
 a <tt class="docutils literal"><span class="pre">random</span></tt>, solo que primero toma una dupla de valores que establecerán el
 límite superior e inferior de forma que el valor aleatorio generado esté
@@ -1851,7 +1851,7 @@ ahora no hemos visto nada relacionado con la E/S. Bien, hasta ahora siempre
 hemos creado nuestro generador de forma manual basándonos en algún entero
 arbitrario. El problema es que, en los programas reales, siempre devolverán
 los mismos números aleatorios, lo cual no es muy buena idea. Por este motivo
-<tt class="docutils literal"><span class="pre">System.Random</span></tt> nos ofrece la acción de E/S <em class="dfn">getStdGen</em> que tiene
+<tt class="docutils literal"><span class="pre">System.Random</span></tt> nos ofrece la acción de E/S <tt class="xref cpp cpp-member docutils literal"><span class="pre">getStdGen</span></tt> que tiene
 el tipo <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">StdGen</span></tt>. Cuando se inicia la ejecución de un programa, éste
 pregunta al sistema por un buen generador de valores aleatorios y lo almacena
 en algo llamado generador global. <tt class="docutils literal"><span class="pre">getStdGen</span></tt> trae ese generador para que
@@ -1904,7 +1904,7 @@ primer componente y la segunda parte como segundo componente.</p>
     <span class="n">putStr</span> <span class="n">second20</span>
 </pre></div>
 </div>
-<p>Otra forma de hacerlo es utilizando la acción <em class="dfn">newStdGen</em> que divide el
+<p>Otra forma de hacerlo es utilizando la acción <tt class="xref cpp cpp-member docutils literal"><span class="pre">newStdGen</span></tt> que divide el
 generador de valores aleatorios en dos nuevos generadores. Actualiza el
 generador global con uno de ellos y el toro lo de vuelve como resultado de la
 acción.</p>
@@ -1962,7 +1962,7 @@ ahora será <tt class="docutils literal"><span class="pre">7</span></tt>.</p>
 <p class="last">Si el usuario introduce algo que <tt class="docutils literal"><span class="pre">read</span></tt> no pueda leer (como
 <tt class="docutils literal"><span class="pre">&quot;haha&quot;</span></tt>), nuestro programa terminará bruscamente con un mensaje
 de error bastante horrendo. Si no te apetece que el programa termine
-de esta forma, utiliza la función <em class="dfn">reads</em>, que devuelve una
+de esta forma, utiliza la función <tt class="xref cpp cpp-member docutils literal"><span class="pre">reads</span></tt>, que devuelve una
 lista vacía cuando no puede leer una cadena. Cuando si puede
 devuelve una lista unitaria que contiene una dupla con nuestro valor
 deseado como primer componente y una cadena con lo que no ha
@@ -2084,7 +2084,7 @@ con las cadenas de bytes.</p>
 </div>
 <p><tt class="docutils literal"><span class="pre">B</span></tt> posee las cadenas de bytes perezosas mientras que <tt class="docutils literal"><span class="pre">S</span></tt> contiene las
 estrictas. Utilizaremos casi siempre la versión perezosa.</p>
-<p>La función <em class="dfn">pack</em> tiene un tipo <tt class="docutils literal"><span class="pre">[Word8]</span> <span class="pre">-&gt;</span> <span class="pre">ByteString</span></tt>. Lo cual
+<p>La función <tt class="xref cpp cpp-member docutils literal"><span class="pre">pack</span></tt> tiene un tipo <tt class="docutils literal"><span class="pre">[Word8]</span> <span class="pre">-&gt;</span> <span class="pre">ByteString</span></tt>. Lo cual
 significa que toma una lista de bytes del tipo <tt class="docutils literal"><span class="pre">Word8</span></tt> y devuelve una
 <tt class="docutils literal"><span class="pre">ByteString</span></tt>.  Puedes verlo como si tomara un lista, que es perezosa, y la
 hace menos perezosa, de forma que sigue siendo perezosa solo que a intervalos
@@ -2107,10 +2107,10 @@ simplemente se truncará de forma binaria al valor 80.</p>
 <p>Hemos empaquetado solo unos pocos valores dentro de una cadena de bytes, de
 forma que caben dentro de un mismo bloque (<tt class="docutils literal"><span class="pre">Chunk</span></tt>). El <tt class="docutils literal"><span class="pre">Empty</span></tt> es como
 <tt class="docutils literal"><span class="pre">[]</span></tt> para las listas.</p>
-<p><em class="dfn">unpack</em> es la versión inversa de de <tt class="docutils literal"><span class="pre">pack</span></tt>. Toma una cadena de bytes y
+<p><tt class="xref cpp cpp-member docutils literal"><span class="pre">unpack</span></tt> es la versión inversa de de <tt class="docutils literal"><span class="pre">pack</span></tt>. Toma una cadena de bytes y
 la convierte en una lista de bytes.</p>
-<p><em class="dfn">fromChunks</em> toma una lista de cadenas de bytes estrictas y la convierte
-en una cadena de bytes perezosa.  <em class="dfn">toChunks</em> toma una cadena de bytes
+<p><tt class="xref cpp cpp-member docutils literal"><span class="pre">fromChunks</span></tt> toma una lista de cadenas de bytes estrictas y la convierte
+en una cadena de bytes perezosa.  <tt class="xref cpp cpp-member docutils literal"><span class="pre">toChunks</span></tt> toma una cadena de bytes
 perezosa y la convierte en una estricta.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; B.fromChunks [S.pack [40,41,42], S.pack [43,44,45], S.pack [46,47,48]]</span>
 <span class="go">Chunk &quot;()*&quot; (Chunk &quot;+,-&quot; (Chunk &quot;./0&quot; Empty))</span>
@@ -2119,11 +2119,11 @@ perezosa y la convierte en una estricta.</p>
 <p>Esto es útil cuando tienes un montón de cadenas de bytes estrictas y quieres
 procesarlas eficientemente sin tener que unirlas en memoria en una más grande
 primero.</p>
-<p>La versión de <tt class="docutils literal"><span class="pre">:</span></tt> para cadenas de bytes se conoce como <em class="dfn">cons</em>. Toma un
+<p>La versión de <tt class="docutils literal"><span class="pre">:</span></tt> para cadenas de bytes se conoce como <tt class="xref cpp cpp-member docutils literal"><span class="pre">cons</span></tt>. Toma un
 byte y una cadena de bytes y pone dicho byte al principio. Aunque es perezosa,
 generará un nuevo bloque para ese elemento aunque dicho bloque aún no este
 lleno. Por este motivo es mejor utilizar la versión estricta de <tt class="docutils literal"><span class="pre">cons</span></tt>,
-<em class="dfn">cons&#8217;</em>, si vas a insertar un montón de bytes al principio de una cadena
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">cons'</span></tt>, si vas a insertar un montón de bytes al principio de una cadena
 de bytes.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; B.cons 85 $ B.pack [80,81,82,84]</span>
 <span class="go">Chunk &quot;U&quot; (Chunk &quot;PQRT&quot; Empty)</span>
@@ -2135,7 +2135,7 @@ de bytes.</p>
 <span class="go">Chunk &quot;23456789:;&lt;&quot; Empty</span>
 </pre></div>
 </div>
-<p>Como puedes ver <em class="dfn">empty</em> crea una cadena de bytes vacía ¿Puedes ver las
+<p>Como puedes ver <tt class="xref cpp cpp-member docutils literal"><span class="pre">empty</span></tt> crea una cadena de bytes vacía ¿Puedes ver las
 diferencias entre <tt class="docutils literal"><span class="pre">cons</span></tt> y <tt class="docutils literal"><span class="pre">cons'</span></tt>? Con ayuda de <tt class="docutils literal"><span class="pre">foldr</span></tt> hemos empezado
 con una cadena de bytes vacía y luego hemos recorrido la lista de números
 desde la derecha, añadiendo cada número al principio de la cadena de bytes.
@@ -2149,7 +2149,7 @@ funciones análogas a las de <tt class="docutils literal"><span class="pre">Data
 funciones que se encuentran en <tt class="docutils literal"><span class="pre">System.IO</span></tt>, solo que <tt class="docutils literal"><span class="pre">String</span></tt> se remplaza
 por <tt class="docutils literal"><span class="pre">ByteString</span></tt>. Por ejemplo, la función <tt class="docutils literal"><span class="pre">readFile</span></tt> de <tt class="docutils literal"><span class="pre">System.IO</span></tt>
 tiene el tipo <tt class="docutils literal"><span class="pre">readFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">String</span></tt>, mientras que
-<em class="dfn">readFile</em> de los módulos de cadenas de bytes tiene el tipo
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">readFile</span></tt> de los módulos de cadenas de bytes tiene el tipo
 <tt class="docutils literal"><span class="pre">readFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">ByteString</span></tt>. Ten cuidado, si estás utilizando la
 versión estricta de cadenas de bytes e intentas leer un fichero, se leerá en
 memoria de un solo golpe. Con las cadenas de bytes perezosas se leerá bloque
@@ -2293,7 +2293,7 @@ no existe?</p>
 Nuestro programa falla ¿Qué pasaría si quisiéramos mostrar un mensaje más
 agradable en caso de que el fichero no exista? Una forma de hacerlo sería
 comprobando si el fichero existe antes de intentar abrirlo utilizando la
-función <em class="dfn">doesFileExist</em> de <tt class="docutils literal"><span class="pre">System.Directory</span></tt>.</p>
+función <tt class="xref cpp cpp-member docutils literal"><span class="pre">doesFileExist</span></tt> de <tt class="docutils literal"><span class="pre">System.Directory</span></tt>.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="kr">import</span> <span class="nn">System.Environment</span>
 <span class="kr">import</span> <span class="nn">System.IO</span>
 <span class="kr">import</span> <span class="nn">System.Directory</span>
@@ -2315,7 +2315,7 @@ booleano que nos dice si el fichero existe o no. No podemos utilizar
 utilizarlas en este contexto. Un fichero que no existe es una excepción que
 se lanza desde la E/S, así que capturarla en la E/S es totalmente aceptable.</p>
 <p>Para tratar con esto utilizando excepciones, vamos a aprovecharnos de la
-función <em class="dfn">catch</em> de <tt class="docutils literal"><span class="pre">System.IO.Error</span></tt>. Su declaración de tipo es
+función <tt class="xref cpp cpp-member docutils literal"><span class="pre">catch</span></tt> de <tt class="docutils literal"><span class="pre">System.IO.Error</span></tt>. Su declaración de tipo es
 <tt class="docutils literal"><span class="pre">catch</span> <span class="pre">::</span> <span class="pre">IO</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(IOError</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">a</span></tt>. Toma dos parámetros. El
 primero es una acción de E/S. Por ejemplo, podría ser una acción que trate de
 abrir un fichero. El segundo es lo que llamamos un manipulador. Si la primera
@@ -2400,8 +2400,8 @@ exista.</p>
 </div>
 <p>Todo permanece igual excepto el manipulador, el cual hemos modificado para
 que capture únicamente un grupo de excepciones de E/S. Hemos utilizado dos
-nuevas funciones de <tt class="docutils literal"><span class="pre">System.IO.Error</span></tt>, <em class="dfn">isDoesNotExistError</em> y
-<em class="dfn">ioError</em>. <tt class="docutils literal"><span class="pre">isDoesNotExistError</span></tt> es un predicado sobre <tt class="docutils literal"><span class="pre">IOError</span></tt>, o
+nuevas funciones de <tt class="docutils literal"><span class="pre">System.IO.Error</span></tt>, <tt class="xref cpp cpp-member docutils literal"><span class="pre">isDoesNotExistError</span></tt> y
+<tt class="xref cpp cpp-member docutils literal"><span class="pre">ioError</span></tt>. <tt class="docutils literal"><span class="pre">isDoesNotExistError</span></tt> es un predicado sobre <tt class="docutils literal"><span class="pre">IOError</span></tt>, o
 lo que es lo mismo, es una función que toma un valor del tipo <tt class="docutils literal"><span class="pre">IOError</span></tt> y
 devuelve <tt class="xref docutils literal"><span class="pre">True</span></tt> o <tt class="xref docutils literal"><span class="pre">False</span></tt>, por lo que su declaración de tipo es
 <tt class="docutils literal"><span class="pre">isDoesNotExistError</span> <span class="pre">::</span> <span class="pre">IOError</span> <span class="pre">-&gt;</span> <span class="pre">Bool</span></tt>. Hemos utilizado esta función con
@@ -2423,18 +2423,18 @@ evaluando la siguiente guarda. Los predicados que trabajan con <tt class="docuti
 son:</p>
 <blockquote>
 <ul class="simple">
-<li><em class="dfn">isAlreadyExistsError</em></li>
-<li><em class="dfn">isDoesNotExistError</em></li>
-<li><em class="dfn">isAlreadyInUseError</em></li>
-<li><em class="dfn">isFullError</em></li>
-<li><em class="dfn">isEOFError</em></li>
-<li><em class="dfn">isIllegalOperation</em></li>
-<li><em class="dfn">isPermissionError</em></li>
-<li><em class="dfn">isUserError</em></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isAlreadyExistsError</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isDoesNotExistError</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isAlreadyInUseError</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isFullError</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isEOFError</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isIllegalOperation</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isPermissionError</span></tt></li>
+<li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isUserError</span></tt></li>
 </ul>
 </blockquote>
 <p>La moyoría de éstas se explican por si mismas. <tt class="docutils literal"><span class="pre">isUserError</span></tt> se evalua a
-<tt class="xref docutils literal"><span class="pre">True</span></tt> cuando utilizamos la función <em class="dfn">userError</em> para crear la
+<tt class="xref docutils literal"><span class="pre">True</span></tt> cuando utilizamos la función <tt class="xref cpp cpp-member docutils literal"><span class="pre">userError</span></tt> para crear la
 excepción, lo cual se utiliza para crear excepciones en nuestro código y
 acompañarlas con una cadena. Por ejemplo, puedes utilizar algo como
 <tt class="docutils literal"><span class="pre">ioError</span> <span class="pre">$</span> <span class="pre">userError</span> <span class="pre">&quot;remote</span> <span class="pre">computer</span> <span class="pre">unplugged!&quot;</span></tt>, aunque es preferible que
@@ -2461,7 +2461,7 @@ provocó un error. No podemos mostrar el <tt class="docutils literal"><span clas
 <tt class="docutils literal"><span class="pre">getArgs</span></tt>, ya que solo un valor del tipo <tt class="docutils literal"><span class="pre">IOError</span></tt> se pasa al manipulador
 y manipulador no sabe nada más. Una función depende exclusivamente de los
 parámetros con los que fue llamada. Por esta razón podemos utilizar la
-función <em class="dfn">ioeGetFileName</em>, cuya declaración de tipo es <tt class="docutils literal"><span class="pre">ioeGetFileName</span> <span class="pre">::</span>
+función <tt class="xref cpp cpp-member docutils literal"><span class="pre">ioeGetFileName</span></tt>, cuya declaración de tipo es <tt class="docutils literal"><span class="pre">ioeGetFileName</span> <span class="pre">::</span>
 <span class="pre">IOError</span> <span class="pre">-&gt;</span> <span class="pre">Maybe</span> <span class="pre">FilePath</span></tt>. Toma un <tt class="docutils literal"><span class="pre">IOError</span></tt> como parámetro y quizá
 devuelva un <tt class="docutils literal"><span class="pre">FilePath</span></tt> (que es un sinónimo de <tt class="docutils literal"><span class="pre">String</span></tt>, así que es
 prácticamente lo mismo). Básicamente lo que hace es extraer la ruta de un
