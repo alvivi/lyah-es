@@ -63,11 +63,41 @@ em {
     font-weight:normal;
 }
 
-.dfn {
+.pre {
+	font-family:Consolas, "Courier New", monospace;
+    color: #777;
+    font-weight:bold;
+	white-space: nowrap;
+}
+
+.cpp-member > .pre {
 	font-family:Consolas, "Courier New", monospace;
 	font-size:16px;
     font-style: normal;
+	font-weight: normal;
 	background: #BC2932;
+	color: white;
+	white-space: nowrap;
+	padding: 1px 3px 1px 3px;
+}
+
+.cpp-class > .pre {
+	font-family:Consolas, "Courier New", monospace;
+	font-size:16px;
+    font-style: normal;
+	font-weight: normal;
+	background: #C3C;
+	color: white;
+	white-space: nowrap;
+	padding: 1px 3px 1px 3px;
+}
+
+.cpp-type > .pre {
+	font-family:Consolas, "Courier New", monospace;
+	font-size:16px;
+    font-style: normal;
+	font-weight: normal;
+	background: #519179;
 	color: white;
 	white-space: nowrap;
 	padding: 1px 3px 1px 3px;
@@ -114,15 +144,6 @@ img.align-center {
     margin:10px auto 25px auto;
     display:block;
 }
-
-
-.pre {
-	font-family:Consolas, "Courier New", monospace;
-    color: #555;
-    font-weight:bold;
-	white-space: nowrap;
-}
-
 
 .related {
    width: 100%;

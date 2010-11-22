@@ -420,7 +420,7 @@ son comparados los segundos elementos y así sucesivamente.
 ¿Qué mas podemos hacer con las listas? Aquí tienes algunas funciones básicas que
 pueden operar con las listas.
 
- * :dfn:`head` toma una lista y devuelve su cabeza. La cabeza de una lista es
+ * :cpp:member:`head` toma una lista y devuelve su cabeza. La cabeza de una lista es
    básicamente el primer elemento.
    
    .. code-block:: console
@@ -428,7 +428,7 @@ pueden operar con las listas.
        ghci> head [5,4,3,2,1]  
        5   
 
- * :dfn:`tail` toma una lista y devuelve su cola. En otros palabras, corta la
+ * :cpp:member:`tail` toma una lista y devuelve su cola. En otros palabras, corta la
    cabeza de la lista. 
    
    .. code-block:: console
@@ -436,14 +436,14 @@ pueden operar con las listas.
        ghci> tail [5,4,3,2,1]  
        [4,3,2,1]   
 
- * :dfn:`last` toma una lista y devuelve su último elemento. 
+ * :cpp:member:`last` toma una lista y devuelve su último elemento. 
  
    .. code-block:: console
 
        ghci> last [5,4,3,2,1]  
        1   
 
- * :dfn:`init` toma una lista y devuelve toda la lista excepto su último elemento.
+ * :cpp:member:`init` toma una lista y devuelve toda la lista excepto su último elemento.
  
    .. code-block:: console
 
@@ -470,14 +470,14 @@ en tiempo de compilación así que siempre es una buena práctica tomar
 precauciones antes de decir a Haskell que te devuelva algunos elementos de una
 lista vacía. 
 
- * :dfn:`length` toma una lista y obviamente devuelve su tamaño.
+ * :cpp:member:`length` toma una lista y obviamente devuelve su tamaño.
  
    .. code-block:: console
        
        ghci> length [5,4,3,2,1]  
        5  
 
- * :dfn:`null` comprueba si una lista está vacía. Si lo está, devuelve ``True``, en
+ * :cpp:member:`null` comprueba si una lista está vacía. Si lo está, devuelve ``True``, en
    caso contrario devuelve ``False``. Usa esta función en lugar de ``xs == []``
    (si tienes una lista que se llame xs).
    
@@ -488,14 +488,14 @@ lista vacía.
        ghci> null []  	   
        True  		   
 
- * :dfn:`reverse` da la vuelta a lista.
+ * :cpp:member:`reverse` da la vuelta a lista.
  
    .. code-block:: console
 
        ghci> reverse [5,4,3,2,1]  
        [1,2,3,4,5]  
 
- * :dfn:`take` toma un número y una lista. Extrae dicho número de elementos de una
+ * :cpp:member:`take` toma un número y una lista. Extrae dicho número de elementos de una
    lista. Observa.
    
    .. code-block:: console
@@ -513,7 +513,7 @@ lista vacía.
    simplemente devuelve la lista. Si tomamos 0 elementos, obtenemos una lista
    vacía.
 
- * :dfn:`drop` funciona de forma similar, solo que quita un número de elementos del
+ * :cpp:member:`drop` funciona de forma similar, solo que quita un número de elementos del
    comienzo de la lista.
    
    .. code-block:: console
@@ -525,10 +525,10 @@ lista vacía.
        ghci> drop 100 [1,2,3,4]     
        []   			   
 
- * :dfn:`maximum` toma una lista de cosas que se pueden poner en algún tipo de
+ * :cpp:member:`maximum` toma una lista de cosas que se pueden poner en algún tipo de
    orden y devuelve el elemento más grande. 
 
- * :dfn:`minimum` devuelve el más pequeño.
+ * :cpp:member:`minimum` devuelve el más pequeño.
    
    .. code-block:: console
 
@@ -537,9 +537,9 @@ lista vacía.
        ghci> maximum [1,9,2,3,4]  
        9   		       	     
 
- * :dfn:`sum` toma una lista de números y devuelve su suma.
+ * :cpp:member:`sum` toma una lista de números y devuelve su suma.
 
- * :dfn:`product` toma una lista de números y devuelve su producto.
+ * :cpp:member:`product` toma una lista de números y devuelve su producto.
  
    .. code-block:: console
 
@@ -550,7 +550,7 @@ lista vacía.
        ghci> product [1,2,5,6,7,9,2,0]  
        0   
 
- * :dfn:`elem` toma una cosa y una lista de cosas y nos dice si dicha cosa es un
+ * :cpp:member:`elem` toma una cosa y una lista de cosas y nos dice si dicha cosa es un
    elemento de la lista. Normalmente, esta función es llamada de forma infija
    porque es más fácil de leer.
    
@@ -639,7 +639,7 @@ primeros 24 elementos y los evalúa con mucho gusto.
 
 Ahora, un par de funciones que generan listas infinitas:
 
- * :dfn:`cycle` toma una lista y crea un ciclo de listas iguales infinito. Si 
+ * :cpp:member:`cycle` toma una lista y crea un ciclo de listas iguales infinito. Si 
    intentáramos mostrar el resultado, nunca terminaría así que hay que cortarlo
    en alguna parte.
    
@@ -650,7 +650,7 @@ Ahora, un par de funciones que generan listas infinitas:
        ghci> take 12 (cycle "LOL ")  
        "LOL LOL LOL " 
 
- * :dfn:`repeat` toma un elemento y produce una lista infinita que contiene ese
+ * :cpp:member:`repeat` toma un elemento y produce una lista infinita que contiene ese
    único elemento. Es como hacer un ciclo de una lista con un solo elemento.
    
    .. code-block:: console
@@ -658,7 +658,7 @@ Ahora, un par de funciones que generan listas infinitas:
        ghci> take 10 (repeat 5)  
        [5,5,5,5,5,5,5,5,5,5] 
 
-   Aunque aquí sería más simple usar la función :dfn:`replicate` si sabes el número
+   Aunque aquí sería más simple usar la función :cpp:member:`replicate` si sabes el número
    de elementos de antemano. ``replicate 3 10`` devuelve ``[10,10,10]``.
 
 
@@ -886,7 +886,7 @@ comparados. Únicamente no podemos comparar dos tuplas de diferentes tamaños
 mientras que si podemos comparar dos listas de diferentes tamaños. Dos funciones
 útiles para operar con tuplas son:
 
- * :dfn:`fst` toma una dupla y devuelve su primer componente.
+ * :cpp:member:`fst` toma una dupla y devuelve su primer componente.
  
    .. code-block:: console
    
@@ -895,7 +895,7 @@ mientras que si podemos comparar dos listas de diferentes tamaños. Dos funcione
        ghci> fst ("Wow", False)  
        "Wow"  
        
- * :dfn:`snd` toma una dupla y devuelve su segundo componente. ¡Sorpresa!
+ * :cpp:member:`snd` toma una dupla y devuelve su segundo componente. ¡Sorpresa!
  
    .. code-block:: console
    
@@ -910,7 +910,7 @@ mientras que si podemos comparar dos listas de diferentes tamaños. Dos funcione
     cuádruplas, quíntuplas, etc. Veremos más formas de extraer datos de la tuplas
     un poco más tarde.
     
-Ahora una función interesante que produce listas de duplas :dfn:`zip`. Esta
+Ahora una función interesante que produce listas de duplas :cpp:member:`zip`. Esta
 función toma dos listas y las une en un lista uniendo sus elementos en una dupla.
 Es una función realmente simple pero tiene montones de usos. Es especialmente útil
 cuando quieres combinar dos listas de alguna forma o recorrer dos listas

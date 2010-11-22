@@ -421,7 +421,7 @@ bloque ``do`` no sea el valor de la última acción.
 Antes de que veamos como tratar con ficheros, vamos a echar un vistazo a
 algunas funciones que son útiles a la hora de trabajar con ``IO``.
 
- * :dfn:`putStr` es muy parecido a ``putStrLn`` en el sentido de que toma una
+ * :cpp:member:`putStr` es muy parecido a ``putStrLn`` en el sentido de que toma una
    cadena y devuelve una acción que imprimirá esa cadena por la terminal, solo
    que ``putStr`` no salta a una nueva línea después de imprimir la cadena tal
    y como ``putStrLn`` hace. ::
@@ -439,7 +439,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
    la acción ``IO`` es la unidad. Un valor inútil, por lo que no tiene sentido
    ligarlo a nada.
    
- * :dfn:`putChar` toma un carácter y devuelve una acción ``IO`` que lo imprimirá
+ * :cpp:member:`putChar` toma un carácter y devuelve una acción ``IO`` que lo imprimirá
    por la terminal. ::
    
        main = do   putChar 't'  
@@ -469,7 +469,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
    caso base y luego pensamos que es realmente el resultado. Es una acción que
    primero imprime el primer carácter y luego imprime el resto de la cadena.
    
- * :dfn:`print` toma un valor de cualquier tipo que sea miembro de la clase
+ * :cpp:member:`print` toma un valor de cualquier tipo que sea miembro de la clase
    ``Show`` (por lo que sabemos que se puede representar como una cadena),
    llama a ``show`` con ese valor para obtener su representación y luego
    muestra esa cadena por la terminal. Básicamente es ``putStrLn . show``.
@@ -513,7 +513,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
    cadena, pero para mostrar valores de cualquier otro tipo se suele utilizar
    ``print``.
    
- * :dfn:`getChar` es una acción ``IO`` que lee un carácter por la entrada
+ * :cpp:member:`getChar` es una acción ``IO`` que lee un carácter por la entrada
    estándar (teclado). Por ello, su tipo es ``getChar :: IO Char``, ya que
    el resultado contenido dentro de la acción ``IO`` es un carácter. Ten en
    cuenta que debido al *buffering*, la acción de leer un carácter no se
@@ -545,7 +545,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
    desde el principio. Intenta jugar un poco con este programa para entender
    como funciona.
    
- * La función :dfn:`when` se encuentra en el módulo ``Control.Monad`` (para
+ * La función :cpp:member:`when` se encuentra en el módulo ``Control.Monad`` (para
    acceder a ella haz ``import Control.Monad``). Es interesante ya que dentro
    de un bloque ``do`` parece como si fuese una sentencia de control de flujo,
    pero en realidad es una función normal. Toma un valor booleano y una acción
@@ -569,7 +569,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
    ``False`` en lugar de ``True``.
    
    
- * :dfn:`sequence` toma una lista de acciones ``IO`` y devuevle una acción que
+ * :cpp:member:`sequence` toma una lista de acciones ``IO`` y devuevle una acción que
    realizará todas esas acciones una detrás de otra. El resultado contenido en
    la acción ``IO`` será una lista con todos los resultados de todas las
    acciones ``IO`` que fueron ejecutadas. Su tipo es ``sequence :: [IO a] ->`
@@ -619,7 +619,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
    
  * Como mapear una función que devuelve una acción ``IO`` sobre una lista y
    luego secuenciarla es algo muy común, se introducieron las funciones
-   auxiliares :dfn:`mapM` y :dfn:`mapM_`. ``mapM`` toma una función y una lista,
+   auxiliares :cpp:member:`mapM` y :cpp:member:`mapM_`. ``mapM`` toma una función y una lista,
    mapea la función sobre la lista y luego la secuencia. ``mapM_`` hace lo
    mismo, solo que después se deshace del resultado. Normalmente utilizamos
    ``mapM_`` cuando no nos importa el resultado de las acciones secuenciadas.
@@ -636,7 +636,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
         2  
         3
         
- * :dfn:`forever` toma una acción ``IO`` y devuelve otra acción ``IO`` que 
+ * :cpp:member:`forever` toma una acción ``IO`` y devuelve otra acción ``IO`` que 
    simplemente repetirá la primera acción indefinidamente. Está situada en
    ``Control.Monad``. Este pequeño programa preguntará al usuario por una
    cadena y luego la devolverá en mayúsculas, indefinidamente: ::
@@ -649,7 +649,7 @@ algunas funciones que son útiles a la hora de trabajar con ``IO``.
             l <- getLine  
             putStrLn $ map toUpper l
             
- * :dfn:`forM` (situado en ``Control.Monad``) es como ``mapM`` solo que tiene
+ * :cpp:member:`forM` (situado en ``Control.Monad``) es como ``mapM`` solo que tiene
    sus parámetros cambiados de sitio. El primer parámetro es la lista y el
    segundo la función a mapear sobre la lista, la cual luego será secuenciada
    ¿Para qué es útil? Bueno, con un uso creativo de funciones lambda y la
@@ -737,7 +737,7 @@ Ficheros y flujos de datos
 ``getChar`` es una acción de E/S que lee un solo carácter desde la terminal.
 ``getLine`` es una acción de E/S que lee una línea desde la terminal. Estas
 funciones son bastante sencillas y la mayoría de lenguajes tienen funciones
-o sentencias similares. Pero ahora vamos a ver :dfn:`getContents`.
+o sentencias similares. Pero ahora vamos a ver :cpp:member:`getContents`.
 ``getContents`` es una acción de E/S que lee cualquier cosa de la entrada
 estándar hasta que encuentre un carácter de fin de fichero. Su tipo es
 ``getContents :: IO String``. Lo bueno de ``getContents`` es que realiza una
@@ -910,7 +910,7 @@ Redireccionamos los contenidos de ``shortlines.txt`` a la entrada de
 
 Este patrón de tomar una cadena como entrada, transformarla con una función y
 mostrar el resultado de esa transformación es tan común que existe una función
-que hace esto más fácil, la función :dfn:`interact`. ``interact`` toma una
+que hace esto más fácil, la función :cpp:member:`interact`. ``interact`` toma una
 función del tipo ``String -> String`` como parámetro y devuelve una acción de
 E/S que tomara la entrada del programa, ejecutará la función sobre ella y
 mostrará por pantalla el resultado de esta función. Vamos a modificar nuestro
@@ -1069,7 +1069,7 @@ busquemos una nueva novia.
 
 ¡Genial! Ahora vamos a analizar nuestro programa línea a línea. El programa
 tiene varias acciones de E/S unidas en un bloque ``do``. En la primera línea
-del bloque ``do`` vemos que hay una función nueva llamada :dfn:`openFile`. Su
+del bloque ``do`` vemos que hay una función nueva llamada :cpp:member:`openFile`. Su
 tipo es el siguiente: ``openFile :: FilePath -> IOMode -> IO Handle``. Si lo
 lees en voz alta dice: ``openFile`` toma la ruta de un fichero y un ``IOMode``
 y devuelve una acción de E/S que abrirá el fichero indicado y contendrá un
@@ -1103,7 +1103,7 @@ leer y escribir datos. Sería un poco estúpido abrir un fichero y no ligar el
 manipulador ya que no podríamos hacer nada con ese fichero. En nuestro caso
 ligamos el manipulador a ``handle``.
 
-En la siguiente línea vemos una función llamada :dfn:`hGetContents`. Toma un
+En la siguiente línea vemos una función llamada :cpp:member:`hGetContents`. Toma un
 ``Handle``, de forma que sabe de donde tiene que leer el contenido, y devuelve
 una ``IO String``, una acción de E/S que contiene como resultado el contenido
 del fichero. Esta función se parece mucho a ``getContents``. La única
@@ -1127,12 +1127,12 @@ como un marcador que nos indica por donde estamos leyendo (o escribiendo) en
 un capítulo, mientras que el contenido sería el capítulo en si.
 
 Con ``putStr contents`` simplemente mostramos el contenido del fichero por
-la salida estándar. Luego ejecutamos :dfn:`hClose`, el cual toma un
+la salida estándar. Luego ejecutamos :cpp:member:`hClose`, el cual toma un
 manipulador y devuelve una acción de E/S que cierra el fichero ¡Tienes que
 cerrar tu mismo cada fichero que abras con ``openFile``! 
 
 Otra forma de hacer lo que mismo que acabamos de hacer es utilizando la
-función :dfn:`withFile`, cuya declaración de tipo es ``withFile :: FilePath ->
+función :cpp:member:`withFile`, cuya declaración de tipo es ``withFile :: FilePath ->
 IOMode -> (Handle -> IO a) -> IO a``. Toma la ruta de un fichero, un
 ``IOMode`` y luego toma una función que a su vez toma un manipulador y
 devuelve una acción de E/S. ``withFile`` devuelve una acción de E/S que
@@ -1186,8 +1186,8 @@ acción resultante de ``withFile'`` también tendrá como resultado el número d
 líneas leidas.
 
 De la misma forma que ``hGetContents`` funciona igual que ``getContents`` pero
-sobre el fichero indicado, existen también :dfn:`hGetLine`, :dfn:`hPutStr`,
-:dfn:`hPutStrLn`, :dfn:`hGetChar`, etc. Funcionan exactamente igual que sus
+sobre el fichero indicado, existen también :cpp:member:`hGetLine`, :cpp:member:`hPutStr`,
+:cpp:member:`hPutStrLn`, :cpp:member:`hGetChar`, etc. Funcionan exactamente igual que sus
 homónimas, solo que toman un manipulador como parámetro y operar sobre el
 fichero indicado en lugar de sobre la entrada o salida estándar. Por ejemplo,
 ``putStrLn`` es una función que toma una cadena y devuelve una acción de E/S
@@ -1200,7 +1200,7 @@ que lee una línea de su fichero.
 Cargar ficheros y luego tratar sus conteidos como cadenas es algo tan común
 que tenemos estas tres pequeñas funciones que hacen nuestra vida más fácil:
 
- * :dfn:`readFile` tiene la declaración de tipo ``readFile :: FilePath -> IO
+ * :cpp:member:`readFile` tiene la declaración de tipo ``readFile :: FilePath -> IO
    String``. Recueda, ``FilePath`` es solo un sinónimo de ``String``.
    ``readFile`` toma la ruta de un fichero y devuelve un acción de E/S que
    leerá ese fichero (de forma perezosa) y ligará sus contenidos a una cadena.
@@ -1218,7 +1218,7 @@ que tenemos estas tres pequeñas funciones que hacen nuestra vida más fácil:
    no podemos cerrarlo manualmente, así que Haskell se encarga de cerrarlo por
    nosotros cuando utilizamos ``readFile``.
    
- * :dfn:`writeFile` tiene el tipo ``FilePath -> String -> IO ()``. Toma la
+ * :cpp:member:`writeFile` tiene el tipo ``FilePath -> String -> IO ()``. Toma la
    ruta de un fichero y una cadena que escribir en ese fichero y devuelve una
    acción de E/S que se encargará de escribirla. En caso de que el fichero
    indicado ya exista, sobreescribirá el fichero desde el incio. Aquí tienes
@@ -1241,7 +1241,7 @@ que tenemos estas tres pequeñas funciones que hacen nuestra vida más fácil:
         NO WAY! NO WAY!  
         I THINK YOU NEED A NEW ONE!
         
- * :dfn:`appendFile` tiene el mismo tipo que ``writeFile``, solo que
+ * :cpp:member:`appendFile` tiene el mismo tipo que ``writeFile``, solo que
    ``appendFile`` no sobreescribe el fichero desde el principio en caso de que
    el fichero indicado ya exista, sino que añade contiendo al final del
    fichero.
@@ -1317,7 +1317,7 @@ Leer ficheros con bloques grandes nos puede ayudar si queremos minimizar el
 acceso a disco o cuando nuestro fichero en realidad es un rescurso de una red
 muy lenta.
 
-También podemos utilizr :dfn:`hFlush`, que es una función que toma un 
+También podemos utilizr :cpp:member:`hFlush`, que es una función que toma un 
 manipulador y devuelve una acción de E/S que vaciará el búfer del fichero
 asociado al manipulador. Cuando usamos un búfer de líneas, el búfer se vacía
 depués de cada línea. Cuando utilizmos un búfer de bloques, el búfer se vacía
@@ -1376,7 +1376,7 @@ Primero abrirmos el fichero ``todo.txt`` en modo lectura y ligamos el
 manipulador a ``handle``.
 
 A continuación, utilizamos una función que aún no conocemos y que proviene
-de ``System.IO``, :dfn:`openTempFile`. Su nombre es bastante auto descriptivo.
+de ``System.IO``, :cpp:member:`openTempFile`. Su nombre es bastante auto descriptivo.
 Toma la ruta de un directorio temporal y una plantilla para nombres para un
 fichero y abre un fichero temporal. Hemos utilizado ``"."`` para el directorio
 temporal porque ``"."`` representa el directorio actual en cualquier S.O.
@@ -1422,9 +1422,9 @@ ahora contiene todas las tareas que contiene el original, excepto la que
 queremos eliminar.
 
 Después de cerrar ambos archivos, tanto el original como el temporal,
-eliminamos el original con :dfn:`removeFile`, que, como puedes ver, toma la
+eliminamos el original con :cpp:member:`removeFile`, que, como puedes ver, toma la
 ruta de un fichero y lo elimina. Después de eliminar el ``todo.txt`` original,
-utilizamos :dfn:`renameFile` para renombrar el fichero temporal a
+utilizamos :cpp:member:`renameFile` para renombrar el fichero temporal a
 ``todo.txt``. Ten cuidad, tanto ``removeFile`` como ``renameFile`` (ambas
 contenidas en ``System.Directory``) toman rutas de ficheros y no
 manipuladores.
@@ -1495,10 +1495,10 @@ programa que quiere que haga cuando se ejecute que con los parámetros de la
 línea de comandos.
 
 El módulo ``System.Environment`` tiene dos acciones de E/S muy interesante.
-Una es :dfn:`getArgs`, cuya declaración de tipo es ``getArgs :: IO [String]``
+Una es :cpp:member:`getArgs`, cuya declaración de tipo es ``getArgs :: IO [String]``
 y es una acción de E/S que obtendrá los parámetros con los que el programa fue
 ejecutado y el resultado que contiene son dichos parámetros en forma de lista.
-:dfn:`getProgName` tiene el tipo ``IO String`` y es una acción de E/S que
+:cpp:member:`getProgName` tiene el tipo ``IO String`` y es una acción de E/S que
 contiene el nombre del programa.
 
 Aquí tienes un pequeño programa que demuestra el comportamiento de estas
@@ -1804,10 +1804,10 @@ otro tipo de dato) basándose en ella.
 
 Utilizaremos el módulo ``System.Random``. Contiene todas las funciones que
 calmaran nuestra sed de aleatoriedad. Vamos a jugar con una de las funciones
-que exporta, llamada :dfn:`random`. Su declaración de tipo es ``random ::
+que exporta, llamada :cpp:member:`random`. Su declaración de tipo es ``random ::
 (RandomGen g, Random a) => g -> (a, g)`` ¡Wau! Hay nuevas clases de tipos en
-esta declaración. La clase de tipos :dfn:`RandomGen` es para tipos que pueden
-actuar como fuentes de aleatoriedad. La clase de tipos :dfn:`Random` es para
+esta declaración. La clase de tipos :cpp:class:`RandomGen` es para tipos que pueden
+actuar como fuentes de aleatoriedad. La clase de tipos :cpp:class:`Random` es para
 tipos que pueden tener datos aleatorios. Un dato booleano puede tener valores
 aleatorios, ``True`` o ``False``. Un número también puede tomar un conjunto
 de diferentes valores alotarios ¿Puede el tipo función tomar valores
@@ -1819,12 +1819,12 @@ enseguida.
 
 Para utilizar la función ``random``, primero tenemos que obtener uno de esos
 generadores aleatorios. El módulo ``System.Random`` exporta un tipo
-interensante llamado :dfn:`StdGen` que posee una instancia para la clase de
+interensante llamado :cpp:type:`StdGen` que posee una instancia para la clase de
 tipos ``RandomGen``. Podemos crear un ``StdGen`` manualmente o podemos decirle
 al sistema que nos de uno basandose en un motón de cosas aleatorias.
 
 Para crear manualmente un generador aletario, utilizamos la función
-:dfn:`mkStdGen`. Tiene el tipo ``Int -> StdGen``. Toma un entero y basándose
+:cpp:member:`mkStdGen`. Tiene el tipo ``Int -> StdGen``. Toma un entero y basándose
 en eso, nos devuelve un generador aleatorio. Bien, vamos a intentar utilizar
 el tandem ``random`` ``mkStdGen`` para obtener un número aleatorio. 
 
@@ -1921,7 +1921,7 @@ queremos valores booleanos. Por este motivo Haskell puede inferir que queremos
 valores booleanos.
 
 ¿Y qué pasaría si quisiéramos lanzar la moneda cuatro veces? ¿Y cinco? Bien,
-para eso tenemos la función llamada :dfn:`randoms` que toma un generador y
+para eso tenemos la función llamada :cpp:member:`randoms` que toma un generador y
 devulve una secuencia infinita de valores aletorios.
 
 .. code-block:: console
@@ -1966,7 +1966,7 @@ cuando generamos los ``n-1`` valores aleatorios.
 ¿Y si queremos obtener un valor aleatorio dentro de un determindo rango? Todos
 los enteros que hemos generador hasta ahora son escandalosamente grandes o
 pequeños ¿Y si queremos lanzar un dado? Bueno, para eso utilizamos
-:dfn:`randomR`. Su declaración de tipo es ``randomR :: (RandomGen g, Random a)
+:cpp:member:`randomR`. Su declaración de tipo es ``randomR :: (RandomGen g, Random a)
 :: (a, a) -> g -> (a, g)``, lo que significa que tiene comportamiento similar
 a ``random``, solo que primero toma una dupla de valores que establecerán el
 límite superior e inferior de forma que el valor aleatorio generado esté 
@@ -1994,7 +1994,7 @@ ahora no hemos visto nada relacionado con la E/S. Bien, hasta ahora siempre
 hemos creado nuestro generador de forma manual basándonos en algún entero
 arbitrario. El problema es que, en los programas reales, siempre devolverán
 los mismos números aleatorios, lo cual no es muy buena idea. Por este motivo
-``System.Random`` nos ofrece la acción de E/S :dfn:`getStdGen` que tiene 
+``System.Random`` nos ofrece la acción de E/S :cpp:member:`getStdGen` que tiene 
 el tipo ``IO StdGen``. Cuando se inicia la ejecución de un programa, éste 
 pregunta al sistema por un buen generador de valores aleatorios y lo almacena
 en algo llamado generador global. ``getStdGen`` trae ese generador para que
@@ -2049,7 +2049,7 @@ primer componente y la segunda parte como segundo componente. ::
         putStrLn first20  
         putStr second20
         
-Otra forma de hacerlo es utilizando la acción :dfn:`newStdGen` que divide el
+Otra forma de hacerlo es utilizando la acción :cpp:member:`newStdGen` que divide el
 generador de valores aleatorios en dos nuevos generadores. Actualiza el
 generador global con uno de ellos y el toro lo de vuelve como resultado de la
 acción. ::
@@ -2110,7 +2110,7 @@ ahora será ``7``.
 .. note:: Si el usuario introduce algo que ``read`` no pueda leer (como
           ``"haha"``), nuestro programa terminará bruscamente con un mensaje
           de error bastante horrendo. Si no te apetece que el programa termine
-          de esta forma, utiliza la función :dfn:`reads`, que devuelve una
+          de esta forma, utiliza la función :cpp:member:`reads`, que devuelve una
           lista vacía cuando no puede leer una cadena. Cuando si puede
           devuelve una lista unitaria que contiene una dupla con nuestro valor
           deseado como primer componente y una cadena con lo que no ha
@@ -2248,7 +2248,7 @@ con las cadenas de bytes. ::
 ``B`` posee las cadenas de bytes perezosas mientras que ``S`` contiene las
 estrictas. Utilizaremos casi siempre la versión perezosa.
 
-La función :dfn:`pack` tiene un tipo ``[Word8] -> ByteString``. Lo cual
+La función :cpp:member:`pack` tiene un tipo ``[Word8] -> ByteString``. Lo cual
 significa que toma una lista de bytes del tipo ``Word8`` y devuelve una
 ``ByteString``.  Puedes verlo como si tomara un lista, que es perezosa, y la
 hace menos perezosa, de forma que sigue siendo perezosa solo que a intervalos
@@ -2276,11 +2276,11 @@ Hemos empaquetado solo unos pocos valores dentro de una cadena de bytes, de
 forma que caben dentro de un mismo bloque (``Chunk``). El ``Empty`` es como
 ``[]`` para las listas.
 
-:dfn:`unpack` es la versión inversa de de ``pack``. Toma una cadena de bytes y
+:cpp:member:`unpack` es la versión inversa de de ``pack``. Toma una cadena de bytes y
 la convierte en una lista de bytes.
 
-:dfn:`fromChunks` toma una lista de cadenas de bytes estrictas y la convierte
-en una cadena de bytes perezosa.  :dfn:`toChunks` toma una cadena de bytes
+:cpp:member:`fromChunks` toma una lista de cadenas de bytes estrictas y la convierte
+en una cadena de bytes perezosa.  :cpp:member:`toChunks` toma una cadena de bytes
 perezosa y la convierte en una estricta.
 
 .. code-block:: console
@@ -2292,11 +2292,11 @@ Esto es útil cuando tienes un montón de cadenas de bytes estrictas y quieres
 procesarlas eficientemente sin tener que unirlas en memoria en una más grande
 primero. 
 
-La versión de ``:`` para cadenas de bytes se conoce como :dfn:`cons`. Toma un
+La versión de ``:`` para cadenas de bytes se conoce como :cpp:member:`cons`. Toma un
 byte y una cadena de bytes y pone dicho byte al principio. Aunque es perezosa,
 generará un nuevo bloque para ese elemento aunque dicho bloque aún no este
 lleno. Por este motivo es mejor utilizar la versión estricta de ``cons``,
-:dfn:`cons'`, si vas a insertar un montón de bytes al principio de una cadena
+:cpp:member:`cons'`, si vas a insertar un montón de bytes al principio de una cadena
 de bytes.
 
 .. code-block:: console
@@ -2310,7 +2310,7 @@ de bytes.
     ghci> foldr B.cons' B.empty [50..60]  
     Chunk "23456789:;<" Empty
     
-Como puedes ver :dfn:`empty` crea una cadena de bytes vacía ¿Puedes ver las
+Como puedes ver :cpp:member:`empty` crea una cadena de bytes vacía ¿Puedes ver las
 diferencias entre ``cons`` y ``cons'``? Con ayuda de ``foldr`` hemos empezado
 con una cadena de bytes vacía y luego hemos recorrido la lista de números
 desde la derecha, añadiendo cada número al principio de la cadena de bytes.
@@ -2326,7 +2326,7 @@ También contienen funciones con el mismo nombre y comportamiento que algunas
 funciones que se encuentran en ``System.IO``, solo que ``String`` se remplaza
 por ``ByteString``. Por ejemplo, la función ``readFile`` de ``System.IO``
 tiene el tipo ``readFile :: FilePath -> IO String``, mientras que
-:dfn:`readFile` de los módulos de cadenas de bytes tiene el tipo
+:cpp:member:`readFile` de los módulos de cadenas de bytes tiene el tipo
 ``readFile :: FilePath -> IO ByteString``. Ten cuidado, si estás utilizando la
 versión estricta de cadenas de bytes e intentas leer un fichero, se leerá en
 memoria de un solo golpe. Con las cadenas de bytes perezosas se leerá bloque
@@ -2492,7 +2492,7 @@ no existe?
 Nuestro programa falla ¿Qué pasaría si quisiéramos mostrar un mensaje más
 agradable en caso de que el fichero no exista? Una forma de hacerlo sería
 comprobando si el fichero existe antes de intentar abrirlo utilizando la
-función :dfn:`doesFileExist` de ``System.Directory``. ::
+función :cpp:member:`doesFileExist` de ``System.Directory``. ::
 
     import System.Environment  
     import System.IO  
@@ -2516,7 +2516,7 @@ utilizarlas en este contexto. Un fichero que no existe es una excepción que
 se lanza desde la E/S, así que capturarla en la E/S es totalmente aceptable.
 
 Para tratar con esto utilizando excepciones, vamos a aprovecharnos de la
-función :dfn:`catch` de ``System.IO.Error``. Su declaración de tipo es
+función :cpp:member:`catch` de ``System.IO.Error``. Su declaración de tipo es
 ``catch :: IO a -> (IOError -> IO a) -> IO a``. Toma dos parámetros. El
 primero es una acción de E/S. Por ejemplo, podría ser una acción que trate de
 abrir un fichero. El segundo es lo que llamamos un manipulador. Si la primera
@@ -2610,8 +2610,8 @@ exista. ::
         
 Todo permanece igual excepto el manipulador, el cual hemos modificado para
 que capture únicamente un grupo de excepciones de E/S. Hemos utilizado dos
-nuevas funciones de ``System.IO.Error``, :dfn:`isDoesNotExistError` y
-:dfn:`ioError`. ``isDoesNotExistError`` es un predicado sobre ``IOError``, o
+nuevas funciones de ``System.IO.Error``, :cpp:member:`isDoesNotExistError` y
+:cpp:member:`ioError`. ``isDoesNotExistError`` es un predicado sobre ``IOError``, o
 lo que es lo mismo, es una función que toma un valor del tipo ``IOError`` y
 devuelve ``True`` o ``False``, por lo que su declaración de tipo es
 ``isDoesNotExistError :: IOError -> Bool``. Hemos utilizado esta función con
@@ -2634,17 +2634,17 @@ junto las guardas, ya que, si una guarda no se evalua a ``True``, se seguirá
 evaluando la siguiente guarda. Los predicados que trabajan con ``IOError``
 son:
 
- * :dfn:`isAlreadyExistsError`
- * :dfn:`isDoesNotExistError`
- * :dfn:`isAlreadyInUseError`
- * :dfn:`isFullError`
- * :dfn:`isEOFError`
- * :dfn:`isIllegalOperation`
- * :dfn:`isPermissionError`
- * :dfn:`isUserError`
+ * :cpp:member:`isAlreadyExistsError`
+ * :cpp:member:`isDoesNotExistError`
+ * :cpp:member:`isAlreadyInUseError`
+ * :cpp:member:`isFullError`
+ * :cpp:member:`isEOFError`
+ * :cpp:member:`isIllegalOperation`
+ * :cpp:member:`isPermissionError`
+ * :cpp:member:`isUserError`
 
 La moyoría de éstas se explican por si mismas. ``isUserError`` se evalua a
-``True`` cuando utilizamos la función :dfn:`userError` para crear la
+``True`` cuando utilizamos la función :cpp:member:`userError` para crear la
 excepción, lo cual se utiliza para crear excepciones en nuestro código y
 acompañarlas con una cadena. Por ejemplo, puedes utilizar algo como
 ``ioError $ userError "remote computer unplugged!"``, aunque es preferible que
@@ -2673,7 +2673,7 @@ provocó un error. No podemos mostrar el ``fileName`` que obtuvimos de
 ``getArgs``, ya que solo un valor del tipo ``IOError`` se pasa al manipulador
 y manipulador no sabe nada más. Una función depende exclusivamente de los 
 parámetros con los que fue llamada. Por esta razón podemos utilizar la
-función :dfn:`ioeGetFileName`, cuya declaración de tipo es ``ioeGetFileName ::
+función :cpp:member:`ioeGetFileName`, cuya declaración de tipo es ``ioeGetFileName ::
 IOError -> Maybe FilePath``. Toma un ``IOError`` como parámetro y quizá
 devuelva un ``FilePath`` (que es un sinónimo de ``String``, así que es
 prácticamente lo mismo). Básicamente lo que hace es extraer la ruta de un
