@@ -11,13 +11,11 @@ Ajuste de patrones
    :alt: Patrones
 
 En este capítulo cubriremos algunas de las construcciones sintácticas de Haskell
-más interesantes, empezando con el ajuste de patrones. Un ajuste de patrones
+más interesantes, empezando con el **ajuste de patrones** ("*pattern
+matching*" en inglés). Un ajuste de patrones 
 consiste en una especificación de pautas que deben ser seguidas por los datos,
 los cuales pueden ser deconstruidos permitiéndonos acceder a sus componentes.
 
-.. note::
-    A esta construcción se conoce más comúnmente con el término de
-    *pattern* *matching*. 
 
 Podemos separar los cuerpos que definen una función a la hora de declarar una
 función como tal. Esto suele llevarnos a un código mucho más elegante, limpio y
@@ -34,7 +32,7 @@ cuando un patrón concuerda con el valor asociado, se utiliza el cuerpo de la
 función asociado. En este caso, la única forma de que un número concuerde con el
 primer patrón es que dicho número sea 7. Si no lo es, se evaluara el siguiente
 patrón, el cual coincide con cualquier valor y lo liga a ``x``. Esta función
-podría estar implementada usando una sentencia ``if``. Pero, ¿Qué pasaría si
+podría estar implementada usando una sentencia ``if``. Pero ¿Qué pasaría si
 quisiéramos una función que nombrara los número del 1 al 5, o
 ``"Not between 1 and 5"`` para cualquier otro número? Si no tuviéramos el
 ajuste de patrones deberíamos crear un enrevesado árbol ``if then else``.
@@ -57,7 +55,7 @@ se comprobaran los demás patrones.
 factorial de un número ``n`` como ``product [1..n]``. También podemos
 implementar una función factorial recursiva, de forma parecida a como lo
 haríamos en matemáticas. Empezamos diciendo que el factorial de 0 es 1. Luego 
-afirmamos que el factorial de cualquier otro número entero positivo es ese
+decimos que el factorial de cualquier otro número entero positivo es ese
 entero multiplicado por el factorial de su predecesor. ::
 
     factorial :: (Integral a) => a -> a  
@@ -72,11 +70,11 @@ Primero intenta calcular ``3 * factorial 2``. El factorial de 2 es
 ``factorial 1`` es ``1 * factorial 0``, lo que nos lleva a
 ``3 * (2 * (1 * factorial 0))``. Ahora viene el truco, hemos definido el
 factorial de 0 para que sea simplemente 1, y como se encuentra con ese patrón
-antes de otro más general, obtenemos 1. Así que el resultado equivale a 
+antes de con otro más general, obtenemos 1. Así que el resultado equivale a 
 ``3 * (2 * (1 * 1))``. Si hubiésemos escrito el segundo patrón al inicio,
 hubiese aceptado todos los números, incluyendo el 0 y nuestro cálculo nunca
 terminaría. Este es el motivo por el que el orden es importante a la hora de
-definir los patrones y es siempre mejor definir los patrones más específicos los
+definir los patrones y siempre es mejor definir los patrones más específicos los
 primeros dejando los más generales al final. 
 
 Los patrones también pueden fallar. Si definimos una función como esta: ::
@@ -86,7 +84,9 @@ Los patrones también pueden fallar. Si definimos una función como esta: ::
     charName 'b' = "Broseph"  
     charName 'c' = "Cecil"  
 
-E intentamos ejecutarla con un valor no esperado, esto es lo que pasa: ::
+E intentamos ejecutarla con un valor no esperado, esto es lo que pasa:
+
+.. code-block:: console
 
     ghci> charName 'a'  
     "Albert"  
@@ -115,13 +115,13 @@ función para que utilice un ajuste de patrones. ::
     addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)  
 
 ¡Ahí lo tienes! Mucho mejor. Ten en cuenta que es un patrón general, es decir,
-se verificará para cualquier par. El tipo de ``addVectors`` es en ambos casos
+se verificará para cualquier dupla. El tipo de ``addVectors`` es en ambos casos
 el mismo ``addVectors :: (Num a) => (a, a) -> (a, a) -> (a, a)``, por lo que
 está garantizado que tendremos dos duplas como parámetros.
 
-``fst`` y ``snd`` extraen componentes de los pares. Pero, ¿Qué pasa con las
-triplas? Bien, como no tenemos funciones que hagan esto, vamos a crearlas 
-nosotros. ::
+``fst`` y ``snd`` extraen componentes de los pares. Pero ¿Qué pasa con las
+triplas? Bien, como no tenemos funciones que hagan lo mismo con las tripla asi
+que vamos a crearlas nosotros. ::
 
     first :: (a, b, c) -> a  
     first (x, _, _) = x  
@@ -137,7 +137,9 @@ realmente no nos importa lo que es esa componente, así que escribimos solo
 ``_``.
 
 Esto me recuerda que también puedes usar el ajuste de patrones en las listas por
-comprensión. Fíjate: :: 
+comprensión. Fíjate:
+
+.. code-block:: console
 
     ghci> let xs = [(1,3), (4,3), (2,4), (5,3), (5,6), (3,1)]  
     ghci> [a+b | (a,b) <- xs]  
@@ -147,7 +149,7 @@ En caso de que se produzca un fallo en el patrón, simplemente pasará al
 siguiente elemento.
 
 Las listas también pueden ser usadas en un ajuste de patrones. Puedes comparar
-contra la lista vacía ``[]`` o cualquier patrón que involucre a ``:`` y la lista
+contra la lista vacía ``[]`` o contra cualquier patrón que involucre a ``:`` y la lista
 vacía. Como ``[1,2,3]`` es solo otra forma de expresar ``1:2:3:[]``, también
 puedes usar el patrón anterior. Un patrón como ``x:xs`` ligará la cabeza de la
 lista con ``x`` y el resto con ``xs``, incluso cuando la lista tenga solo un
@@ -169,7 +171,9 @@ propia función ``head``. ::
     head' [] = error "Can't call head on an empty list, dummy!"  
     head' (x:_) = x  
 
-Comprobamos que funciona: ::
+Comprobamos que funciona:
+
+.. code-block:: console
 
     ghci> head' [4,5,6]  
     4  
@@ -178,7 +182,7 @@ Comprobamos que funciona: ::
 
 ¡Bien! Fíjate que si queremos ligar varias variables (incluso aunque alguna de
 ellas sea ``_`` y realmente no la queremos ligar) debemos rodearlas con
-paréntesis. También fíjate con la función ``error`` que utilizamos. Ésta toma
+paréntesis. Fíjate también con la función ``error`` que hemos utilizamos. Ésta toma
 una cadena y genera un error en tiempo de ejecución, usado esa cadena como
 información acerca del tipo de error que ocurrió. Provoca que el programa
 termine, lo cual no es bueno usar a menudo. De todas formas, llamar a ``head``
@@ -232,9 +236,9 @@ cabeza más la suma del resto de la cola, y si lo escribimos obtenemos: ::
     sum' [] = 0  
     sum' (x:xs) = x + sum' xs  
 
-También existe una cosa llamada *patrones* *como* (o patrones as, en inglés).
+También existe una cosa llamada *patrones como* (o patrones *as*, en inglés).
 Son útiles para descomponer algo usando un patrón, de forma que se ligue con los
-nombres que queramos, y además mantenemos una referencia a ese algo como un
+nombres que queramos, y además mantengamos una referencia a ese algo como un
 todo. Realizamos esto poniendo un nombre y un ``@`` delante del patrón. Por
 ejemplo, el patrón ``xs@(x:y:ys)``. Este patrón se ajustará exactamente a lo
 mismo que lo haría ``x:y:ys`` pero podríamos acceder fácilmente a la lista
@@ -243,14 +247,14 @@ en el cuerpo de la función. Un ejemplo rápido: ::
 
     capital :: String -> String  
     capital "" = "Empty string, whoops!"  
-    capital all@(x:xs) = "The first letter of " ++ all ++ " is " ++ [x]
+    capital all@(x:_) = "The first letter of " ++ all ++ " is " ++ [x]
 
-::
+.. code-block:: console
 
     ghci> capital "Dracula"  
     "The first letter of Dracula is D"
 
-Normalmente usamos los *patrones* *como* para evitar repetirnos cuando estamos
+Normalmente usamos los *patrones como* para evitar repetirnos cuando estamos
 ajustando un patrón más grande y tenemos que usarlo entero otra vez en algún
 lugar del cuerpo de la función.
 
@@ -259,6 +263,7 @@ usar un patrón ``(xs ++ ys)`` ¿Qué habría en la primera y en la segunda list
 No tiene mucho sentido. Tendría más sentido ajustar patrones como
 ``(xs ++ [x,y,z])`` o simplemente ``(xs ++ [x])`` pero dada la naturaleza de las
 listas no podemos hacer esto.
+
 
 .. _guardas:
 
@@ -272,7 +277,7 @@ listas no podemos hacer esto.
 Mientras que los patrones son una forma de asegurarnos que un valor tiene una
 determinada forma y deconstruirlo, las guardas son una forma de comprobar si
 alguna propiedad de una valor (o varios de ellos) es cierta o falsa. Eso suena
-mucho como una sentencia ``if`` y de hecho es muy similar. La cuestión es que las
+muy parecido a una sentencia ``if`` y de hecho es muy similar. La cuestión es que las
 guardas son mucho más legibles cuando tienes varias condiciones y encajan muy 
 bien con los patrones.
 
@@ -281,7 +286,7 @@ que utilice guardas. Vamos a crear una función simple que te regañará de form
 diferente en función de tu 
 `IMC <http://es.wikipedia.org/wiki/%C3%8Dndice_de_masa_corporal>`_
 (índice de masa corporal). Tu IMC es igual a tu altura dividida por tu peso al
-cuadrado. Si tu IMC es menor que 18,5 tienes infrapeso. Si estas en algún entre
+cuadrado. Si tu IMC es menor que 18,5 tienes infrapeso. Si estas en algún lugar entre
 18,5 y 25 eres del montón. Si tienes entre 25 y 30 tienes sobrepeso y si tienes
 más de 30 eres obeso. Así que aquí tienes la función (No estamos calculando 
 nada ahora, simplemente obtiene un IMC y te lo muestra) ::
@@ -294,27 +299,27 @@ nada ahora, simplemente obtiene un IMC y te lo muestra) ::
         | otherwise   = "¡Enhorabuena, eres una ballena!" 
     
 Las guardas se indican con barras verticales que siguen al nombre de la
-función y sus parámetros. Normalmente tienen una sangría están alineadas. Una
+función y sus parámetros. Normalmente tienen una sangría y están alineadas. Una
 guarda es básicamente una expresión booleana. Si se evalúa a ``True``, entonces
 el cuerpo de la función correspondiente es utilizado. Si se evalúa a ``False``,
 se comprueba la siguiente guarda y así sucesivamente. Si llamamos a esta
 función con ``24.3``, primero comprobará si es menor o igual que ``18.5``. Como
 no lo es, seguirá a la siguiente guarda. Se comprueba la segunda guarda y como
-24,3 es menor que 25, la segunda cadena es devuelta. 
+24,3 es menor que 25, la se devuelve la segunda cadena. 
 
-Esto recuerda mucho a un gran árbol ``if then else`` de los lenguajes
-imperativos, solo que mucho mejor y más legible. Generalmente los arboles ``if
+Recuerda a un gran árbol ``if then else`` de los lenguajes
+imperativos, solo que mucho mejor y más claro. Generalmente los arboles ``if
 else`` muy grandes están mal vistos, pero hay ocasiones en que un problema se
 define de forma discreta y no hay forma de solucionarlo. Las guardas son una
 buena alternativa para esto.
 
 Muchas veces la última guarda es ``otherwise``. ``otherwise`` está definido
-simplemente como ``otherwise = True`` y acepta todo. Esto muy similar al ajuste
+simplemente como ``otherwise = True`` y acepta todo. Es muy similar al ajuste
 de patrones, solo se aceptan si la entrada satisface un patrón pero las guardas
 comprueban condiciones booleanas. Si todas las guardas de una función se evalúan
 a ``False`` (y no hemos dado otra guarda ``otherwise``), la evaluación falla y
-continuará hacia el siguiente **patrón**. Ese es la razón por la que los
-patrones y las guardas encajen tan bien juntas. Si existe ningún patrón ni 
+continuará hacia el siguiente **patrón**. Por esta razón los
+patrones y las guardas encajen tan bien juntas. Si no existe ningún patrón ni 
 ninguna guarda aceptable se lanzará un error. 
 
 Por supuesto podemos usar guardas con con funciones que tomen tantos parámetros
@@ -329,16 +334,18 @@ que tome la altura y el peso y lo calcule por nosotros. ::
         | weight / height ^ 2 <= 30.0 = "¡Estás gordo! Pierde algo de peso gordito."  
         | otherwise                   = "¡Enhorabuena, eres una ballena!" 
     
-Vamos a ver si estoy gordo... ::
+Vamos a ver si estoy gordo...
+
+.. code-block:: console
 
     ghci> bmiTell 85 1.90  
     "Supuestamente eres normal. Ptsss, espero que seas feo."  
 
-¡Yeah! No estoy gordo, pero Haskell me acaba de llamar feo...
+¡Sí! No estoy gordo, pero Haskell me acaba de llamar feo...
 
 Fíjate que no hay un ``=`` después del nombre de la función y sus parámetros,
-antes de la primera guarda. Muchos novatos obtienen error sintácticos por
-ponerlos ahí.
+antes de la primera guarda. Muchos novatos generan un error sintáctico por
+poner un ``=`` ahí, y tú también lo harás.
 
 Otro ejemplo muy simple: vamos a implementar nuestra función ``max``. Si
 recuerdas, puede tomar dos cosas que puedan ser comparadas y devuelve la mayor. 
@@ -356,7 +363,7 @@ cortas. Pero para demostrarlo podemos definir ``max'`` como: ::
     max' :: (Ord a) => a -> a -> a  
     max' a b | a > b = a | otherwise = b
 
-¡Arg! No se lee fácilmente. Sigamos adelante, vamos a implementar nuestro
+¡Arg! No se lee fácilmente. Sigamos adelante. Vamos a implementar nuestro
 propio ``compare`` usando guardas. ::
 
     myCompare :: (Ord a) => a -> a -> Ordering  
@@ -365,7 +372,7 @@ propio ``compare`` usando guardas. ::
         | a == b    = EQ  
         | otherwise = LT
         
-::
+.. code-block:: console
 
     ghci> 3 `myCompare` 2  
     GT    
@@ -409,8 +416,8 @@ definimos varios nombres o funciones. Estos nombres son visibles en las
 guardas y nos dan la ventaja de no tener que repetirnos. Si decidimos que
 tenemos que calcular el IMC de otra forma solo tenemos que modificarlo en un
 lugar. También mejora la legibilidad ya que da nombre a las cosas y hace que
-nuestros programas sean más rápidos ya que cosas como nuestro ``bmi`` solo
-debe calcularse una vez. Podríamos pasarnos un poco y presentar una función
+nuestros programas sean más rápidos ya que cosas como ``bmi`` solo
+deben calcularse una vez. Podríamos pasarnos un poco y presentar una función
 como esta: ::
 
     bmiTell :: (RealFloat a) => a -> a -> String  
@@ -467,7 +474,7 @@ ejemplo es que no podemos calcular simplemente un IMC desde los parámetros de
 nuestra función. Tenemos que examinar todos los elementos de la lista y calcular
 su IMC para cada dupla. 
 
-Las secciones ``where`` también pueden estar anidadas. Es algo común crear una
+Las secciones ``where`` también pueden estar anidadas. Es muy común crear una
 función y definir algunas funciones auxiliares en la sección ``where`` y luego
 definir otras funciones auxiliares dentro de cada uno de ellas.
 
@@ -508,26 +515,34 @@ la expresión que las utiliza mientras que ``where`` lo hace en el orden inverso
 La diferencia es que las secciones ``let`` son expresiones por si mismas. Las
 secciones ``where`` son simplemente construcciones sintácticas. ¿Recuerdas
 cuando explicamos las sentencias ``if`` y se explicó que como son una expresión
-pueden ser usadas en casi cualquier lugar? ::
+pueden ser usadas en casi cualquier lugar? 
+
+.. code-block:: console
 
     ghci> [if 5 > 3 then "Woo" else "Boo", if 'a' > 'b' then "Foo" else "Bar"]  
     ["Woo", "Bar"]  
     ghci> 4 * (if 10 > 5 then 10 else 0) + 2  
     42
     
-También puedes hacer lo mismo con las secciones ``let``. ::
+También puedes hacer lo mismo con las secciones ``let``.
+
+.. code-block:: console
 
     ghci> 4 * (let a = 9 in a + 1) + 2  
     42
     
-También pueden ser utilizadas definir funciones en un ámbito local: ::
+También pueden ser utilizadas para definir funciones en un ámbito local:
+
+.. code-block:: console
 
     ghci> [let square x = x * x in (square 5, square 3, square 2)]  
     [(25,9,4)]
 
 Si queremos ligar varias variables en una solo línea, obviamente no podemos
 alinear las definiciones en la misma columna. Por este motivo podemos separarlas
-con puntos y comas. ::
+con puntos y comas.
+
+.. code-block:: console
 
     ghci> (let a = 100; b = 200; c = 300 in a*b*c, let foo="Hey "; bar = "there!" in foo ++ bar)  
     (6000000,"Hey there!")
@@ -535,7 +550,9 @@ con puntos y comas. ::
 No tienes que porque poner el último punto y coma pero puedes hacerlo si
 quieres. Como ya hemos dicho, puedes utilizar ajustes de patrones con las
 secciones ``let``. Son muy útiles para desmantelar tuplas en sus componentes y
-ligarlos a nombres y demás. ::
+ligarlos a varios nombres y demás.
+
+.. code-block:: console
 
     ghci> (let (a,b,c) = (1,2,3) in a+b+c) * 100  
     600
@@ -567,7 +584,9 @@ casos. Sin embargo, podemos usar una sección ``let in`` en un predicado y los
 nombres definidos solo serán visibles en este predicado. La parte ``in`` también
 puede ser omitida cuando definimos funciones y constantes dentro del intérprete
 ``GHCi``. Si lo hacemos, los nombres serán visibles durante toda la sesión
-interactiva. ::
+interactiva.
+
+.. code-block:: console
 
     ghci> let zoot x y z = x * y + z  
     ghci> zoot 3 9 2  
@@ -603,11 +622,11 @@ con ninguno de los anteriores.
 Haskell toma este concepto y lo lleva un paso más allá. Como su nombre indica
 las expresiones ``case`` son, bueno, expresiones, como las expresiones
 ``if else`` o las secciones ``let``. No solo podemos evaluar expresiones
-basandonos en los posibles valores de un variable sino que podemos realizar
+basandonos en los posibles valores de un variable sino que podemos realizar un
 ajuste de patrones. Mmmm... tomar un valor, realizar un ajuste de patrones sobre
 él, evaluar trozos de código basados en su valor ¿Dónde hemos oído esto antes?
 Oh sí, en los ajuste de patrones de los parámetros de una función. Bueno, en
-realidad es simplemente azúcar sintáctico para las expresiones ``case``. Estos
+realidad es simplemente una decoración sintáctica para las expresiones ``case``. Estos
 dos trozos de código hacen lo mismo y son intercambiables: ::
 
     head' :: [a] -> a  
@@ -642,7 +661,7 @@ ser utilizadas casi en cualquier lugar. Por ejemplo: ::
                                                    xs -> "a longer list."
 
 Son útiles para realizar un ajuste de patrones en medio de una expresión. Como
-el ajuste de patrones es azúcar sintáctico para las expresiones ``case``,
+el ajuste de patrones es una decoración sintáctica para las expresiones ``case``,
 podríamos tener definido algo como esto: ::
 
     describeList :: [a] -> String  

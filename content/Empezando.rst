@@ -132,7 +132,9 @@ escribiendo su nombre y luego escribiendo sus parámetros entre paréntesis,
 normalmente separados por comas. En Haskell, las funciones son llamadas
 escribiendo su nombre, un espacio y sus parámetros, separados por espacios.
 Para empezar, vamos a intentar llamar a una de las funciones más aburridas de
-Haskell. ::
+Haskell.
+
+.. code-block:: console
 
     ghci> succ 8
     9
@@ -141,7 +143,9 @@ La función ``succ`` toma cualquier cosa que tenga definido un sucesor y
 devuelve ese sucesor. Como puedes ver, simplemente hemos separado el nombre de 
 la función y su parámetro por un espacio. Llamar a una función con varios 
 parámetros es igual de sencillo. Las funciones ``min`` y ``max`` toman dos cosas
-que puedan ponerse en orden (¡Cómo los números!) y devuelven uno de ellos. ::
+que puedan ponerse en orden (¡Cómo los números!) y devuelven uno de ellos. 
+
+.. code-block:: console
 
     ghci> min 9 10   
     9  	       	     
@@ -152,7 +156,9 @@ que puedan ponerse en orden (¡Cómo los números!) y devuelven uno de ellos. ::
 
 La aplicación de funciones (llamar a una función poniendo un espacio después de
 ella y luego escribir sus parámetros) tiene la máxima prioridad. Lo que esto
-significa para nosotros es que estas dos sentencias son equivalentes. ::
+significa para nosotros es que estas dos sentencias son equivalentes.
+
+.. code-block:: console
 
     ghci> succ 9 + max 5 4 + 1    
     16  			    	 
