@@ -56,7 +56,7 @@ crear soluciones a problemas de forma elegante y concisa.</p>
 <p>Si aún no sabes que es la recursión, lee esta frase: La recursión es en realidad
 una forma de definir funciones en la que dicha función es utiliza en la propia
 definición de la función. Las definiciones matemáticas normalmente están
-definidas usando recursión. Por ejemplo, la serie de Fibonacci se define
+definidas de forma recursiva. Por ejemplo, la serie de Fibonacci se define
 recursivamente. Primero, definimos los dos primeros números de Fibonacci de
 forma no recursiva. Decimos que <tt class="docutils literal"><span class="pre">F(0)</span> <span class="pre">=</span> <span class="pre">0</span></tt> y <tt class="docutils literal"><span class="pre">F(1)</span> <span class="pre">=</span> <span class="pre">1</span></tt>, que significa que
 el 1º y el 2º número de Fibonacci es 0 y 1, respectivamente. Luego, para
@@ -71,7 +71,7 @@ base en una definición como en <tt class="docutils literal"><span class="pre">F
 termine. Si no hubiéramos definido <tt class="docutils literal"><span class="pre">F(0)</span></tt> y <tt class="docutils literal"><span class="pre">F(1)</span></tt> no recursivamente, nunca
 obtendríamos un resultado para un número cualquiera, ya que alcanzaríamos <tt class="docutils literal"><span class="pre">0</span></tt>
 y continuaríamos con los número negativos. De repente, encontraríamos un
-<tt class="docutils literal"><span class="pre">F(-2000)</span> <span class="pre">=</span> <span class="pre">F(-2001)</span> <span class="pre">+</span> <span class="pre">F(-2002)</span></tt> y seguiríamos sin ver un final.</p>
+<tt class="docutils literal"><span class="pre">F(-2000)</span> <span class="pre">=</span> <span class="pre">F(-2001)</span> <span class="pre">+</span> <span class="pre">F(-2002)</span></tt> y seguiríamos sin ver el final.</p>
 <p>La recursión es muy importante en Haskell ya que, al contrario que en los
 lenguajes imperativos, realizamos cálculos declarando como <strong>es</strong> algo, en lugar
 de declarar <strong>como</strong> obtener algo. Por este motivo no hay bucles <tt class="docutils literal"><span class="pre">while</span></tt> o
@@ -102,11 +102,11 @@ Haskell.</p>
     <span class="kr">where</span> <span class="n">maxTail</span> <span class="ow">=</span> <span class="n">maximum&#39;</span> <span class="n">xs</span>
 </pre></div>
 </div>
-<p>Como puedes ver el ajuste de patrones funcionan genial con la recursión. Muchos
+<p>Como puedes ver el ajuste de patrones funcionan genial junto con la recursión. Muchos
 lenguajes imperativos no tienen patrones así que hay que utilizar muchos
 <tt class="docutils literal"><span class="pre">if</span></tt>/<tt class="docutils literal"><span class="pre">else</span></tt> para implementar los casos base. El primer caso base dice que si
 una lista está vacía, ¡Error! Tiene sentido porque ¿Cuál es el máximo de una
-lista vacía? No tengo ni idea. El segundo patrón también representa un caso
+lista vacía? Ni idea. El segundo patrón también representa un caso
 base. Dice que si nos dan una lista unitaria simplemente devolvemos el único
 elemento.</p>
 <p>En el tercer patrón es donde está la acción. Usamos un patrón para dividir la
@@ -122,7 +122,7 @@ no ajustarían. El tercero si lo haría y la lista se dividiría en <tt class="d
 nos vamos por ahí. Se ajustaría con el tercer patrón otra vez y <tt class="docutils literal"><span class="pre">[5,1]</span></tt> sería
 dividido en <tt class="docutils literal"><span class="pre">5</span></tt> y <tt class="docutils literal"><span class="pre">[1]</span></tt>. Otra vez, la sección <tt class="docutils literal"><span class="pre">where</span></tt> requiere saber el
 máximo de <tt class="docutils literal"><span class="pre">[1]</span></tt>. Como esto es un caso base, devuelve 1. ¡Por fin! Así que
-subimos un paso, comparamos <tt class="docutils literal"><span class="pre">5</span></tt> con el máximo de <tt class="docutils literal"><span class="pre">[1]</span></tt> (que es <tt class="docutils literal"><span class="pre">1</span></tt>),
+subimos un paso, comparamos <tt class="docutils literal"><span class="pre">5</span></tt> con el máximo de <tt class="docutils literal"><span class="pre">[1]</span></tt> (que es <tt class="docutils literal"><span class="pre">1</span></tt>) y
 sorprendentemente obtenemos 5. Así que ahora sabemos que el máximo de <tt class="docutils literal"><span class="pre">[5,1]</span></tt>
 es <tt class="docutils literal"><span class="pre">5</span></tt>. Subimos otro paso y tenemos <tt class="docutils literal"><span class="pre">2</span></tt> y <tt class="docutils literal"><span class="pre">[5,1]</span></tt>. Comparamos <tt class="docutils literal"><span class="pre">2</span></tt> con el
 máximo de <tt class="docutils literal"><span class="pre">[5,1]</span></tt>, que es <tt class="docutils literal"><span class="pre">5</span></tt> y elegimos <tt class="docutils literal"><span class="pre">5</span></tt>.</p>
@@ -135,13 +135,13 @@ de ellos. Así es como podríamos reescribir la función usando <tt class="docut
 <span class="nf">maximum&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">max</span> <span class="n">x</span> <span class="p">(</span><span class="n">maximum&#39;</span> <span class="n">xs</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>¿Te parece elegante eso? En esencia, el máximo de una lista es el máximo de su
+<p>¿Te parece elegante? Resumiendo, el máximo de una lista es el máximo de su
 primer elemento y el máximo del resto de sus elementos.</p>
 <img alt="Máximo" class="align-center" src="../images/maxs.png" />
 </div>
 <div class="section" id="unas-cuantas-funciones-recursivas-mas">
 <h2>Unas cuantas funciones recursivas más<a class="headerlink" href="#unas-cuantas-funciones-recursivas-mas" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>Ahora que sabemos cómo pensar en general, de forma recursiva, vamos a
+<p>Ahora que sabemos cómo pensar de forma recursiva en general, vamos a
 implementar unas cuantas funciones de forma recursiva. En primer lugar, vamos a
 implementar <tt class="docutils literal"><span class="pre">replicate</span></tt>. <tt class="docutils literal"><span class="pre">replicate</span></tt> toma un <tt class="docutils literal"><span class="pre">Int</span></tt> y algún elemento y
 devuelve una lista que contiene varias repeticiones de ese mismo elemento. Por
@@ -164,8 +164,7 @@ función alcance el caso base.</p>
 elementos de una lista. Por ejemplo, <tt class="docutils literal"><span class="pre">take</span> <span class="pre">3</span> <span class="pre">[5,4,3,2,1]</span></tt> devolverá
 <tt class="docutils literal"><span class="pre">[5,4,3]</span></tt>. Si intentamos obtener 0 o menos elementos de una lista, obtendremos
 una lista vacía. También si intentamos tomar algo de una lista vacía,
-obtendremos una lista vacía. Fíjate que ambos son casos base. Vamos a escribir
-esto.</p>
+obtendremos una lista vacía. Fíjate que ambos son casos base. Vamos a escribirlo.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">take&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">i</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">i</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">i</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
 <span class="nf">take&#39;</span> <span class="n">n</span> <span class="kr">_</span>
     <span class="o">|</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span>   <span class="ow">=</span> <span class="kt">[]</span>
@@ -175,7 +174,7 @@ esto.</p>
 </div>
 <img alt="Pintor" class="align-right" src="../images/painter.png" />
 <p>El primer patrón indica que si queremos obtener 0 o un número negativo de
-elementos, obtenemos una lista vacía. Date cuenta de que estamos usando <tt class="docutils literal"><span class="pre">_</span></tt>
+elementos, obtenemos una lista vacía. Fíjate que estamos usando <tt class="docutils literal"><span class="pre">_</span></tt>
 para enlazar la lista ya que realmente no nos importa en este patrón. Además
 también estamos usando una guarda, pero sin la parte <tt class="docutils literal"><span class="pre">otherwise</span></tt>. Esto
 significa que si <tt class="docutils literal"><span class="pre">n</span></tt> acaba siendo algo más que 0, el patrón fallará y
@@ -186,7 +185,7 @@ lista es igual a una lista que tiene <tt class="docutils literal"><span class="p
 tome n-1 elementos de la cola. Intenta usar papel y lápiz para seguir el
 desarrollo de como sería la evaluación de, digamos, <tt class="docutils literal"><span class="pre">take</span> <span class="pre">3</span> <span class="pre">[4,3,2,1]</span></tt>.</p>
 <p><tt class="docutils literal"><span class="pre">reverse</span></tt> simplemente pone al revés una lista. Piensa en el caso base, ¿Cuál
-es? Vamos... ¡Es una lista vacía! Una lista inversa es igual a esa misma lista
+es? Vamos... ¡Es una lista vacía! Una lista vacía inversa es igual a esa misma lista
 vacía. Vale, ¿Qué hay del resto de la lista? Podríamos decir que si dividimos
 una lista en su cabeza y cola, la lista inversa es igual a la cola invertida y
 luego la cabeza al final.</p>
@@ -197,7 +196,7 @@ luego la cabeza al final.</p>
 </div>
 <p>¡Ahí lo tienes!</p>
 <p>Como Haskell soporta listas infinitas, en realidad nuestra recursión no tiene
-porque tener casos base. Pero si no los tiene, seguiríamos calculando algo
+porque tener casos base. Pero si no los tiene, seguiremos calculando algo
 infinitamente o bien produciendo una estructura infinita. Sin embargo, lo bueno
 de estas listas infinitas es que podemos cortarlas por donde queramos.
 <tt class="docutils literal"><span class="pre">repeat</span></tt> toma un elemento y devuelve una lista infinita que simplemente tiene
@@ -247,18 +246,17 @@ falso.</p>
 <div class="section" id="quicksort">
 <span id="id1"></span><h2>¡Quicksort!<a class="headerlink" href="#quicksort" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="Quickman" class="align-left" src="../images/quickman.png" />
-<p>Tenemos una lista de elemento que pueden ser ordenados. Su tipo es miembro de la
-clase de tiposs <tt class="docutils literal"><span class="pre">Ord</span></tt>. Y ahora, queremos ordenarlos. Existe un algoritmo muy
-interesante para ordenarlos llamado quicksort. Es una forma muy inteligente de
+<p>Tenemos una lista de elementos que pueden ser ordenados. Su tipo es miembro de la
+clase de tipos <tt class="docutils literal"><span class="pre">Ord</span></tt>. Y ahora, queremos ordenarlos. Existe un algoritmo muy
+interesante para ordenarlos llamado Quicksort. Es una forma muy inteligente de
 ordenar elementos. Mientras en algunos lenguajes imperativos puede tomar hasta
-10 líneas de código para implementar quicksort, en Haskell la implementación es
+10 líneas de código para implementar Quicksort, en Haskell la implementación es
 mucho más corta y elegante. Quicksort se ha convertido en usa especie de pieza
 de muestra de Haskell. Por lo tanto, vamos a implementarlo, a pesar de que la
-implementación de quicksort en Haskell se considera muy cursi ya que todo el
-mundo lo hace en las presentaciones para mostrar lo elegante que puede llegar
-a ser haskell.</p>
-<p>Bueno, la definición de tipo va a ser <tt class="docutils literal"><span class="pre">quicksort</span> <span class="pre">::</span> <span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">[a]</span></tt>.
-Ninguna sorpresa. ¿Caso base? La lista vacía, como era de esperar. Ahora viene
+implementación de Quicksort en Haskell se considera muy cursi ya que todo el
+mundo lo hace en las presentaciones para que veamos los bonito que es.</p>
+<p>Bueno, la declaración de tipo va será <tt class="docutils literal"><span class="pre">quicksort</span> <span class="pre">::</span> <span class="pre">(Ord</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">[a]</span></tt>.
+Ninguna sorpresa ¿Caso base? La lista vacía, como era de esperar. Ahora viene
 el algoritmo principal: una lista ordenada es una lista que tiene todos los
 elementos menores (o iguales) que la cabeza al principio (y esos valores están
 ordenados), luego viene la cabeza de la lista que estará en el medio y luego
@@ -279,13 +277,13 @@ función:</p>
 </pre></div>
 </div>
 <p>Vamos a ejecutar una pequeña prueba para ver si se comporta correctamente.</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">quicksort</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
-<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">quicksort</span> <span class="s">&quot;the quick brown fox jumps over the lazy dog&quot;</span>
-<span class="s">&quot;        abcdeeefghhijklmnoooopqrrsttuuvwxyz&quot;</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; quicksort [10,2,5,3,1,6,7,4,2,3,4,8,9]</span>
+<span class="go">[1,2,2,3,3,4,4,5,6,7,8,9,10]</span>
+<span class="go">ghci&gt; quicksort &quot;the quick brown fox jumps over the lazy dog&quot;</span>
+<span class="go">&quot;        abcdeeefghhijklmnoooopqrrsttuuvwxyz&quot;</span>
 </pre></div>
 </div>
-<p>Bien, ¡Eso es de lo que estaba hablando! Así que si tenemos, digamos
+<p>Bien ¡Eso es de lo que estaba hablando! Así que si tenemos, digamos
 <tt class="docutils literal"><span class="pre">[5,1,9,4,6,7,3]</span></tt> y queremos ordenarlos, este algoritmo primero tomará la
 cabeza de la lista, que es 5 y lo pondrá en medio de dos listas que son los
 menores y los mayores de este. De esta forma tendremos
@@ -299,12 +297,12 @@ de alguna forma. Aquí tienes una ilustración:</p>
 <img alt="Quicksort" class="align-center" src="../images/quicksort.png" />
 <p>Un elemento que está en su posición correcta y no se moverá más está en naranja.
 Si los lees de izquierda a derecha verás que es la lista ordenada. Aunque
-elegimos comparar todos los elemento con la cabeza, podríamos haber elegido
-cualquier otro elemento. En quicksort, se llama pivote al elemento con el que
+elegimos comparar todos los elementos con la cabeza, podríamos haber elegido
+cualquier otro elemento. En Quicksort, se llama pivote al elemento con el que
 comparamos. Estos son los de color verde. Elegimos la cabeza porque es muy
 fácil aplicarle un patrón. Los elementos que son más pequeños que el pivote son
 de color verde claro y los elementos que son mayores en negro. El gradiente
-amarillo representa la aplicación de quicksort.</p>
+amarillo representa la aplicación de Quicksort.</p>
 </div>
 <div class="section" id="pensando-de-forma-recursiva">
 <h2>Pensando de forma recursiva<a class="headerlink" href="#pensando-de-forma-recursiva" title="Enlazar permanentemente con este título">¶</a></h2>
@@ -316,19 +314,19 @@ cualquier otra estructura de datos. Un sumatorio es la suma del primer elemento
 más la suma del resto de elementos. Un productorio es el producto del primer
 elemento entre el producto del resto de elementos. El tamaño de una lista es
 1 más el tamaño del resto de la lista, etc.</p>
-<img alt="Cerebro" class="align-left" src="../images/brain.png" />
+<img alt="Cerebro recursivo" class="align-left" src="../images/brain.png" />
 <p>Por supuesto también existen los casos base. Por lo general un caso base es un
 escenario en el que la aplicación de una recursión no tiene sentido. Cuando
 trabajamos con listas, los casos base suelen tratar con listas vacías. Cuando
 utilizamos árboles los casos base son normalmente los nodos que no tienen hijos.</p>
 <p>Es similar cuando tratamos con números. Normalmente hacemos algo con un número
 y luego aplicamos la función a ese número modificado. Ya hicimos funciones
-recursivas de este tipo como el del factorial de un número, la cual no tiene
+recursivas de este tipo como el del factorial de un número, el cual no tiene
 sentido con cero, ya que el factorial solo está definido para enteros positivos.
 A menudo el caso base resulta ser la identidad. La identidad de la
 multiplicación es 1 ya que si multiplicas algo por 1 obtienes el mismo
 resultado. También cuando realizamos sumatorios de listas, definimos como 0 al
-sumatorio de una lista vacía, ya que 0 es la identidad de la suma. En quicksort,
+sumatorio de una lista vacía, ya que 0 es la identidad de la suma. En Quicksort,
 el caso base es la lista vacía y la identidad es también la lista vacía, ya que
 si añades a una lista la lista vacía obtienes la misma lista ordenada.</p>
 <p>Así que cuanto pienses en resolver un problema de forma recursiva, intenta

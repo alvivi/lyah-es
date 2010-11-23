@@ -155,8 +155,8 @@ normalmente separados por comas. En Haskell, las funciones son llamadas
 escribiendo su nombre, un espacio y sus parámetros, separados por espacios.
 Para empezar, vamos a intentar llamar a una de las funciones más aburridas de
 Haskell.</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">succ</span> <span class="mi">8</span>
-<span class="mi">9</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; succ 8</span>
+<span class="go">9</span>
 </pre></div>
 </div>
 <p>La función <tt class="docutils literal"><span class="pre">succ</span></tt> toma cualquier cosa que tenga definido un sucesor y
@@ -164,21 +164,21 @@ devuelve ese sucesor. Como puedes ver, simplemente hemos separado el nombre de
 la función y su parámetro por un espacio. Llamar a una función con varios
 parámetros es igual de sencillo. Las funciones <tt class="docutils literal"><span class="pre">min</span></tt> y <tt class="docutils literal"><span class="pre">max</span></tt> toman dos cosas
 que puedan ponerse en orden (¡Cómo los números!) y devuelven uno de ellos.</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">min</span> <span class="mi">9</span> <span class="mi">10</span>
-<span class="mi">9</span>
-<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">min</span> <span class="mf">3.4</span> <span class="mf">3.2</span>
-<span class="mf">3.2</span>
-<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">max</span> <span class="mi">100</span> <span class="mi">101</span>
-<span class="mi">101</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; min 9 10</span>
+<span class="go">9</span>
+<span class="go">ghci&gt; min 3.4 3.2</span>
+<span class="go">3.2</span>
+<span class="go">ghci&gt; max 100 101</span>
+<span class="go">101</span>
 </pre></div>
 </div>
 <p>La aplicación de funciones (llamar a una función poniendo un espacio después de
 ella y luego escribir sus parámetros) tiene la máxima prioridad. Lo que esto
 significa para nosotros es que estas dos sentencias son equivalentes.</p>
-<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">succ</span> <span class="mi">9</span> <span class="o">+</span> <span class="n">max</span> <span class="mi">5</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="mi">16</span>
-<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">succ</span> <span class="mi">9</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">max</span> <span class="mi">5</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="mi">16</span>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; succ 9 + max 5 4 + 1</span>
+<span class="go">16</span>
+<span class="go">ghci&gt; (succ 9) + (max 5 4) + 1</span>
+<span class="go">16</span>
 </pre></div>
 </div>
 <p>Sin embargo, si hubiésemos querido obtener el sucesor del producto de los
