@@ -19,7 +19,7 @@ crear soluciones a problemas de forma elegante y concisa.
 Si aún no sabes que es la recursión, lee esta frase: La recursión es en realidad
 una forma de definir funciones en la que dicha función es utiliza en la propia
 definición de la función. Las definiciones matemáticas normalmente están
-definidas usando recursión. Por ejemplo, la serie de Fibonacci se define
+definidas de forma recursiva. Por ejemplo, la serie de Fibonacci se define
 recursivamente. Primero, definimos los dos primeros números de Fibonacci de
 forma no recursiva. Decimos que ``F(0) = 0`` y ``F(1) = 1``, que significa que
 el 1º y el 2º número de Fibonacci es 0 y 1, respectivamente. Luego, para
@@ -34,7 +34,7 @@ base en una definición como en ``F(3) = (F(1) + F(0)) + F(1)`` se denomina
 termine. Si no hubiéramos definido ``F(0)`` y ``F(1)`` no recursivamente, nunca
 obtendríamos un resultado para un número cualquiera, ya que alcanzaríamos ``0``
 y continuaríamos con los número negativos. De repente, encontraríamos un
-``F(-2000) = F(-2001) + F(-2002)`` y seguiríamos sin ver un final. 
+``F(-2000) = F(-2001) + F(-2002)`` y seguiríamos sin ver el final. 
 
 La recursión es muy importante en Haskell ya que, al contrario que en los
 lenguajes imperativos, realizamos cálculos declarando como **es** algo, en lugar
@@ -70,11 +70,11 @@ Haskell. ::
         | otherwise = maxTail  
         where maxTail = maximum' xs
     
-Como puedes ver el ajuste de patrones funcionan genial con la recursión. Muchos
+Como puedes ver el ajuste de patrones funcionan genial junto con la recursión. Muchos
 lenguajes imperativos no tienen patrones así que hay que utilizar muchos
 ``if``/``else`` para implementar los casos base. El primer caso base dice que si
 una lista está vacía, ¡Error! Tiene sentido porque ¿Cuál es el máximo de una
-lista vacía? No tengo ni idea. El segundo patrón también representa un caso
+lista vacía? Ni idea. El segundo patrón también representa un caso
 base. Dice que si nos dan una lista unitaria simplemente devolvemos el único
 elemento.
 
@@ -92,7 +92,7 @@ no ajustarían. El tercero si lo haría y la lista se dividiría en ``2`` y
 nos vamos por ahí. Se ajustaría con el tercer patrón otra vez y ``[5,1]`` sería
 dividido en ``5`` y ``[1]``. Otra vez, la sección ``where`` requiere saber el
 máximo de ``[1]``. Como esto es un caso base, devuelve 1. ¡Por fin! Así que 
-subimos un paso, comparamos ``5`` con el máximo de ``[1]`` (que es ``1``),
+subimos un paso, comparamos ``5`` con el máximo de ``[1]`` (que es ``1``) y
 sorprendentemente obtenemos 5. Así que ahora sabemos que el máximo de ``[5,1]``
 es ``5``. Subimos otro paso y tenemos ``2`` y ``[5,1]``. Comparamos ``2`` con el
 máximo de ``[5,1]``, que es ``5`` y elegimos ``5``. 
@@ -106,7 +106,7 @@ de ellos. Así es como podríamos reescribir la función usando ``max``: ::
     maximum' [x] = x  
     maximum' (x:xs) = max x (maximum' xs)  
     
-¿Te parece elegante eso? En esencia, el máximo de una lista es el máximo de su
+¿Te parece elegante? Resumiendo, el máximo de una lista es el máximo de su
 primer elemento y el máximo del resto de sus elementos.
 
 
@@ -119,7 +119,7 @@ Unas cuantas funciones recursivas más
 -------------------------------------
 
 
-Ahora que sabemos cómo pensar en general, de forma recursiva, vamos a
+Ahora que sabemos cómo pensar de forma recursiva en general, vamos a
 implementar unas cuantas funciones de forma recursiva. En primer lugar, vamos a
 implementar ``replicate``. ``replicate`` toma un ``Int`` y algún elemento y
 devuelve una lista que contiene varias repeticiones de ese mismo elemento. Por
@@ -141,16 +141,15 @@ función alcance el caso base.
 
 .. Note:
     ``Num`` no es una subclase de ``Ord``. Esto significa que lo que constituye
-    un número realmente no tiene que adherirse a un orden. Este es el motivo por
-    el que aparecen ambas restricciones de clase,``Num`` y ``Ord``, cuando
-    realizamos una suma, resta o también una comparación.
+    un número realmente no tiene que adherirse a un orden. Por este motivo
+    aparecen ambas restricciones de clase,``Num`` y ``Ord``, cuando
+    realizamos una suma o una resta o también una comparación.
     
 Ahora vamos a implementar ``take``. Esta función toma un cierto número de
 elementos de una lista. Por ejemplo, ``take 3 [5,4,3,2,1]`` devolverá
 ``[5,4,3]``. Si intentamos obtener 0 o menos elementos de una lista, obtendremos
 una lista vacía. También si intentamos tomar algo de una lista vacía,
-obtendremos una lista vacía. Fíjate que ambos son casos base. Vamos a escribir
-esto. ::
+obtendremos una lista vacía. Fíjate que ambos son casos base. Vamos a escribirlo. ::
 
     take' :: (Num i, Ord i) => i -> [a] -> [a]  
     take' n _  
@@ -163,7 +162,7 @@ esto. ::
    :alt: Pintor
 
 El primer patrón indica que si queremos obtener 0 o un número negativo de
-elementos, obtenemos una lista vacía. Date cuenta de que estamos usando ``_``
+elementos, obtenemos una lista vacía. Fíjate que estamos usando ``_``
 para enlazar la lista ya que realmente no nos importa en este patrón. Además 
 también estamos usando una guarda, pero sin la parte ``otherwise``. Esto
 significa que si ``n`` acaba siendo algo más que 0, el patrón fallará y
@@ -175,7 +174,7 @@ tome n-1 elementos de la cola. Intenta usar papel y lápiz para seguir el
 desarrollo de como sería la evaluación de, digamos, ``take 3 [4,3,2,1]``.
 
 ``reverse`` simplemente pone al revés una lista. Piensa en el caso base, ¿Cuál
-es? Vamos... ¡Es una lista vacía! Una lista inversa es igual a esa misma lista
+es? Vamos... ¡Es una lista vacía! Una lista vacía inversa es igual a esa misma lista
 vacía. Vale, ¿Qué hay del resto de la lista? Podríamos decir que si dividimos
 una lista en su cabeza y cola, la lista inversa es igual a la cola invertida y
 luego la cabeza al final. ::
@@ -187,7 +186,7 @@ luego la cabeza al final. ::
 ¡Ahí lo tienes!
 
 Como Haskell soporta listas infinitas, en realidad nuestra recursión no tiene
-porque tener casos base. Pero si no los tiene, seguiríamos calculando algo
+porque tener casos base. Pero si no los tiene, seguiremos calculando algo
 infinitamente o bien produciendo una estructura infinita. Sin embargo, lo bueno
 de estas listas infinitas es que podemos cortarlas por donde queramos. 
 ``repeat`` toma un elemento y devuelve una lista infinita que simplemente tiene
@@ -246,19 +245,18 @@ falso.
    :align: left
    :alt: Quickman
 
-Tenemos una lista de elemento que pueden ser ordenados. Su tipo es miembro de la
-clase de tiposs ``Ord``. Y ahora, queremos ordenarlos. Existe un algoritmo muy
-interesante para ordenarlos llamado quicksort. Es una forma muy inteligente de
+Tenemos una lista de elementos que pueden ser ordenados. Su tipo es miembro de la
+clase de tipos ``Ord``. Y ahora, queremos ordenarlos. Existe un algoritmo muy
+interesante para ordenarlos llamado Quicksort. Es una forma muy inteligente de
 ordenar elementos. Mientras en algunos lenguajes imperativos puede tomar hasta
-10 líneas de código para implementar quicksort, en Haskell la implementación es
+10 líneas de código para implementar Quicksort, en Haskell la implementación es
 mucho más corta y elegante. Quicksort se ha convertido en usa especie de pieza
 de muestra de Haskell. Por lo tanto, vamos a implementarlo, a pesar de que la
-implementación de quicksort en Haskell se considera muy cursi ya que todo el
-mundo lo hace en las presentaciones para mostrar lo elegante que puede llegar
-a ser haskell.
+implementación de Quicksort en Haskell se considera muy cursi ya que todo el
+mundo lo hace en las presentaciones para que veamos los bonito que es.
 
-Bueno, la definición de tipo va a ser ``quicksort :: (Ord a) => [a] -> [a]``.
-Ninguna sorpresa. ¿Caso base? La lista vacía, como era de esperar. Ahora viene
+Bueno, la declaración de tipo va será ``quicksort :: (Ord a) => [a] -> [a]``.
+Ninguna sorpresa ¿Caso base? La lista vacía, como era de esperar. Ahora viene
 el algoritmo principal: una lista ordenada es una lista que tiene todos los
 elementos menores (o iguales) que la cabeza al principio (y esos valores están
 ordenados), luego viene la cabeza de la lista que estará en el medio y luego
@@ -278,14 +276,16 @@ función: ::
             biggerSorted = quicksort [a | a <- xs, a > x]  
         in  smallerSorted ++ [x] ++ biggerSorted  
         
-Vamos a ejecutar una pequeña prueba para ver si se comporta correctamente. ::
+Vamos a ejecutar una pequeña prueba para ver si se comporta correctamente.
+
+.. code-block:: console
 
     ghci> quicksort [10,2,5,3,1,6,7,4,2,3,4,8,9]  
     [1,2,2,3,3,4,4,5,6,7,8,9,10]  
     ghci> quicksort "the quick brown fox jumps over the lazy dog"  
     "        abcdeeefghhijklmnoooopqrrsttuuvwxyz"  
     
-Bien, ¡Eso es de lo que estaba hablando! Así que si tenemos, digamos
+Bien ¡Eso es de lo que estaba hablando! Así que si tenemos, digamos
 ``[5,1,9,4,6,7,3]`` y queremos ordenarlos, este algoritmo primero tomará la
 cabeza de la lista, que es 5 y lo pondrá en medio de dos listas que son los
 menores y los mayores de este. De esta forma tendremos 
@@ -303,12 +303,12 @@ de alguna forma. Aquí tienes una ilustración:
 
 Un elemento que está en su posición correcta y no se moverá más está en naranja.
 Si los lees de izquierda a derecha verás que es la lista ordenada. Aunque 
-elegimos comparar todos los elemento con la cabeza, podríamos haber elegido
-cualquier otro elemento. En quicksort, se llama pivote al elemento con el que
+elegimos comparar todos los elementos con la cabeza, podríamos haber elegido
+cualquier otro elemento. En Quicksort, se llama pivote al elemento con el que
 comparamos. Estos son los de color verde. Elegimos la cabeza porque es muy
 fácil aplicarle un patrón. Los elementos que son más pequeños que el pivote son
 de color verde claro y los elementos que son mayores en negro. El gradiente 
-amarillo representa la aplicación de quicksort. 
+amarillo representa la aplicación de Quicksort. 
 
 
 Pensando de forma recursiva
@@ -326,7 +326,7 @@ elemento entre el producto del resto de elementos. El tamaño de una lista es
 
 .. image:: /images/brain.png
    :align: left
-   :alt: Cerebro
+   :alt: Cerebro recursivo
 
 Por supuesto también existen los casos base. Por lo general un caso base es un
 escenario en el que la aplicación de una recursión no tiene sentido. Cuando
@@ -335,12 +335,12 @@ utilizamos árboles los casos base son normalmente los nodos que no tienen hijos
 
 Es similar cuando tratamos con números. Normalmente hacemos algo con un número
 y luego aplicamos la función a ese número modificado. Ya hicimos funciones 
-recursivas de este tipo como el del factorial de un número, la cual no tiene
+recursivas de este tipo como el del factorial de un número, el cual no tiene
 sentido con cero, ya que el factorial solo está definido para enteros positivos.
 A menudo el caso base resulta ser la identidad. La identidad de la
 multiplicación es 1 ya que si multiplicas algo por 1 obtienes el mismo
 resultado. También cuando realizamos sumatorios de listas, definimos como 0 al
-sumatorio de una lista vacía, ya que 0 es la identidad de la suma. En quicksort,
+sumatorio de una lista vacía, ya que 0 es la identidad de la suma. En Quicksort,
 el caso base es la lista vacía y la identidad es también la lista vacía, ya que
 si añades a una lista la lista vacía obtienes la misma lista ordenada.
 
