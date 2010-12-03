@@ -8,13 +8,13 @@ Funciones de orden superior
    :alt: Sol
 
 Las funciones de Haskell pueden tomar funciones como parámetros y devolver
-funciones como resultado. Una función que hace ambas cosas o alguna de ellas es
-llamada función de orden superior. Las funciones de orden superior no son
-simplemente una parte más de la experiencia Haskell, ellas mismas representan
-la experiencia Haskell. Aparecen cuando quieres definir computaciones definiendo
-cosas como son en lugar de definir los pasos de cambio de algún estado o
-algún bucle, las funciones de orden superior son indispensables. Son realmente 
-una forma muy potente de resolver problemas y de pensar acerca de los programas.
+funciones como resultado. Una función que hace ambas cosas o alguna de ellas
+se llama función de orden superior. Las funciones de orden superior no son
+simplemente una parte más de Haskell, ellas mismas representan la experiencia
+de programar en Haskell. Aparecen cuando quieres definir cálculos definiendo
+cosas como son en lugar de definir los pasos de cambio de algún estado o algún
+bucle, las funciones de orden superior son indispensables. Son realmente una
+forma muy potente de resolver problemas y de pensar acerca de los programas.
 
 
 Funciones currificadas
@@ -22,16 +22,18 @@ Funciones currificadas
 
 
 Oficialmente cada función de Haskell solo puede tomar un parámetro. Así que
-¿Como es posible que hayamos definido y usado varias funciones que toman mas de
-un parámetro? Bueno, ¡Es un buen truco! Todas las funciones que hemos usado
+¿Como es posible que hayamos definido y usado varias funciones que toman mas
+de un parámetro? Bueno ¡Es un buen truco! Todas las funciones que hemos usado
 hasta el momento y aceptaban más de un parámetro han sido funciones
-currificadas. ¿Qué significa esto? Lo entenderás mejor con un ejemplo. Vamos a
-tomar a nuestro buen amigo, la función ``max``. Parece que toma dos parámetro y
-devuelve aquel que es mayor. Al aplicar ``max 4 5`` primero se crea una función
-que toma un solo parámetro y devuelve 4 o el parámetro, dependiendo de cual sea
-mayor. Luego, 5 es aplicado a esa función y esta produce el resultado deseado. 
-Esto suena un poco complicado pero en realidad es un concepto muy cool. Las 
-siguientes dos llamadas son equivalentes: ::
+currificadas ¿Qué significa esto? Lo entenderás mejor con un ejemplo. Vamos a
+usar a nuestro buen amigo, la función ``max``. Parece que toma dos parámetro y
+devuelve aquél que es mayor. Al aplicar ``max 4 5`` primero se crea una
+función que toma un solo parámetro y devuelve 4 o el parámetro, dependiendo de
+cual sea mayor. Luego, 5 es aplicado a esa función y esta produce el resultado
+deseado. Esto suena un poco complicado pero en realidad es un concepto muy
+útil. Las siguientes dos llamadas son equivalentes:
+
+.. code-block:: console
 
     ghci> max 4 5  
     5  
@@ -42,38 +44,42 @@ siguientes dos llamadas son equivalentes: ::
    :align: left
    :alt: Haskell Curry
 
-El poner un espacio entre dos cosas es sencillamente **aplicar una función**. El
-espacio es una especie de operador y tiene el orden de preferencia mayor. Vamos
-a examinar el tipo de ``max``. Es ``max :: (Ord a) => a -> a -> a``. Esto
-también puede ser escrito como ``max :: (Ord a) => a -> (a -> a)``. Y esto
-también puede leerse como: ``max`` toma un ``a`` y devuelve (eso es ``->``) una
-función que toma un ``a`` y devuelve un ``a``. Ese es el porqué el tipo
-devuelto y los parámetros de la función están simplemente separados por flechas.
+El poner un espacio entre dos cosas es sencillamente **aplicar una función**.
+El espacio es una especie de operador y tiene el orden de preferencia mayor.
+Vamos a examinar el tipo de ``max``. Es ``max :: (Ord a) => a -> a -> a``.
+Esto también puede ser escrito como ``max :: (Ord a) => a -> (a -> a)``. Y
+también puede leerse como: ``max`` toma un ``a`` y devuelve (eso es ``->``)
+una función que toma un ``a`` y devuelve un ``a``. Ese es el porqué el tipo
+devuelto y los parámetros de la función están separados solamente por flechas.
 
 ¿Y cómo nos beneficia esto? En pocas palabras, si llamamos a una función con
-demasiados pocos parámetros obtenemos una función **parcialmente aplicada**, es
-decir una función que toma tantos parámetros como le falte. Usar la aplicación
-parcial de funciones (Si prefieres, llamar a las funciones con menos parámetros) 
-es una forma sencilla de crear funciones al vuelo de forma que podamos pasarlas
-como parámetros a otras funciones o dotarlas con algunos datos.
+demasiados pocos parámetros obtenemos una función **parcialmente aplicada**,
+es decir una función que toma tantos parámetros como le falte. Utilizar la
+aplicación parcial de funciones (o llamar a las funciones con menos
+parámetros) es una forma sencilla de crear funciones al vuelo de forma que
+podamos pasarlas como parámetros a otras funciones o dotarlas con algunos
+datos.
 
 Échale un vistazo a esta función ofensivamente simple. ::
 
     multThree :: (Num a) => a -> a -> a -> a  
     multThree x y z = x * y * z
 
-¿Qué es lo que realmente pasa cuando realizamos ``multThree 3 5 9`` o 
+¿Qué es lo que realmente pasa cuando realizamos ``multThree 3 5 9`` o
 ``((multThree 3) 5) 9``? Primero, 3 es aplicado a ``multThree`` ya que está
-separado por un espacio. Esto crea una función que toma un parámetro y devuelve
-una función. Luego 5 es aplicado a está, de forma que se creará una función que
-toma un parámetro y lo multiplica por 15. 9 es aplicado a esa función y el
-resultado es 135 o algo similar. Recuerda que el tipo de esta función también
-podría escribirse como ``multThree :: (Num a) => a -> (a -> (a -> a))``. Lo que
-está antes del ``->`` es el parámetro que toma la función y lo que hay después
-es lo que devuelve. Así que nuestra función toma un ``a`` y devuelve una función
-con un tipo ``(Num a) => a -> (a -> a)``. De forma similar, esta función toma
-una ``a`` y devuelve una función del tipo ``(Num a) => a -> a``. Y finalmente,
-esta función toma una ``a`` y devuelve una ``a``. Mira esto: ::
+separado por un espacio. Esto crea una función que toma un parámetro y
+devuelve una función. Luego 5 es aplicado a está, de forma que se creará una
+función que toma un parámetro y lo multiplica por 15. 9 es aplicado a esa
+función y el resultado es 135 o algo similar. Recuerda que el tipo de esta
+función también podría escribirse como ``multThree :: (Num a) => a -> (a -> (a
+-> a))``. Lo que está antes del ``->`` es el parámetro que toma la función y
+lo que hay después es lo que devuelve. Así que nuestra función toma un ``a`` y
+devuelve una función con un tipo ``(Num a) => a -> (a -> a)``. De forma
+similar, esta función toma una ``a`` y devuelve una función del tipo ``(Num a)
+=> a -> a``. Y finalmente, esta función toma una ``a`` y devuelve una ``a``.
+Mira esto:
+
+.. code-block:: console
     
     ghci> let multTwoWithNine = multThree 9  
     ghci> multTwoWithNine 2 3  
@@ -90,9 +96,9 @@ número y lo compare con 100? Podríamos hacer algo como esto: ::
     compareWithHundred x = compare 100 x  
 
 Si la llamamos con 99 nos devuelve ``GT``. Bastante simple. Fíjate en la ``x``
-del lado derecho de la ecuación. Ahora vamos a pensar que devuelve`
-```compare 100``. Devuelve una función que toma un número y lo compara con 100.
-¡Wau! ¿No es eso lo que buscábamos? Podemos reescribirlo como: ::
+del lado derecho de la ecuación. Ahora vamos a pensar que devuelve` ```compare
+100``. Devuelve una función que toma un número y lo compara con 100. ¡Wau! ¿No
+es eso lo que buscábamos? Podemos reescribirlo como: ::
 
     compareWithHundred :: (Num a, Ord a) => a -> Ordering  
     compareWithHundred = compare 100
@@ -101,7 +107,7 @@ La declaración de tipo permanece igual ya que ``compare 100`` devuelve una
 función. ``compare`` tiene el tipo ``(Ord a) => a -> (a -> Ordering)`` y
 llamarla con 100 devuelve ``(Num a, Ord a) => a -> Ordering``. La restricción
 de clase adicional se añade porque 100 es parte también de la clase de tipos
-``Num``. 
+``Num``.
 
 .. note:: ¡Asegúrate de que realmente sabes como funcionan las funciones
           currificadas y la aplicación parcial de funciones ya que son muy
@@ -109,9 +115,9 @@ de clase adicional se añade porque 100 es parte también de la clase de tipos
 
 Las funciones infijas también pueden ser aplicadas parcialmente usando
 secciones. Para seccionar una función infija simplemente hay que rodearla con
-paréntesis y suministrar un solo parámetro en un lado. Esto crea una función que
-toma un parámetro y lo aplica en el lado que falta un operando. Una función
-extremadamente trivial sería: ::
+paréntesis y suministrar un solo parámetro en un lado. Esto crea una función
+que toma un parámetro y lo aplica en el lado que falta un operando. Una
+función extremadamente trivial sería: ::
 
     divideByTen :: (Floating a) => a -> a  
     divideByTen = (/10)
@@ -123,13 +129,15 @@ sería: ::
     isUpperAlphanum :: Char -> Bool  
     isUpperAlphanum = (`elem` ['A'..'Z'])
     
-Lo único especial de las secciones es el uso de ``-``. Por definición, ``(-4)``
-sería una función que toma un número y le restase 4. Sin embargo, por
+Lo único especial de las secciones es el uso de ``-``. Por definición,
+``(-4)`` sería una función que toma un número y le restase 4. Sin embargo, por
 conveniencia, ``(-4)`` significa menos cuatro. Así que si quieres una función
 que reste 4 a un número puedes usar ``(subtract 4)`` o ``((-) 4)``.
 
-¿Qué pasa si intentamos hacer simplemente ``multThree 3 4``en GHCi en lugar de
-darle un nombre con un ``let`` o pasarlo a otra función? ::
+¿Qué pasa si intentamos hacer ``multThree 3 4``en GHCi en lugar de darle un
+nombre con un ``let`` o pasarlo a otra función?
+
+.. code-block:: console
 
     ghci> multThree 3 4  
     <interactive>:1:0:  
@@ -139,13 +147,13 @@ darle un nombre con un ``let`` o pasarlo a otra función? ::
         In the expression: print it  
         In a 'do' expression: print it
 
-GHCi nos está diciendo que expresión producida es una función del tipo
-``a -> a`` pero no sabe como mostrarlo por pantalla. Las funciones no son 
-miembros de la clase de tiposs ``Show``, así que no podemos obtener una cadena
-con la representación de una función. Si hacemos algo como ``1 + 1`` en GHCi,
-primero calcula que eso es ``2``, y luego llama a ``show`` en ``2`` para tener
-una representación textual de ese número. Y una representación textual de ``2``
-es simplemente ``"2"``, que es lo que obtenemos por pantalla.
+GHCi nos está diciendo que expresión producida es una función del tipo ``a ->
+a`` pero no sabe como mostrarlo por pantalla. Las funciones no son miembros de
+la clase de tipos ``Show``, así que no podemos obtener una cadena con la
+representación de una función. Si hacemos algo como ``1 + 1`` en GHCi, primero
+calcula que eso es ``2``, y luego llama a ``show`` en ``2`` para tener una
+representación textual de ese número. Y una representación textual de ``2`` es
+simplemente ``"2"``, que es lo que obtenemos por pantalla.
 
 
 Orden superior en su orden
@@ -163,29 +171,31 @@ y la aplique dos veces a algo. ::
    :align: right
    :alt: Rocktopus
 
-Antes de nada, fíjate en su declaración de tipo. Antes, no necesitábamos usar
-paréntesis ya que ``->`` es naturalmente asociativo por la derecha. Sin embargo,
-aquí está la excepción. Esto indica que el primer parámetro es una función que
-toma algo y devuelve algo del mismo tipo. El segundo parámetro es algo de ese
-mismo tipo y también devuelve algo de ese tipo. También podríamos leer esta
-declaración de tipo de forma currificada, pero para salvarnos de un buen dolor
-de cabeza diremos simplemente que esta función toma dos parámetros y devuelve
-una sola cosa. El primer parámetro es una función (del tipo ``a -> a``) y el
-segundo es del mismo tipo ``a``. La función puede ser del tipo ``Int -> Int`` o
-del tipo ``String -> String`` o cualquier otra cosa. Pero entonces, el segundo
-parámetro debe ser del mismo tipo. 
+Primero fíjate en su declaración de tipo. Antes, no necesitábamos usar
+paréntesis ya que ``->`` es naturalmente asociativo por la derecha. Sin
+embargo, aquí está la excepción. Esto indica que el primer parámetro es una
+función que toma algo y devuelve algo del mismo tipo. El segundo parámetro es
+algo de ese mismo tipo y también devuelve algo de ese tipo. También podríamos
+leer esta declaración de tipo de forma currificada, pero para salvarnos de un
+buen dolor de cabeza diremos simplemente que esta función toma dos parámetros
+y devuelve una sola cosa. El primer parámetro es una función (del tipo ``a ->
+a``) y el segundo es del mismo tipo ``a``. La función puede ser del tipo ``Int
+-> Int`` o del tipo ``String -> String`` o cualquier otra cosa. Pero entonces,
+el segundo parámetro debe ser del mismo tipo.
 
-.. note:: De ahora en adelante diremos que una función toma varios parámetros en
-          lugar de decir que en realidad una función toma un parámetro y
-          devuleve una función parcialmente aplicada hasta que alcance una
-          función que devuleva un valor sólido. Así que para simplificar diremos
-          que ``a -> a -> a`` toma dos parámetros, incluso aunque nosotros
-          sepamos lo que realmente está pasando.
+.. note:: De ahora en adelante diremos que una función toma varios
+          parámetros en lugar de decir que en realidad una función toma un
+          parámetro y devuleve una función parcialmente aplicada hasta que
+          alcance una función que devuleva un valor sólido. Así que para
+          simplificar diremos que ``a -> a -> a`` toma dos parámetros, incluso
+          aunque nosotros sepamos lo que realmente está pasando.
           
-El cuerpo de la función es muy simple. Simplemente usamos el parámetro ``f``
+El cuerpo de la función es muy simple. Usamos el parámetro ``f``
 como una función, aplicando ``x`` a ella separándolas con un espacio y luego
 aplicando el resultado a ``f`` otra vez. De todas formas, juega un poco con
-la función: ::
+la función:
+
+.. code-block:: console
 
     ghci> applyTwice (+3) 10  
     16  
@@ -199,13 +209,13 @@ la función: ::
     [3,3,1]
 
 Lo increíble y útil de la aplicación parcial es evidente. Si nuestra función
-requiere que le pasemos una función que tome un solo parámetro, podemos 
-simplemente aplicar parcialmente una función hasta el que tome un solo parámetro
-y luego pasarla.
+requiere que le pasemos una función que tome un solo parámetro, podemos
+simplemente aplicar parcialmente una función hasta el que tome un solo
+parámetro y luego pasarla.
 
 Ahora vamos a usar la programación de orden superior para implementar una útil
-función que está en la librería estándar. Se llama ``zipWith``. Toma una función
-y dos listas y las une aplicando la función entre los correspondientes
+función que está en la librería estándar. Se llama ``zipWith``. Toma una
+función y dos listas y las une aplicando la función entre los correspondientes
 parámetros. Aquí tienes como la implementaríamos:
 
     zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]  
@@ -215,23 +225,25 @@ parámetros. Aquí tienes como la implementaríamos:
 
 Mira la declaración de tipo. El primer elemento es una función que toma dos
 cosas y produce una tercera. No tienen que ser del mismo tipo, aunque pueden
-serlo. El segundo y el tercer parámetro son listas. La primera tiene que ser una
-lista de ``a`` ya que la función de unión toma ``a`` como primer parámetro. La
-segunda es una lista de ``b``. El resultado es una lista de ``c``. Si la
-declaración de tipo de una función dice que acepta una función ``a -> b -> c``
-como parámetro, también aceptará una función del tipo ``a -> a -> a``. Recuerda
-que cuando estas creando una función, especialmente de orden superior, y no
-estas seguro de su tipo, simplemente puedes omitir la declaración de tipo y
-luego mirar el tipo que infiere Haskell usando ``:t``.
+serlo. El segundo y el tercer parámetro son listas. La primera tiene que ser
+una lista de ``a`` ya que la función de unión toma ``a`` como primer
+parámetro. La segunda es una lista de ``b``. El resultado es una lista de
+``c``. Si la declaración de tipo de una función dice que acepta una función
+``a -> b -> c`` como parámetro, también aceptará una función del tipo ``a -> a
+-> a``. Recuerda que cuando estas creando una función, especialmente de orden
+superior, y no estas seguro de su tipo, simplemente puedes omitir la
+declaración de tipo y luego mirar el tipo que infiere Haskell usando ``:t``.
 
 La acción de la función es muy similar a la de ``zip``. El caso base es el
 mismo, solo que hay un parámetro extra, la función de unión, pero este
 parámetro no tiene importancia en el caso base así que usamos ``_`` con él. El
-cuerpo de la función para el último patrón es también muy similar al de ``zip``,
-solo que no hace ``(x, y)`` sino ``f x y``. Una sola función de orden superior
-puede ser utilizada para realizar una multitud de tareas diferentes si es
-suficientemente general. Aquí tienes una pequeña muestra de las cosas que puede
-hacer ``zipWith'``: ::
+cuerpo de la función para el último patrón es también muy similar al de
+``zip``, solo que no hace ``(x, y)`` sino ``f x y``. Una sola función de orden
+superior puede ser utilizada para realizar una multitud de tareas diferentes
+si es suficientemente general. Aquí tienes una pequeña muestra de las cosas
+que puede hacer ``zipWith'``:
+
+.. code-block:: console
 
     ghci> zipWith' (+) [4,2,5,6] [2,6,2,3]  
     [6,8,7,9]  
@@ -245,13 +257,13 @@ hacer ``zipWith'``: ::
     [[3,4,6],[9,20,30],[10,12,12]]
 
 Como puedes ver, una sola función de orden superior puede ser usada de forma
-muy versátil. Los lenguajes imperativos usan normalmente cosas como bucles,
-bucles ``while``, estableciendo alguna variable, comprobando su estado, etc. 
-para conseguir un comportamiento y luego envolverlo con una interfaz, como una
-función. La programación funcional utiliza las funciones de orden superior para
-abstraer los patrones comunes, como examinar dos listas por pares y hacer algo
-con esos pares o tomar un conjunto de soluciones y eliminar aquellas que no
-necesites.
+muy versátil. Los lenguajes imperativos usan normalmente cosas como bucles
+``while``, estableciendo alguna variable, comprobando su estado, etc. para
+conseguir un comportamiento similar y luego envolverlo con una interfaz, una
+función. La programación funcional utiliza las funciones de orden superior
+para abstraer los patrones comunes, como examinar dos listas por pares y hacer
+algo con esos pares o tomar un conjunto de soluciones y eliminar aquellas que
+no necesites.
 
 Vamos a implementar otra función que ya está en la librería estándar llamada
 ``flip``. ``flip`` toma una función y devuelve una función que es como nuestra
@@ -262,13 +274,15 @@ Podemos implementarla así: ::
     flip' f = g  
         where g x y = f y x
     
-Aquí, tomamos ventaja del hecho de que las funciones estén currificadas. Cuando
-llamamos a ``flip'`` sin los parámetros ``x`` e ``y``, devolverá una función que
-tome esos parámetros pero los llamará al revés. Incluso aunque las funciones a
-las que se les ha aplicado ``flip`` son normalmente pasadas a otras funciones,
-podemos tomar ventaja de la currificación cuando creemos funciones de orden
-superior pensando de antemano y escribir su resultado final como si fuesen
-llamadas totalmente aplicadas. ::
+Aquí, nos aprovechamos del hecho de que las funciones estén currificadas.
+Cuando llamamos a ``flip'`` sin los parámetros ``x`` e ``y``, devolverá una
+función que tome esos parámetros pero los llamará al revés. Incluso aunque las
+funciones a las que se les ha aplicado ``flip`` son normalmente pasadas a
+otras funciones, podemos tomar ventaja de la currificación cuando creemos
+funciones de orden superior pensando de antemano y escribir su resultado final
+como si fuesen llamadas totalmente aplicadas.
+
+.. code-block:: console
 
     ghci> flip' zip [1,2,3,4,5] "hello"  
     [('h',1),('e',2),('l',3),('l',4),('o',5)]  
@@ -276,24 +290,24 @@ llamadas totalmente aplicadas. ::
     [5,4,3,2,1]
 
 
-Mapeados y filtros
-------------------
+Asociaciones y filtros
+----------------------
 
 
-``map`` toma una función y una lista y aplica esa función a cada elemento de esa
-lista, produciendo una nueva lista. Vamos a ver su definición de tipo y como se
-define. ::
+``map`` toma una función y una lista y aplica esa función a cada elemento de
+esa lista, produciendo una nueva lista. Vamos a ver su definición de tipo y
+como se define. ::
 
     map :: (a -> b) -> [a] -> [b]  
     map _ [] = []  
     map f (x:xs) = f x : map f xs
 
 La definición de tipo dice que toma una función y que a su vez esta toma un
-``a`` y devuelve un ``b``, una lista de ``a`` y devuelve una lista de ``b``. Es
-interesante que simplemente mirando la definición de tipo de una función, a
+``a`` y devuelve un ``b``, una lista de ``a`` y devuelve una lista de ``b``.
+Es interesante que simplemente mirando la definición de tipo de una función, a
 veces podemos decir que hace la función. ``map`` es una de esas funciones de
-orden superior que son realmente versátiles y que pueden ser usadas de millones
-formas diferentes. Aquí lo tienes en acción: ::
+orden superior que son realmente versátiles y que pueden ser usadas de
+millones formas diferentes. Aquí lo tienes en acción: ::
 
     ghci> map (+3) [1,5,3,1,6]  
     [4,8,6,4,9]  
@@ -308,15 +322,15 @@ formas diferentes. Aquí lo tienes en acción: ::
 
 Probablemente te hayas dado cuenta de cada una de estas sentencias se puede
 conseguir usando listas por comprensión. ``map (+3) [1,5,3,1,6]`` es lo mismo
-que escribir ``[x+3 | x <- [1,5,3,1,6]]``. Sin embargo usar ``map`` es mucho más
-legible cuando solo tienes que aplicar una función a los elementos de una lista,
-especialmente cuando estas tratando con mapeados de mapeados de modo que se
-llena todo con un montón de corchetes y termine todo siendo un lío. 
+que escribir ``[x+3 | x <- [1,5,3,1,6]]``. Sin embargo usar ``map`` es mucho
+más legible cuando solo tienes que aplicar una función a los elementos de una
+lista, especialmente cuando estas tratando con mapeados de mapeados de modo
+que se llena todo con un montón de corchetes y termine todo siendo un lío.
 
 ``filter`` es una función que toma un predicado (un predicado es una función
-que dice si algo es cierto o falso, o en nuestro caso, una función que devuelve
-un valor booleano) y una lista y devuelve una lista con los elementos que
-satisfacen el predicado. La declaración de tipo y la implementación serían
+que dice si algo es cierto o falso, o en nuestro caso, una función que
+devuelve un valor booleano) y una lista y devuelve una lista con los elementos
+que satisfacen el predicado. La declaración de tipo y la implementación serían
 algo como: ::
 
     filter :: (a -> Bool) -> [a] -> [a]  
@@ -344,9 +358,9 @@ incluido en la nueva lista. Si no, se queda fuera. Algunos ejemplos: ::
 Todo esto podría haberse logrado también con listas por comprensión que usaran
 predicados. No hay ninguna regla que diga cuando usar ``map`` o ``filter`` en
 lugar de listas por comprensión, simplemente debes decidir que es más legible
-dependiendo del contexto. El filtro equivalente de aplicar varios predicados en
-una lista por comprensión es el mismo que aplicar varios filtrados o unir los
-predicados usando la función lógica ``&&``.
+dependiendo del contexto. El filtro equivalente de aplicar varios predicados
+en una lista por comprensión es el mismo que aplicar varios filtrados o unir
+los predicados usando la función lógica ``&&``.
 
 ¿Recuerdas nuestra función :ref:`quicksort <quicksort>` del capítulo anterior?
 Usamos listas por comprensión para filtrar los elementos que eran menores o
@@ -365,50 +379,51 @@ legible usando ``filter``. ::
    :alt: Mapa
 
 Mapear y filtrar son el pan de cada día de todas las herramientas de un
-programador funcional. No importa si utilizas las funciones ``map`` y ``filter``
-o listas por comprensión. Recuerda como resolvimos el problema de encontrar
-triángulos rectos con una determinada circunferencia. En programación
-imperativa, deberíamos haber solucionado el problema anidando tres bucles y
-luego comprobar si la combinación actual satisface las propiedades de un
-triángulo recto. En ese caso, lo habríamos mostrado por pantalla o algo
-parecido. Con la programación funcional este patrón se consigue con el mapeado
-y filtrado. Creas una función que tome un valor y produzca un resultado.
-Mapeamos esa función sobre todos los elementos de la lista y luego filtramos la
-lista resultante para que satisfaga nuestra búsqueda. Gracias a la evaluación
-perezosa de Haskell, incluso si mapeas algo sobre una lista varias veces o la
-filtras varias veces, solo se recorrerá la lista una vez.
+programador funcional. No importa si utilizas las funciones ``map`` y
+``filter`` o listas por comprensión. Recuerda como resolvimos el problema de
+encontrar triángulos rectos con una determinada circunferencia. En
+programación imperativa, deberíamos haber solucionado el problema anidando
+tres bucles y luego comprobar si la combinación actual satisface las
+propiedades de un triángulo recto. En ese caso, lo habríamos mostrado por
+pantalla o algo parecido. Con la programación funcional este patrón se
+consigue con el mapeado y filtrado. Creas una función que tome un valor y
+produzca un resultado. Mapeamos esa función sobre todos los elementos de la
+lista y luego filtramos la lista resultante para que satisfaga nuestra
+búsqueda. Gracias a la evaluación perezosa de Haskell, incluso si mapeas algo
+sobre una lista varias veces o la filtras varias veces, solo se recorrerá la
+lista una vez.
 
 Vamos a buscar el **número más grande por debajo de 100.000 que sea divisible
-por 3829**. Para lograrlo, simplemente filtramos un conjunto de posibilidades en
-el cual sabemos que está la solución. ::
+por 3829**. Para lograrlo, simplemente filtramos un conjunto de posibilidades
+en el cual sabemos que está la solución. ::
 
     largestDivisible :: (Integral a) => a  
     largestDivisible = head (filter p [100000,99999..])  
         where p x = x `mod` 3829 == 0
 
-Primero creamos una lista de números menores que 100.000 de forma descendiente.
-Luego la filtramos con nuestro predicado y como los número están ordenados de 
-forma descendiente, el número más grande que satisface nuestro predicado es
-el primer elemento de la lista filtrada. Ni siquiera tenemos que usar una lista
-finita para nuestro conjunto de partida. La evaluación perezosa aparece otra
-vez. Como al final solo acabamos usando la cabeza de la lista, no importa si la
-lista es finita o infinita. La evaluación se para cuando se encuentre la primera
-solución adecuada.
+Primero creamos una lista de números menores que 100.000 de forma
+descendiente. Luego la filtramos con nuestro predicado y como los número están
+ordenados de forma descendiente, el número más grande que satisface nuestro
+predicado es el primer elemento de la lista filtrada. Ni siquiera tenemos que
+usar una lista finita para nuestro conjunto de partida. La evaluación perezosa
+aparece otra vez. Como al final solo acabamos usando la cabeza de la lista, no
+importa si la lista es finita o infinita. La evaluación se para cuando se
+encuentre la primera solución adecuada.
 
-A continuación, vamos a buscar la **suma de todos los cuadrados impares que son
-menores de 10.000**. Pero primero, como vamos a usarla en nuestra solución,
-vamos a introducir la función ``takeWhile``. Toma un predicado y una lista y
-recorre la lista desde el principio y devuelve estos elementos mientras el
-predicado se mantenga cierto. Una vez encuentre un predicado que no se evalúe a
-cierto para. Si queremos obtener la primera palabra de ``"Los elefantes saben
-como montar una fiesta"``, podríamos hacer ``takeWhile (/=' ') "Los elefantes
-saben como montar una fiesta"`` y obtendríamos ``"Los"``. Vale, ahora a por la
-suma de todos los cuadrados impares menores que 10.000. Primero empezaremos
-mapeado la función ``(^2)`` a la lista infinita ``[1..]``. Luego filtramos la
-lista para quedarnos solo con los impares. Después tomamos los elementos
-mientras sean menores que 10.000. Finalmente, obtenemos la suma de todos estos
-elementos. Ni siquiera tenemos que crear una función para obtener el resultado,
-podemos hacerlo en una línea en GHCi: ::
+A continuación, vamos a buscar la **suma de todos los cuadrados impares que
+son menores de 10.000**. Pero primero, como vamos a usarla en nuestra
+solución, vamos a introducir la función ``takeWhile``. Toma un predicado y una
+lista y recorre la lista desde el principio y devuelve estos elementos
+mientras el predicado se mantenga cierto. Una vez encuentre un predicado que
+no se evalúe a cierto para. Si queremos obtener la primera palabra de ``"Los
+elefantes saben como montar una fiesta"``, podríamos hacer ``takeWhile (/=' ')
+"Los elefantes saben como montar una fiesta"`` y obtendríamos ``"Los"``. Vale,
+ahora a por la suma de todos los cuadrados impares menores que 10.000. Primero
+empezaremos mapeado la función ``(^2)`` a la lista infinita ``[1..]``. Luego
+filtramos la lista para quedarnos solo con los impares. Después tomamos los
+elementos mientras sean menores que 10.000. Finalmente, obtenemos la suma de
+todos estos elementos. Ni siquiera tenemos que crear una función para obtener
+el resultado, podemos hacerlo en una línea en GHCi: ::
 
     ghci> sum (takeWhile (<10000) (filter odd (map (^2) [1..])))  
     166650
