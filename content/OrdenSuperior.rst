@@ -601,6 +601,8 @@ pensada para se parcialmente aplicada y se pasada como a una función como
 parámetro.
 
 
+.. _pliegues:
+
 Pliegues y papiroflexia 
 -----------------------
 
@@ -979,6 +981,8 @@ map (*3) . zipWith max [1,2,3,4,5] $ [4,5,6,7,8]``. Si una expresión termina co
 3 paréntesis, existen posibilidades de escribir la misma expresión usando 3
 composiciones de funciones. 
 
+.. _estilolibrepuntos:
+
 Otro uso común de la composición de funciones es la definición de funciones en
 el llamado estilo libre de puntos. Echa un vistazo a esta función que
 escribimos anteriormente: ::
@@ -1047,4 +1051,4 @@ escribirlo como: ::
         in  sum belowLimit
 
 No ganaría ninguna competición de código corto, pero le facilitaría la vida a
-alguien que tuviera que leer este código.
+alguien que tuviera que leerlo.

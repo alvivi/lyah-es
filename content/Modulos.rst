@@ -12,7 +12,7 @@ Cargando módulos
    :alt: Módulos
 
 Un módulo de Haskell es una colección de funciones, tipos y clases de tipos
-relacionadas entre si. Un programa Haskell es una colección de módulos donde
+relacionadas entre sí. Un programa Haskell es una colección de módulos donde
 el módulo principal carga otros módulos y utiliza las funciones definidas
 en ellos para realizar algo. Tener el código divido en módulos tiene bastantes
 ventajas. Si un módulo es lo suficientemente genérico, las funciones que son
