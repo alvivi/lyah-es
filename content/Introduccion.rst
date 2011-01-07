@@ -71,7 +71,7 @@ tipo de limitación pero en realidad tiene algunas buenas consecuencias: si una
 función es llamada dos veces con los mismos parámetros, está garantizado que
 obtendremos el mismo resultado. Esto es llamado *transparencia referencial* y
 no solo permite al compilador razonar acerca de el comportamiento de un
-programa, sino que también te permite deducir fácilmente (he incluso
+programa, sino que también te permite deducir fácilmente (e incluso
 demostrar) que una función es correcta y así poder construir funciones más
 complejas simplemente enlazando funciones simples.
 

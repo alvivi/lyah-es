@@ -1690,8 +1690,8 @@ de otro modo, devuelve el segundo. ::
     "NO!"
 
 
-La clase de tipos functor
--------------------------
+La clase de tipos funtor
+------------------------
 
 
 Hasta ahora, nos hemos encontrado con un montón de clases de tipos de la
@@ -1727,8 +1727,8 @@ un valor, como ``Int``, ``Bool`` o ``Maybe String``), sino un constructor de
 tipos que toma un tipo como parámetro. Un ejemplo rápido para recordar: 
 ``Maybe Int`` es un tipo concreto, pero ``Maybe`` es un constructor de tipos
 que toma un tipo como parámetro. De cualquier modo, hemo visto que ``fmap``
-toma una función de un tipo a otro y un functor aplicado a un tipo y devuelve
-otro functor aplicado con el otor tipo.
+toma una función de un tipo a otro y un funtor aplicado a un tipo y devuelve
+otro funtor aplicado con el otor tipo.
 
 Si esto te suena un poco confuso, no te preocupes. Lo verás todo más claro
 ahora cuando mostremos un cuantos ejemplos. Mmm... esta declaración de tipo
@@ -1737,7 +1737,7 @@ me recuerda a algo. Si no sabes cual es el tipo de ``map``, es este: ``map ::
 
 ¡Interesante! Toma una función de un tipo a otro y una lista de un tipo y
 devuelve una lista del otro tipo. Amigos, creo que acabamos de descubir un
-functor. De hecho, ``map`` es ``fmap`` pero solo funciona con listas. Aquí
+funtor. De hecho, ``map`` es ``fmap`` pero solo funciona con listas. Aquí
 tienes como las listas tienen una instancia para la clase ``Functor``. ::
 
     instance Functor [] where  
@@ -1763,14 +1763,14 @@ resultado cuando las usamos con listas. ::
 desde luego obenemos una lista vacía. Simplemente convierte una lista vacía
 con el tipo ``[a]`` a una lista vacía con el tipo ``[b]``.
 
-Los tipos que pueden actuar como una caja pueden ser functores. Puede pensar
+Los tipos que pueden actuar como una caja pueden ser funtores. Puede pensar
 en una lista como una caja que tiene un número ilimitado de pequeños
 compartimientos y puden estar todos vacíos, o pueden estár algunos llenos.
 Asi que, ¿Qué más tiene la propiedad de comportarse como una caja? Por
 ejemplo, el tipo ``Maybe a``. De algún modo, es como una caja que puede o bien
 no contener nada, en cuyo caso su valor será ``Nothing``, o puede contener
 algo, como ``"HAHA"``, en cuyo caso su valor ser`á ``Just "HAHA"``. Aquí
-tienes como ``Maybe`` es un functor: ::
+tienes como ``Maybe`` es un funtor: ::
 
     instance Functor Maybe where  
         fmap f (Just x) = Just (f x)  
@@ -1824,11 +1824,11 @@ que serán mapeado con la función. ::
     ghci> fmap (*4) (foldr treeInsert EmptyTree [5,7,3,2,1,7])  
     Node 28 (Node 4 EmptyTree (Node 8 EmptyTree (Node 12 EmptyTree (Node 20 EmptyTree EmptyTree)))) EmptyTree
     
-¡Bien! ¿Qué pasa con ``Either a b``? ¿Puede ser un functor? La clase de tipos
+¡Bien! ¿Qué pasa con ``Either a b``? ¿Puede ser un funtor? La clase de tipos
 ``Functor`` quiere constructores de tipos que tomen un solo parámetro de tipo
 pero ``Either`` toma dos. Mmm... ¡Ya se! aplicaremos parcialmente ``Either``
 suministrando un solo parámetro de forma que solo tenga un parámetro libre.
-Aquí tienes como el tipo ``Either a`` es un functor en las librerías estándar.
+Aquí tienes como el tipo ``Either a`` es un funtor en las librerías estándar.
 ::
 
     instance Functor (Either a) where  
@@ -1859,7 +1859,7 @@ Esto también encaja con nuestra analogía de las cajas si pensamos en ``Left``
 como una especie de caja vacía con un mensaje de error escrito en un lado
 diciendonos porque la caja está vacía.
 
-Los diccionarios de ``Data.Map`` también son functores ya que pueden contener
+Los diccionarios de ``Data.Map`` también son funtores ya que pueden contener
 (o no) valores. En el caso de ``Map k v``, ``fmap`` mapearía una función 
 ``v -> v'`` sobre un diccionario ``Map k v`` y devolvería un diccionario con
 el tipo ``Map k v'``.
@@ -1876,9 +1876,9 @@ Con la clase de tipos ``Functor`` hemos visto como las clases de tipos puden
 representar conceptos de orden superior interesantes. También hemos tenido un
 poco de práctica aplicando parcialmente tipos y creando instancias. En uno de
 los siguientes capítulos veremos algunas de las leyes que se aplican
-a los functores. 
+a los funtores. 
 
-.. note:: Los functores deben obedecer algunas leyes de forma que tengan unas
+.. note:: Los funtores deben obedecer algunas leyes de forma que tengan unas
           propiedades de las que podamos depender para no tener que pensar
           mucho luego. Si usamos ``fmap (+1)`` sobre un la lista ``[1,2,3,4]``
           esperemamos obtener ``[2,3,4,5]`` y no su inversa, ``[5,4,3,2]``. Si
@@ -1889,7 +1889,7 @@ a los functores.
           sub-árbol izquierdo de un nodo solo contenga elementos menores que
           el nodo y el sub-árbol derecho solo contenga elementos mayores que
           el nodo podría producir un árbol donde no se cumpliera esto. Veremos
-          la leyes de los functores con más detalle en un próximo capítulo.
+          la leyes de los funtores con más detalle en un próximo capítulo.
  
  
 Familias y artes marciales

@@ -14,5 +14,6 @@
    content/Modulos
    content/ClasesDeTipos
    content/EntradaSalida
-   content/Problemas 
+   content/Problemas
+   content/Funtores
    
