@@ -550,10 +550,10 @@ declaraciones de las funciones.
 
 Una vez más, es muy importante distinguir entre constructores de datos y
 constructores de tipo. Cuando declaramos un tipo de dato, la parte anterior al
-``=`` es el constructor de tipo, mientras que la parte que va después
+``=`` es el constructor de tipos, mientras que la parte que va después
 (posiblemente separado por ``|``) son los constructores de datos. Dar a una
 función el tipo ``Vector t t t -> Vector t t t -> t`` sería incorrecto ya que
-hemos usado tipos en la declaración y el constructor de tipo vector toma un
+hemos usado tipos en la declaración y el constructor de tipos vector toma un
 solo parámetro, mientras que el constructor de datos toma tres. Vamos a jugar
 un poco con los vectores: ::
 
@@ -658,7 +658,7 @@ en su declaración, como ``elem``. ::
 
 Las clases de tipos ``Show`` y ``Read`` son para cosas que pueden ser
 convertidas a o desde cadenas, respectivamente. Como pasaba con ``Eq``, si un
-constructor de tipo tiene campos, su tipo debe ser miembro de la clase`
+constructor de tipos tiene campos, su tipo debe ser miembro de la clase`
 ``Show`` o ``Read`` si queremos que también forme parte de estas clases. 
 
 Vamos a hacer que nuestro tipo de dato ``Person`` forme parte también de las
@@ -895,14 +895,14 @@ podemos utilizar esto: ::
     
 Con esto, una función que tomara un valor por clave en una lista de
 asociación puede tener el tipo ``(Eq k) => k -> AssocList k v -> Maybe v``.
-``AssocList`` es un constructor de tipo que toma dos tipos y produce un tipo
+``AssocList`` es un constructor de tipos que toma dos tipos y produce un tipo
 concreto, como ``AssocList Int String`` por ejemplo. 
 
 .. note:: Cuando hablamos de tipos concretos nos referimos a tipos
           completamente aplicados, como ``Map Int String``. A veces, los
           chicos y yo decimos que ``Maybe`` es un tipo, pero no queremos
           referirnos a eso, ya que cualquier idiota sabe que ``Maybe`` es un
-          constructor de tipo. Cuando aplico un tipo extra a ``Maybe``, como
+          constructor de tipos. Cuando aplico un tipo extra a ``Maybe``, como
           ``Maybe String``, entonces tengo un tipo concreto. Ya sabes, los
           valores solo pueden tener tipos que sean tipos concretos.
           Concluyendo, vive rápido, quiere mucho y no dejes que nadie te
@@ -912,8 +912,8 @@ De la misma forma que podemos aplicar parcialmente funciones para obtener
 nuevas funciones, podemos aplicar parcialmente los parámetros de tipo y
 obtener nuevos constructores de tipo. De la misma forma que llamamos a la
 funciones con parámetros de menos para obtener nuevas funciones, podemos
-especificar un constructor de tipo con parámetros de menos y obtener un
-constructor de tipo parcialmente aplicado. Si queremos un tipo que represente
+especificar un constructor de tipos con parámetros de menos y obtener un
+constructor de tipos parcialmente aplicado. Si queremos un tipo que represente
 un diccionario (de ``Data.Map``) que asocie enteros con cualquier otra cosa,
 podemos utilizar esto: :: 
 
@@ -923,7 +923,7 @@ O bien esto otro: ::
 
     type IntMap = Map Int  
     
-De cualquier forma, el constructor de tipo ``IntMap`` tomará un parámetro
+De cualquier forma, el constructor de tipos ``IntMap`` tomará un parámetro
 y ese será el tipo con el que se asociarán los enteros.
 
 .. note:: Si vas a intentar implementar esto, seguramente imporatarás de forma
@@ -1474,7 +1474,7 @@ tipo.
 
 ¿Pero cómo son creadas las instancias del tipo ``Maybe`` o de las listas? Lo
 que hace diferente a ``Maybe`` de, digamos, ``TrafficLight`` es que ``Maybe``
-no es por si mismo un tipo concreto, es un constructor de tipo que toma un
+no es por si mismo un tipo concreto, es un constructor de tipos que toma un
 parámetro (como ``Char`` o cualquier otra cosa) para producir un tipo
 concreto. Vamos a echar un vistazo a la clase ``Eq`` de nuevo: ::
 
@@ -1494,7 +1494,7 @@ String``). Por este motivo no podemos hacer cosas como: ::
         ...
 
 Ya que como hemos visto, ``a`` debe ser un tipo concreto pero ``Maybe`` no lo
-es. Es un constructor de tipo que toma un parámetro y produce un tipo
+es. Es un constructor de tipos que toma un parámetro y produce un tipo
 concreto. Sería algo pesado tener que escribir ``instance Eq (Maybe Int)`
 where``, ``instance Eq (Maybe Char) where``, etc. para cada tipo. Así que
 podemos escribirlo así: ::
@@ -1688,6 +1688,9 @@ de otro modo, devuelve el segundo. ::
     "YEAH!"  
     ghci> yesnoIf Nothing "YEAH!" "NO!"  
     "NO!"
+
+
+.. _funtores:
 
 
 La clase de tipos funtor
