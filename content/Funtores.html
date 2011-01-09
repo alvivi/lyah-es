@@ -1,0 +1,292 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Funtores, funtores aplicables y monoides &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/cms.js"></script>        
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="funtores-funtores-aplicables-y-monoides">
+<h1>Funtores, funtores aplicables y monoides<a class="headerlink" href="#funtores-funtores-aplicables-y-monoides" title="Enlazar permanentemente con este título">¶</a></h1>
+<p>La combinación de Haskell de la pureza, las funciones de orden superior,
+tipos de datos algebraicos con parámetros, y clases de tipos nos permite
+implementar el polimorfismo a un nivel superior al que pueden alcanzar otros
+lenguajes. No tenemos que ver los tipos como si pertenecieran a una gran
+jerarquía de tipos. En lugar de eso, vemos como pueden actuar los tipos y
+luego los conectamos con las clases de tipos apropiadas. Un <tt class="docutils literal"><span class="pre">Int</span></tt> puede
+actuar como un montón de cosas. Puede actuar como algo equiparable, como algo
+ordenable, como algo enumerable, etc.</p>
+<p>Las clases de tipos son abiertas, lo que significa que podemos definir nuestro
+propio tipo de dato, razonar en como éste actúa y conectarlo con la clase de
+tipos que define ese comportamiento. Por este motivo, y porque el fabuloso
+sistema de tipos de Haskell nos permite saber mucho acerca de una función con
+tan solo sabiendo su declaración de tipo, podemos crear clases de tipos que
+definen comportamientos muy generales y abstractos. Ya vimos que las clases
+de tipos definen operaciones para ver si dos cosas son iguales o comparar dos
+cosas por un cierto orden. Son comportamientos muy abstractos a la vez que
+elegantes, pero no los vemos como algo especial ya que hemos estado tratando
+con ellos a lo largo de nuestras vidas. Hace poco conocimos los funtores, que
+son básicamente cosas que se pueden mapear. Esto es un ejemplo de algo útil y
+a la vez bastante abstracto de lo que pueden describir las clases de tipos. En
+este capítulo veremos más de cerca los funtores, junto a una versión más
+fuerte y útil de los funtores llamados funtores aplicables. También daremos un
+vistazo a los monoides.</p>
+<div class="section" id="de-vuelta-con-los-funtores">
+<h2>De vuelta con los funtores<a class="headerlink" href="#de-vuelta-con-los-funtores" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="La ranas ni siquiera necesitan dinero." class="align-right" src="../_images/frogtor.png" />
+<p>Ya hablamos de los funtores en su pequeña <a class="reference internal" href="ClasesDeTipos.html#funtores"><em>sección</em></a>. Si
+todavía no la has leído, probablemente deberías darle un vistazo ahora mismo,
+o quizá luego cuando tengas más tiempo. O simplemente puedes hacer como si ya
+la hubieses leído.</p>
+<p>Aún así, vamos a recordar algo: los funtores son cosas que se puede mapear,
+como las listas, <tt class="docutils literal"><span class="pre">Maybe``s,</span> <span class="pre">árboles,</span> <span class="pre">etc.</span> <span class="pre">En</span> <span class="pre">Haskell,</span> <span class="pre">son</span> <span class="pre">descritos</span> <span class="pre">con</span> <span class="pre">la</span>
+<span class="pre">clase</span> <span class="pre">de</span> <span class="pre">tipos</span> <span class="pre">``Functor</span></tt>, la cual solo contiene un método de clase,
+<tt class="docutils literal"><span class="pre">fmap</span></tt>, que tiene como tipo <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">b</span></tt>. Dice algo
+como: dame una función que tome un <tt class="docutils literal"><span class="pre">a</span></tt> y devuelva un <tt class="docutils literal"><span class="pre">b</span></tt> y una caja con
+una <tt class="docutils literal"><span class="pre">a</span></tt> (o varias de ellas) dentro y yo te daré una caja con una <tt class="docutils literal"><span class="pre">b</span></tt> (o
+varias de ellas) dentro. En cierto modo es como si aplicará la función dentro
+de la caja.</p>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Muchas veces se utiliza la analogía de la caja para ayudar a obtener
+una intuición de como funcionan los funtores, luego, probablemente
+usemos la misma analogía para los funtores aplicables y las mónadas.
+Al principio es una buena analogía que ayuda a la gente a entender
+los funtores, pero no la tomes al pie de la letra, ya que para
+algunos funtores la analogía de la caja tiene que ser ajusta al
+milímetro para que siga siendo verdad. Un término más correcto para
+definir lo que es un funtor sería <em>contexto</em> <em>computacional</em>. El
+contexto sería que la computación podría tener un valor o podría
+fallar (<tt class="docutils literal"><span class="pre">Maybe</span></tt> y <tt class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span></tt>) o que podría tener más valores
+(listas) o demás cosas del estilo.</p>
+</div>
+<p>Si queremos que un constructor de tipos sea una instancia de <tt class="docutils literal"><span class="pre">Functor</span></tt>, tiene
+que pertenecer a la familia de tipos <tt class="docutils literal"><span class="pre">*</span> <span class="pre">-&gt;</span> <span class="pre">*</span></tt>, lo que significa que debe
+tomar exactamente un tipo concreto como parámetro.  Por ejemplo, <tt class="docutils literal"><span class="pre">Maybe</span></tt>
+puede ser una instancia ya que tome un tipo como parámetro para producir un
+nuevo tipo concreto, como <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">Int</span></tt> o <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">String</span></tt>. Si un constructor
+de tipos toma dos parámetros, como <tt class="docutils literal"><span class="pre">Either</span></tt>, tenemos que aplicar
+parcialmente el constructor de tipos hasta que solo acepte un parámetro. Así
+que no podemos usar <tt class="docutils literal"><span class="pre">instance</span> <span class="pre">Functor</span> <span class="pre">Either</span> <span class="pre">where</span></tt> pero si podemos utilizar
+<tt class="docutils literal"><span class="pre">instance</span> <span class="pre">Functor</span> <span class="pre">(Either</span> <span class="pre">a)</span> <span class="pre">where</span></tt> y luego podemos pensar que <tt class="docutils literal"><span class="pre">fmap</span></tt> es
+solo para <tt class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span></tt>, por lo que tendría una declaración de tipo como
+<tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(b</span> <span class="pre">-&gt;</span> <span class="pre">c)</span> <span class="pre">-&gt;</span> <span class="pre">Either</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">Either</span> <span class="pre">a</span> <span class="pre">c</span></tt>. Como puedes ver, la parte
+<tt class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span></tt> es fija, ya que <tt class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span></tt> toma solo un parámetro, mientras que
+<tt class="docutils literal"><span class="pre">Either</span></tt> toma dos parámetros así que
+<tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(b</span> <span class="pre">-&gt;</span> <span class="pre">c)</span> <span class="pre">-&gt;</span> <span class="pre">Either</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">Either</span> <span class="pre">c</span></tt> no tendría mucho sentido.</p>
+<p>Hasta ahora hemos aprendido como unos cuantos tipos (bueno, en realidad
+constructores de tipos) son instancias de <tt class="docutils literal"><span class="pre">Functor</span></tt>, como <tt class="docutils literal"><span class="pre">[]</span></tt>, <tt class="docutils literal"><span class="pre">Maybe</span></tt>,
+<tt class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span></tt> y el tipo <tt class="docutils literal"><span class="pre">Tree</span></tt> que creamos nosotros mismos. Vimos como
+podíamos mapear funciones sobre ellos. En esta sección, veremos dos instancias
+más de la clase funtor, en concreto <tt class="docutils literal"><span class="pre">IO</span></tt> y <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span></tt>.</p>
+<p>Si un valor tiene el tipo, digamos, <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">String</span></tt>, significa que es una acción
+que, cuando sea ejecutada, saldrá al mundo real y nos traerá una cadena, que
+será devuelta como resultado. Podemos usar <tt class="docutils literal"><span class="pre">&lt;-</span></tt> dentro de un bloque <tt class="docutils literal"><span class="pre">do</span></tt>
+para ligar ese resultado a un nombre. Mencionamos que las acciones E/S son
+como cajas con sus pequeñitos pies que se encargan de salir al mundo real y
+traernos algún valor. Podemos inspeccionar lo que nos han traído, pero si lo
+hacemos el valor que devolvamos tiene que estar dentro de <tt class="docutils literal"><span class="pre">IO</span></tt>. Si pensamos
+en esta analogía de la caja con pies, podemos ver que <tt class="docutils literal"><span class="pre">IO</span></tt> se comporta como
+un funtor.</p>
+<p>Vamos a ver como <tt class="docutils literal"><span class="pre">IO</span></tt> es una instancia de <tt class="docutils literal"><span class="pre">Functor</span></tt>. Cuando aplicamos
+<tt class="docutils literal"><span class="pre">fmap</span></tt> con una función sobre una acción de E/S, queremos obtener una acción
+de E/S que haga lo mismo, pero que tenga la función anterior aplicada a su
+resultado.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">instance</span> <span class="kt">Functor</span> <span class="kt">IO</span> <span class="kr">where</span>
+    <span class="n">fmap</span> <span class="n">f</span> <span class="n">action</span> <span class="ow">=</span> <span class="kr">do</span>
+        <span class="n">result</span> <span class="ow">&lt;-</span> <span class="n">action</span>
+        <span class="n">return</span> <span class="p">(</span><span class="n">f</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>El resultado de mapear algo sobre una acción de E/S será una acción de E/S,
+así que justo después de la declaración usamos un bloque <tt class="docutils literal"><span class="pre">do</span></tt> para juntar
+dos acciones de E/S en una nueva. En la implementación de <tt class="docutils literal"><span class="pre">fmap</span></tt>, creamos
+una nueva acción de E/S que primero ejecutará la acción de E/S original y
+llamará a su resultado <tt class="docutils literal"><span class="pre">result</span></tt>. Luego, hacemos <tt class="docutils literal"><span class="pre">return</span> <span class="pre">(f</span> <span class="pre">result)</span></tt>.
+<tt class="docutils literal"><span class="pre">return</span></tt> es, como ya sabes, una función que crear una acción de E/S que no
+hace nada salvo tener algo como resultado. La acción que produce un bloque
+<tt class="docutils literal"><span class="pre">do</span></tt> siempre tendrá como resultado el resultado de su última acción. Por ese
+motivo utilizamos <tt class="docutils literal"><span class="pre">return</span></tt> para crear una acción de E/S que en realidad no
+hace nada, salvo contener <tt class="docutils literal"><span class="pre">f</span> <span class="pre">result</span></tt> como resultado.</p>
+<p>Podemos jugar con él para ver como funciona. En realidad es bastante simple.
+Fíjate en el siguiente trozo de código:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span> <span class="n">line</span> <span class="ow">&lt;-</span> <span class="n">getLine</span>
+          <span class="kr">let</span> <span class="n">line&#39;</span> <span class="ow">=</span> <span class="n">reverse</span> <span class="n">line</span>
+          <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&quot;You said &quot;</span> <span class="o">++</span> <span class="n">line&#39;</span> <span class="o">++</span> <span class="s">&quot; backwards!&quot;</span>
+          <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&quot;Yes, you really said&quot;</span> <span class="o">++</span> <span class="n">line&#39;</span> <span class="o">++</span> <span class="s">&quot; backwards!&quot;</span>
+</pre></div>
+</div>
+<p>Se le pregunta al usuario por una nueva línea y luego se la devolvemos al
+usuario, aunque invertida. Así sería como escribiríamos lo mismo utilizando
+<tt class="docutils literal"><span class="pre">fmap</span></tt>:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span> <span class="n">line</span> <span class="ow">&lt;-</span> <span class="n">fmap</span> <span class="n">reverse</span> <span class="n">getLine</span>
+          <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&quot;You said &quot;</span> <span class="o">++</span> <span class="n">line</span> <span class="o">++</span> <span class="s">&quot; backwards!&quot;</span>
+          <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&quot;Yes, you really said&quot;</span> <span class="o">++</span> <span class="n">line</span> <span class="o">++</span> <span class="s">&quot; backwards!&quot;</span>
+</pre></div>
+</div>
+<img alt="w00ooOoooOO" class="align-left" src="../_images/alien.png" />
+<p>De la misma forma que que cuando usamos <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">reverse</span></tt> sobre <tt class="docutils literal"><span class="pre">Just</span> <span class="pre">&quot;blah&quot;</span></tt>
+obtenemos <tt class="docutils literal"><span class="pre">Just</span> <span class="pre">&quot;halb&quot;</span></tt>, podemos utilizar <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">reverse</span></tt> sobre
+<tt class="docutils literal"><span class="pre">getLine</span></tt>. <tt class="docutils literal"><span class="pre">getLine</span></tt> es una acción de E/S que tiene el tipo <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">String</span></tt>
+y al mapear <tt class="docutils literal"><span class="pre">reverse</span></tt> sobre ella nos devuelve una acción que viajará al
+mundo real y nos traerá una línea de texto, a la que luego dará la vuelta
+aplicando <tt class="docutils literal"><span class="pre">reverse</span></tt> a su resultado. De la misma forma que podemos aplicar
+una función a algo contenido en una caja <tt class="docutils literal"><span class="pre">Maybe</span></tt>, podemos aplicar una
+función a lo que hay dentro de una caja <tt class="docutils literal"><span class="pre">IO</span></tt>, solo que tiene que viajar al
+mundo real para obtener ese algo. Luego lo ligamos a un nombre usando <tt class="docutils literal"><span class="pre">&lt;-</span></tt>,
+dicho nombre será asociado al resultado que ya se le ha aplicado <tt class="docutils literal"><span class="pre">reverse</span></tt>.</p>
+<p>La acción de E/S <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">(++&quot;!&quot;)</span> <span class="pre">getLine</span></tt> actúa como <tt class="docutils literal"><span class="pre">getLine</span></tt>, solo su
+resultado siempre lleva añadido un <tt class="docutils literal"><span class="pre">&quot;!&quot;</span></tt> al final.</p>
+<p>Si vemos el tipo de <tt class="docutils literal"><span class="pre">fmap</span></tt> limitado a <tt class="docutils literal"><span class="pre">IO</span></tt>, tendríamos algo como
+<tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">IO</span> <span class="pre">b</span></tt>. <tt class="docutils literal"><span class="pre">fmap</span></tt> toma una función y una acción
+de E/S y devuelve una nueva acción de E/S que actúa como la anterior, solo que
+la función se aplica al resultado contenido en la acción.</p>
+<p>Si alguna vez te encuentras ligando un nombre a una acción de E/S, con el
+único fin de aplicarle una función para luego usarlo en algún otro lugar,
+considera el uso de <tt class="docutils literal"><span class="pre">fmap</span></tt>, ya que es más elegante. Si quieres aplicar
+varias transformaciones al contenido de un funtor puedes declarar tu propia
+función, usar una función lambda o, idealmente, utilizar la composición de
+funciones:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">import</span> <span class="nn">Data.Char</span>
+<span class="kr">import</span> <span class="nn">Data.List</span>
+
+<span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span> <span class="n">line</span> <span class="ow">&lt;-</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">intersperse</span> <span class="sc">&#39;-&#39;</span> <span class="o">.</span> <span class="n">reverse</span> <span class="o">.</span> <span class="n">map</span> <span class="n">toUpper</span><span class="p">)</span> <span class="n">getLine</span>
+          <span class="n">putStrLn</span> <span class="n">line</span>
+</pre></div>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> runhaskell fmapping_io.hs
+<span class="go">hello there</span>
+<span class="go">E-R-E-H-T- -O-L-L-E-H</span>
+</pre></div>
+</div>
+<p>Como probablemente ya sepas, <tt class="docutils literal"><span class="pre">intersperse</span> <span class="pre">'-'</span> <span class="pre">.</span> <span class="pre">reverse</span> <span class="pre">.</span> <span class="pre">map</span> <span class="pre">toUpper</span></tt> es
+una función que toma una cadena, mapea <tt class="docutils literal"><span class="pre">toUpper</span></tt> sobre ella, aplica
+<tt class="docutils literal"><span class="pre">reverse</span></tt> sobre el resultado anterior y luego le aplica <tt class="docutils literal"><span class="pre">intersperse</span> <span class="pre">'-'</span></tt>.
+Es como <tt class="docutils literal"><span class="pre">(\xs</span> <span class="pre">-&gt;</span> <span class="pre">intersperse</span> <span class="pre">'-'</span> <span class="pre">(reverse</span> <span class="pre">(map</span> <span class="pre">toUpper</span> <span class="pre">xs)))</span></tt> solo que
+más bonito.</p>
+<p>Otra instancia de <tt class="docutils literal"><span class="pre">Functor</span></tt> con la que hemos estado trabajando pero que no
+sabíamos que era un funtor es <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span></tt>. Probablemente ahora mismo estás un
+poco confundido, ya que ¿Qué diablos significa <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span></tt>? El tipo de una
+función <tt class="docutils literal"><span class="pre">r</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> se puede reescribir como <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span> <span class="pre">a</span></tt>, de forma similar que
+podemos escribir <tt class="docutils literal"><span class="pre">2</span> <span class="pre">+</span> <span class="pre">3</span></tt> como <tt class="docutils literal"><span class="pre">(+)</span> <span class="pre">2</span> <span class="pre">3</span></tt>. Cuando nos encontramos con
+<tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span> <span class="pre">a</span></tt>, vemos a <tt class="docutils literal"><span class="pre">(-&gt;)</span></tt> de forma diferente, ya que podemos verlo como
+un constructor de tipos que toma dos parámetros de tipos, como <tt class="docutils literal"><span class="pre">Either</span></tt>.
+Pero recuerda, dijimos que un constructor de tipos debe tomar un solo
+parámetro para poder ser instancia de un funtor. Por esa razón no podemos
+crear una <tt class="docutils literal"><span class="pre">(-&gt;)</span></tt> instancia  de <tt class="docutils literal"><span class="pre">Functor</span></tt>, pero si lo aplicamos
+parcialmente <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span></tt>, no hay ningún problema. Si la sintaxis permitiera
+aplicar parcialmente los constructores de tipos con secciones (de la misma
+forma que podemos aplicar parcialmente <tt class="docutils literal"><span class="pre">+</span></tt> utilizando <tt class="docutils literal"><span class="pre">(2+)</span></tt>, que es lo
+mismo que <tt class="docutils literal"><span class="pre">(+)</span> <span class="pre">2</span></tt>), podríamos escribir <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span></tt> como <tt class="docutils literal"><span class="pre">(r</span> <span class="pre">-&gt;)</span></tt> ¿Cómo son
+los funtores funciones? Bueno, vamos a echar un vistazo a la implementación,
+que se encuentra en <tt class="docutils literal"><span class="pre">Control.Monad.Instances</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Normalmente identificamos a la funciones que toman cualquier cosa y
+devuleven cualquier otra cosa como <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt>. <tt class="docutils literal"><span class="pre">r</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> es
+exactamente lo mismo, solo que hemos usado letras diferentes para
+las variables de tipo.</p>
+</div>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">instance</span> <span class="kt">Functor</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">r</span><span class="p">)</span> <span class="kr">where</span>
+    <span class="n">fmap</span> <span class="n">f</span> <span class="n">g</span> <span class="ow">=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Si la sintaxis lo permitiera, lo podríamos haber escrito como:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">instance</span> <span class="kt">Functor</span> <span class="p">(</span><span class="n">r</span> <span class="ow">-&gt;</span><span class="p">)</span> <span class="kr">where</span>
+    <span class="n">fmap</span> <span class="n">f</span> <span class="n">g</span> <span class="ow">=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">f</span> <span class="p">(</span><span class="n">g</span> <span class="n">x</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Pero no lo permite, así que lo tenemos que escribir como al principio.</p>
+<p>Antes de nada, vamos a pensar en el tipo de <tt class="docutils literal"><span class="pre">fmap</span></tt>. Sería
+<tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">b</span></tt>. Ahora lo que tenemos que hacer es
+remplazar mentalmente todas las <tt class="docutils literal"><span class="pre">f</span></tt>, las cuales hacen el papel de funtor,
+por <tt class="docutils literal"><span class="pre">(-&gt;)</span> <span class="pre">r</span></tt>. Hacemos esto cada vez que queramos ver como se comporta
+<tt class="docutils literal"><span class="pre">fmap</span></tt> para una cierta instancia. Obtenemos
+<tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">((-&gt;)</span> <span class="pre">r</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">((-&gt;)</span> <span class="pre">r</span> <span class="pre">b)</span></tt>. Ahora lo que podemos hacer
+es escribir los tipos <tt class="docutils literal"><span class="pre">((-&gt;)</span> <span class="pre">r</span> <span class="pre">a)</span></tt> y <tt class="docutils literal"><span class="pre">((-&gt;)</span> <span class="pre">r</span> <span class="pre">b)</span></tt> de forma infija,
+<tt class="docutils literal"><span class="pre">r</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> y <tt class="docutils literal"><span class="pre">r</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt>, como hacemos normalmente con las funciones. Lo que
+obtenemos es <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">(r</span> <span class="pre">-&gt;</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">(r</span> <span class="pre">-&gt;</span> <span class="pre">b)</span></tt>.</p>
+<p>Mmmm... Vale. Si mapeamos una función sobre una función obtenemos una nueva
+función, de la misma forma que si mapeamos una función sobre un <tt class="docutils literal"><span class="pre">Maybe</span></tt>
+obtenemos un <tt class="docutils literal"><span class="pre">Maybe</span></tt> y de la misma forma que si mapeamos una función sobre
+una lista obtenemos una lista ¿Qué nos dice exactamente el tipo
+<tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">(r</span> <span class="pre">-&gt;</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">(r</span> <span class="pre">-&gt;</span> <span class="pre">b)</span></tt>? Bueno, podemos ver que toma una
+función de <tt class="docutils literal"><span class="pre">a</span></tt> a <tt class="docutils literal"><span class="pre">b</span></tt> y una función de <tt class="docutils literal"><span class="pre">r</span></tt> a <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve una
+función de <tt class="docutils literal"><span class="pre">r</span></tt> a <tt class="docutils literal"><span class="pre">b</span></tt> ¿Te recuerda a algo? ¡Sí! ¡Composición de funciones!
+Dirigimos la salida de <tt class="docutils literal"><span class="pre">r</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> a la entrada de <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt> para obtener una
+función <tt class="docutils literal"><span class="pre">r</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt>, lo cual es exactamente lo mismo que la composición de
+funciones. Si miras como se definió la instancia arriba, podrás ver que es una
+simple composición de funciones. Otra forma de escribirlo sería así:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">instance</span> <span class="kt">Functor</span> <span class="p">((</span><span class="ow">-&gt;</span><span class="p">)</span> <span class="n">r</span><span class="p">)</span> <span class="kr">where</span>
+    <span class="n">fmap</span> <span class="ow">=</span> <span class="p">(</span><span class="o">.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>De esta forma vemos de forma clara que <tt class="docutils literal"><span class="pre">fmap</span></tt> es una simple composición de
+funciones. Ejecuta <tt class="docutils literal"><span class="pre">:m</span> <span class="pre">+</span> <span class="pre">Control.Monad.Instances</span></tt>, ya que ahí está definida
+esta instancia e intenta jugar un poco mapeando funciones.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">:</span><span class="n">t</span> <span class="n">fmap</span> <span class="p">(</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span><span class="mi">100</span><span class="p">)</span>
+<span class="nf">fmap</span> <span class="p">(</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span><span class="mi">100</span><span class="p">)</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">fmap</span> <span class="p">(</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="o">+</span><span class="mi">100</span><span class="p">)</span> <span class="mi">1</span>
+<span class="mi">303</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="p">`</span><span class="n">fmap</span><span class="p">`</span> <span class="p">(</span><span class="o">+</span><span class="mi">100</span><span class="p">)</span> <span class="o">$</span> <span class="mi">1</span>
+<span class="mi">303</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span> <span class="o">.</span> <span class="p">(</span><span class="o">+</span><span class="mi">100</span><span class="p">)</span> <span class="o">$</span> <span class="mi">1</span>
+<span class="mi">303</span>
+<span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">fmap</span> <span class="p">(</span><span class="n">show</span> <span class="o">.</span> <span class="p">(</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span> <span class="p">(</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="mi">1</span>
+<span class="s">&quot;300&quot;</span>
+</pre></div>
+</div>
+<p>Podemos llamar a <tt class="docutils literal"><span class="pre">fmap</span></tt> de forma infija para que se parezca a <tt class="docutils literal"><span class="pre">.</span></tt>. En la
+segunda línea estamos mapeando <tt class="docutils literal"><span class="pre">(*3)</span></tt> sobre <tt class="docutils literal"><span class="pre">(+100)</span></tt>, lo que resulta en
+una función que tomara un valor llamará a <tt class="docutils literal"><span class="pre">(+100)</span></tt> y luego a <tt class="docutils literal"><span class="pre">(*3)</span></tt> con el
+resultado anterior. Llamamos a la función con <tt class="docutils literal"><span class="pre">1</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

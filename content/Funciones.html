@@ -7,8 +7,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <title>La sintaxis de las funciones &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
-    <link rel="stylesheet" href="../static/style.css" type="text/css" />
-    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -18,11 +18,12 @@
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../static/jquery.js"></script>
-    <script type="text/javascript" src="../static/underscore.js"></script>
-    <script type="text/javascript" src="../static/doctools.js"></script>
-    <script type="text/javascript" src="../static/translations.js"></script>
-    <link rel="shortcut icon" href="../static/favicon.ico"/>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/cms.js"></script>        
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Recursión" href="Recursion.html" />
     <link rel="prev" title="Tipos y clases de tipos" href="Tipos.html" /> 
@@ -49,7 +50,7 @@
 <h1>La sintaxis de las funciones<a class="headerlink" href="#la-sintaxis-de-las-funciones" title="Enlazar permanentemente con este título">¶</a></h1>
 <div class="section" id="ajuste-de-patrones">
 <h2>Ajuste de patrones<a class="headerlink" href="#ajuste-de-patrones" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Patrones" class="align-right" src="../images/pattern.png" />
+<img alt="Patrones" class="align-right" src="../_images/pattern.png" />
 <p>En este capítulo cubriremos algunas de las construcciones sintácticas de Haskell
 más interesantes, empezando con el <strong>ajuste de patrones</strong> (&#8220;<em>pattern
 matching</em>&#8221; en inglés). Un ajuste de patrones
@@ -285,7 +286,7 @@ listas no podemos hacer esto.</p>
 </div>
 <div class="section" id="guardas-guardas">
 <span id="guardas"></span><h2>¡Guardas, Guardas!<a class="headerlink" href="#guardas-guardas" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Guardas" class="align-left" src="../images/guards.png" />
+<img alt="Guardas" class="align-left" src="../_images/guards.png" />
 <p>Mientras que los patrones son una forma de asegurarnos que un valor tiene una
 determinada forma y deconstruirlo, las guardas son una forma de comprobar si
 alguna propiedad de una valor (o varios de ellos) es cierta o falsa. Eso suena
@@ -494,7 +495,7 @@ función que nos diera el área de un cilindro basado en su altura y su radio.</
     <span class="kr">in</span>  <span class="n">sideArea</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">topArea</span>
 </pre></div>
 </div>
-<img alt="Let it be" class="align-right" src="../images/letitbe.png" />
+<img alt="Let it be" class="align-right" src="../_images/letitbe.png" />
 <p>Su forma es <tt class="docutils literal"><span class="pre">let</span> <span class="pre">&lt;`definiciones`&gt;</span> <span class="pre">in</span> <span class="pre">&lt;expresión&gt;</span></tt>. Los nombres que definas es
 la sección <tt class="docutils literal"><span class="pre">let</span></tt> son accesibles en la parte <tt class="docutils literal"><span class="pre">in</span></tt>. Como puedes ver, también
 podríamos haber definido esto con una sección <tt class="docutils literal"><span class="pre">where</span></tt>. Fíjate también que los
@@ -582,7 +583,7 @@ que es más legible.</p>
 </div>
 <div class="section" id="expresiones-case">
 <h2>Expresiones case<a class="headerlink" href="#expresiones-case" title="Enlazar permanentemente con este título">¶</a></h2>
-<img alt="Expresiones case" class="align-right" src="../images/case.png" />
+<img alt="Expresiones case" class="align-right" src="../_images/case.png" />
 <p>Muchos lenguajes imperativos (Como C, C++, Java, etc.) tienen sintaxis <tt class="docutils literal"><span class="pre">case</span></tt>
 y si alguna vez has programado en ellos, probablemente sepas acerca de que va
 esto. Se trata de tomar una variable y luego ejecutar bloques de código para
@@ -659,8 +660,6 @@ podríamos tener definido algo como esto:</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright Miran Lipovača.
-      Creado con <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
     </div>
   </body>
 </html>
