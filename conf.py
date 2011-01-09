@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'¡Aprende Haskell por el bien de todos!'
-copyright = u'Miran Lipovača'
+copyright = u'Miran Lipovača & Álvaro Vilanova Vidal'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -152,10 +152,10 @@ html_use_index = False
 #html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-#html_show_sphinx = True
+html_show_sphinx = False
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-#html_show_copyright = True
+html_show_copyright = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -181,7 +181,7 @@ htmlhelp_basename = 'AprendeHaskellporelbiendetodosdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'AprendeHaskellporelbiendetodos.tex', u'Aprende Haskell por el bien de todos Documentation',
-   u'Miran Lipovača', 'manual'),
+   u'Miran Lipovača & Álvaro Vilanova Vidal', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
