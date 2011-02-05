@@ -17,6 +17,8 @@ bucle, las funciones de orden superior son indispensables. Son realmente una
 forma muy potente de resolver problemas y de pensar acerca de los programas.
 
 
+.. _curry:
+
 Funciones currificadas
 ----------------------
 
@@ -897,6 +899,9 @@ esta forma, podemos, por ejemplo, mapear una lista de funciones: ::
 
     ghci> map ($ 3) [(4+), (10*), (^2), sqrt]  
     [7.0,30.0,9.0,1.7320508075688772]
+
+
+.. _compfunc:
 
 
 Composición de funciones

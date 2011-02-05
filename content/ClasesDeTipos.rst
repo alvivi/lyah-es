@@ -211,7 +211,7 @@ mismo que escribir ``Shape (Rectangle, Circle)``.
 
 También podríamos optar por no exportar ningún constructor de datos para
 ``Shape`` simplemente escribiendo ``Shape`` en dicha sentencia. De esta forma,
-aquel que importe nuestro módulo solo podrá crear figuras utilizando las
+quien importe nuestro módulo solo podrá crear figuras utilizando las
 funciones auxiliares ``baseCircle`` y ``baseRect``. ``Data.Map`` utiliza este
 método. No puedes crear un diccionario utilizando ``Map.Map [(1,2),(3,4)]`` ya
 que no se exporta el constructor de datos. Sin embargo, podemos crear un
@@ -1627,7 +1627,7 @@ contenidos de ``Maybe``. Simplemente decimos que es verdadero si es un valor
 ``Just`` y falso si es ``Nothing``. Seguimos teniendo que escribir
 ``(Maybe a)`` en lugar de solo ``Maybe`` ya que, si lo piensas un poco, una
 función ``Maybe -> Bool`` no puede existir (ya que ``Maybe`` no es un tipo
-concreto), mientras que ``Maybe a -> Bool`` es correcto. Aún así, sigue siendo
+concreto), mientras que ``Maybe a -> Bool`` es correcto. Aun así, sigue siendo
 genial ya que ahora, cualquier tipo ``Maybe algo`` es parte de la clase`
 ``YesNo`` y no importa lo que sea ``algo``.
 

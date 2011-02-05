@@ -103,6 +103,10 @@ em {
 	padding: 1px 3px 1px 3px;
 }
 
+.js-data > .pre {
+    color: #A71923;
+}
+
 .highlight {
 	margin-left: 3ex;
 	margin-right: 3ex;

@@ -366,7 +366,7 @@ normalmente termina la ejecución de un método o una subrutina y devuelve algú
 tipo de valor a quien quiera que lo llamó. En Haskell (dentro de la acciones
 ``IO`` concretamente), lo que hace es convertir un valor puro en una acción
 ``IO``. Si lo piensas como en la analogía de la caja que vimos, ``return``
-coge un valor y lo pone dentro de una caja. La acción ``IO`` resultante
+toma un valor y lo pone dentro de una caja. La acción ``IO`` resultante
 realmente no hace nada, simplemente tiene dicho valor como resultado. Así que
 en un contexto ``IO``, ``return "haha"`` tendrá el tipo ``IO String`` ¿Cuál es
 el motivo de transformar un valor puro en una acción que realmente no hace
@@ -2420,7 +2420,7 @@ Vale, así que el código de E/S (es decir, código impuro) puede lanzar
 excepciones. Tiene sentido ¿Pero qué sucede con el código puro? Bueno, también
 puede lanzar excepciones. Piensa en las funciones ``div`` y ``head``. Tienen
 los tipos ``(Integral a) => a -> a ->`` y ``[a] -> a`` respectivamente. No
-hay ningún ``Maybe`` ni ``Either`` en el tipo que devuelven pero aún así
+hay ningún ``Maybe`` ni ``Either`` en el tipo que devuelven pero aun así
 pueden fallar. ``div`` puede fallar si intentas dividir algo por cero y
 ``head`` cuando le das una lista vacía. 
 
@@ -2728,7 +2728,7 @@ del programa.
 Ahora ya sabes como tratar las excepciones de la E/S. No hemos visto como
 lanzar excepciones desde código puro y trabajar con ellas, porque, como ya
 hemos dicho, Haskell ofrece mejores formas de informar de errores sin recurrir
-a partes de la E/S. Incluso aún teniendo que trabajar con acciones de la E/S
+a partes de la E/S. Incluso aun teniendo que trabajar con acciones de la E/S
 que puede fallar, prefiero tener tipos como ``IO (Either a b)``, que indiquen
 que son acciones de E/S normales solo que su resultado será del tipo
 ``Either a b``, así que o bien devolverán ``Left a`` o  ``Right b``.
