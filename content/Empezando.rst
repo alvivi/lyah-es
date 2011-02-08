@@ -668,6 +668,8 @@ Ahora, un par de funciones que generan listas infinitas:
    de elementos de antemano. ``replicate 3 10`` devuelve ``[10,10,10]``.
 
 
+.. _comprension:
+
 Soy una lista por comprensión
 -----------------------------
 

@@ -543,7 +543,7 @@ puedes leer la implementación línea a línea y ver si las leyes se cumplen o
 intentar descubrir algún contraejemplo.
 
 También podemos ver los funtores como resultados en un cierto contexto. Por
-ejemplo, ``Just 3`` tiene un resultado igual a``3`` en el contexto de que
+ejemplo, ``Just 3`` tiene un resultado igual a ``3`` en el contexto de que
 puede existir un resultado o no. ``[1,2,3]`` contiene tres resultados, ``1``,
 ``2`` y ``3``, en el contexto de que pueden haber varios resultados o incluso
 ninguno. La función ``(+3)`` dará un resultado, dependiendo del parámetro que
@@ -566,8 +566,892 @@ y luego se le sumará tres, que es exactamente lo mismo que sucede con la
 composición de funciones.
 
 
+Funtores aplicativos
+--------------------
 
 
+.. image:: /images/present.png
+   :align: right
+   :alt: Ignora esta analogía.
+
+En esta sección, daremos un vistazo a los funtores aplicativos, los cuales son
+una especie de funtores aumentados, representados en Haskell por la clase de
+tipos ``Applicative``, que se encuentra en ``Control.Applicative``.
+
+Como ya sabes, las funciones en Haskell están currificadas por defecto, lo que
+significa que las funciones que parecen que toman varios parámetros en
+realidad solo toman un parámetro y devuelven una función que tomará el
+siguiente parámetro y así sucesivamente. Si una función tiene el tipo
+``a -> b -> c``, normalmente decimos que toma dos parámetros y devuelve un
+``c``, pero en realidad toma un ``a`` y devuelve una función ``b -> c``. Por
+este motivo podemos aplicar esta función como ``f x y`` o como ``(f x) y``.
+Este mecanismo es el que nos permite aplicar parcialmente las funciones 
+simplemente pasándoles menos parámetros de los que necesitan, de forma que
+obtenemos nuevas funciones que probablemente pasaremos a otras funciones.
+
+Hasta ahora, cuando mapeamos funciones sobre funtores, normalmente mapeamos
+funciones que toman un solo parámetro. Pero ¿Qué sucede si mapeamos una
+función como ``*``, que toma dos parámetros, sobre un funtor? Vamos a ver
+varios ejemplo concretos. Si tenemos ``Just 3`` y hacemos
+``fmap (*) (Just 3)`` ¿Qué obtenemos? A partir de la implementación de la
+instancia ``Functor`` de ``Maybe``, sabemos que es un valor ``Just algo``,
+aplicará la función ``*`` dentro de ``Just``. Así pues, al hacer
+``fmap (*) (Just 3)`` obtenemos ``Just ((*) 3)``, que también puede escribirse
+usando secciones como ``Just (* 3)`` ¡Interesante! ¡Ahora tenemos una función
+dentro de un ``Just``!
+
+.. code-block:: console
+
+    ghci> :t fmap (++) (Just "hey")  
+    fmap (++) (Just "hey") :: Maybe ([Char] -> [Char])  
+    ghci> :t fmap compare (Just 'a')  
+    fmap compare (Just 'a') :: Maybe (Char -> Ordering)  
+    ghci> :t fmap compare "A LIST OF CHARS"  
+    fmap compare "A LIST OF CHARS" :: [Char -> Ordering]  
+    ghci> :t fmap (\x y z -> x + y / z) [3,4,5,6]  
+    fmap (\x y z -> x + y / z) [3,4,5,6] :: (Fractional a) => [a -> a -> a]
+    
+Si mapeamos ``compare``, que tiene un tipo ``(Ord a) => a -> a -> Ordering``
+sobre una lista de caracteres, obtenemos una lista de funciones del tipo
+``Char -> Ordering``, ya que la función ``compare`` se aplica parcialmente
+a cada uno de los caracteres de la lista. No es una lista de funciones
+``(Ord a) => a -> Ordering``, ya que como el primer ``a`` ha sido fijado a
+``Char`` el segundo también debe ser ``Char``.
+
+Vemos que si aplicamos funciones con varios parámetros sobre funtores,
+obtenemos funtores que contienen funciones. Así que ¿Qué podemos hacer ahora
+con ellos? Bien, podemos mapear funciones que toman estas funciones como
+parámetros sobre ellos, ya que cualquier cosa que este dentro de un funtor
+será pasado a la función que mapeamos.
+
+.. code-block:: console
+
+    ghci> let a = fmap (*) [1,2,3,4]  
+    ghci> :t a  
+    a :: [Integer -> Integer]  
+    ghci> fmap (\f -> f 9) a  
+    [9,18,27,36]
+    
+Pero ¿Y si tenemos un valor funtor de ``Just (3 *)`` y un valor funtor de
+``Just 5`` y queremos sacar la función de ``Just (3 *)`` y mapearla sobre
+``Just 5``? Con los funtores normales no tendríamos mucha suerte, ya que lo
+único que soportan es mapear funciones normales sobre funtores. Incluso aunque
+mapeáramos ``\f -> f 9`` sobre un funtor que contuviese funciones, estaríamos
+mapeando simples funciones normales. No podemos mapear funciones que están
+dentro de un funtor sobre otro funtor con lo que nos ofrece ``fmap``.
+Podríamos usar un ajuste de patrones con el constructor ``Just`` para extraer
+la función y luego mapearla sobre ``Just 5``, pero estamos buscando algo
+más abstracto, general y que funcione junto a los funtores.
+
+Te presento la clase de tipos ``Applicative``. Reside en el módulo
+``Control.Applicative`` y define dos métodos, ``pure`` y ``<*>``. No
+proporciona ninguna implementación por defecto para ninguno de los dos, así
+que tenemos que definir ambos si queremos que algo sea un funtor aplicativo.
+La clase se define así: ::
+    
+    class (Functor f) => Applicative f where  
+        pure :: a -> f a  
+        (<*>) :: f (a -> b) -> f a -> f b  
+    
+Estas tres simples líneas nos dicen mucho. Vamos a empezar por la primera
+línea. Empieza con la definición de la clase ``Applicative`` y también 
+presenta una restricción de clase. Dice que si queremos que un constructor de
+tipos forme parte de la clase de tipos ``Applicative``, tiene que ser primero
+parte de clase ``Functor``. De este modo si sabemos que un constructor de
+tipos es parte de la clase de tipos ``Applicative``, también lo es de
+``Functor``, así que podemos usar ``fmap`` sobre él. 
+
+El primer método que define se llama ``pure``. Su declaración de tipo es
+``pure :: a -> f a``. ``f`` juega el papel del funtor aplicativo de la
+instancia. Como Haskell tiene un buen sistema de tipos y como todo lo que
+puede hacer una función es tomar un parámetro y devolver algún valor, podemos
+deducir muchas cosas únicamente a partir de la declaración de tipos, y este
+caso no es una excepción. ``pure`` debe tomar un valor de cualquier tipo y
+devolver un funtor aplicativo que contiene ese valor. Cuando decimos
+*que contiene*, estamos usando la analogía de la caja de nuevo, aunque ya
+hemos visto que esta comparación no siempre es perfecta. Aun así, la
+declaración ``a -> f a`` es bastante descriptiva. Tomamos un valor y lo
+introducimos en un funtor aplicativo que contendrá ese valor como resultado.
+
+Una forma mejor de entender ``pure`` sería decir que toma un valor y lo
+introduce en una especie de contexto por defecto (o contexto puro), es decir,
+el contexto mínimo para albergar ese valor.
+
+La función ``<*>`` es realmente interesante. Tiene como declaración de tipo
+``f (a -> b) -> f a -> f b`` ¿Te recuerda a algo? Por supuesto, 
+``fmap :: (a -> b) -> f a -> f b``. Es una especie de ``fmap`` modificado.
+Mientras que ``fmap`` toma una función y un funtor y aplica esa función dentro
+del funtor, mientras que ``<*>`` toma un funtor que contenga una función y
+otro funtor de forma que extrae esa función del primer funtor y la mapea sobre
+el segundo funtor. Cuando decimos ``extrae``, en realidad es algo como ejecuta
+y luego extrae, quizá incluso secuenciar. Lo veremos pronto.
+
+Vamos a echar un vistazo a la implementación de la instancia ``Applicative``
+de ``Maybe``. ::
+
+    instance Applicative Maybe where  
+        pure = Just  
+        Nothing <*> _ = Nothing  
+        (Just f) <*> something = fmap f something  
+    
+De nuevo, a partir de la definición de la clase venos que ``f`` toma el papel
+funtor aplicativo que toma un tipo concreto como parámetro, así que escribimos
+``instance Applicative Maybe where`` en lugar de
+``instance Applicative (Maybe a) where``.
+
+Antes de nada, ``pure``. Antes hemos dicho que se supone que éste toma algo
+y lo introduce en un funtor aplicativo. Hemos escrito ``pure = Just``, ya que
+los constructores de datos como ``Just`` son funciones normales. También
+podríamos haber escrito ``pure x = Just x``. 
+
+Luego, tenemos la definición de ``<*>``. No podemos extraer una función de
+``Nothing``, ya que no hay nada dentro él. Así que decimos que si intentamos
+extraer una función de un ``Nothing``, el resultado será ``Nothing``. Si vemos
+la definición de clase de ``Applicative``, veremos que hay una restricción de
+clase a ``Functor``, lo cual significa que podemos asumir que ambos parámetros
+de ``<*>`` son funtores. Si el primer parámetro no es un ``Nothing``, si no un
+``Just`` con una función en su interior, diremos que queremos mapear esa
+función sobre el segundo parámetro. Esto también tiene en cuenta el caso en el
+que el segundo parámetro sea ``Nothing``, ya que aplicar ``fmap`` con
+cualquier función sobre ``Nothing`` devuelve ``Nothing``.
+
+Así que para ``Maybe``, ``<*>`` extrae la función de su operando izquierdo si
+es un ``Just`` y lo mapea sobre su operando derecho. Si alguno de estos
+parámetros es ``Nothing``, ``Nothing`` será el resultado.
+
+Vale, genial. Vamos a probarlo.
+
+.. code-block:: console
+
+    ghci> Just (+3) <*> Just 9  
+    Just 12  
+    ghci> pure (+3) <*> Just 10  
+    Just 13  
+    ghci> pure (+3) <*> Just 9  
+    Just 12  
+    ghci> Just (++"hahah") <*> Nothing  
+    Nothing  
+    ghci> Nothing <*> Just "woot"  
+    Nothing
+    
+Vemos que tanto ``pure (+3)`` como ``Just (3)`` son iguales en este caso.
+Utiliza ``pure`` cuando trabajes con valores ``Maybe`` en un contexto
+aplicativo (es decir, cuando los utilices junto ``<*>``), de cualquier otro
+modo sigue fiel a ``Just``. Las primeras cuatro líneas de entrada demuestran
+como una función es extraída y luego mapeada, pero en este caso, podría haber
+sido logrado simplemente mapeando funciones normales sobre funtores. La última
+línea es interesante, ya que intentamos extraer una función de un ``Nothing``
+y luego mapearla, lo cual es por supuesto ``Nothing``.
+
+Con los funtores normales solo podemos mapear una función sobre un
+funtor, luego no podemos extraer el resultado de forma general, incluso aunque
+el resultado sea una función parcialmente aplicada. Los funtores aplicativos,
+por otra parte, te permiten operar con varios funtores con una única función.
+Mira esto:
+
+.. code-block:: console
+
+    ghci> pure (+) <*> Just 3 <*> Just 5  
+    Just 8  
+    ghci> pure (+) <*> Just 3 <*> Nothing  
+    Nothing  
+    ghci> pure (+) <*> Nothing <*> Just 5  
+    Nothing
+    
+.. image:: /images/whale.png
+   :align: right
+   :alt: Ballenaaa.
+
+¿Qué esta pasando aquí? Vamos a echar un vistazo paso a paso. ``<*>`` es
+asociativo por la izquierda, por lo tanto ``pure (+) <*> Just 3 <*> Just 5``
+es lo mismo que ``(pure (+) <*> Just 3) <*> Just 5``. Primero, la función
+``+`` se introduce en un funtor, en este caso un valor ``Maybe`` que contiene
+esa función. Así que al principio tenemos ``pure (+)`` que es lo mismo que
+``Just (+)``. Luego tenemos ``Just (+) <*> Just 3``, cuyo resultado, debido a
+que se aplica parcialmente la función, es ``Just (3+)``. Al aplicar ``3`` a la
+función ``+`` obtenemos una nueva función que tomará un parámetro y le
+añadirá 3. Para terminar, llegamos a ``Just (3+) <*> Just 5``, que resulta en
+``Just 8``.
+
+¿No es increíble? Los funtores aplicativos y el estilo aplicativo de hacer
+``pure f <*> x <*> y <*> ...`` nos permiten tomar una función que espera
+parámetros que no son necesariamente funtores y utilizarla para operar con
+varios valores que están en algún contexto funtor. La función puede tomar
+tantos parámetros como queramos, ya que será aplicada parcialmente paso a paso
+cada vez que aparezca un ``<*>``.
+
+Todo esto se vuelve más útil y aparente si consideramos el hecho de que
+``pure f <*> x`` es igual a ``fmap f x``. Esta es una de la leyes aplicativas.
+Las veremos en detalle más adelante, pero por ahora, podemos ver de forma
+intuitiva su significado. Piensa un poco en ello, tiene sentido. Como ya hemos
+dicho, ``pure`` inserta un valor en un contexto por defecto. Si todo lo que
+hacemos es insertar una función en un contexto por defecto y luego la
+extraemos para aplicarla a un valor contenido en un funtor aplicativo, es lo
+mismo que simplemente mapear la función sobre ese funtor aplicativo. En
+lugar de escribir ``pure f <*> x <*> y <*> ...`` podemos usar
+``fmap f x <*> y <*> ...``. Por este motivo ``Control.Applicative`` exporta
+una función llamada ``<$>``, que es simplemente ``fmap`` como operador infijo.
+Así se define: ::
+
+    (<$>) :: (Functor f) => (a -> b) -> f a -> f b  
+    f <$> x = fmap f x
+    
+.. note:: Recuerda, las variables de tipo son independientes de los nombres de
+          los parámetros o de otro nombres de valores. La ``f`` en la
+          declaración de la función es una variable de tipo con una
+          restricción de clase diciendo que cualquier constructor de tipos que
+          reemplace a ``f`` de ser miembro de la clase ``Functor``. La ``f``
+          que aparece en el cuerpo de la función representa la función que
+          mapearemos sobre ``x``. El hecho de que usemos ``f`` para
+          representar ambos no significa que representen lo mismo. 
+          
+El estilo aplicativo realmente destaca cuando utilizamos ``<$>``, ya que si
+queremos aplicar un función ``f`` entre tres funtores aplicativos
+podemos escribirlo así ``f <$> x <*> y <*> z``. Si los parámetros no fueran
+funtores aplicativos sino valores normales, lo habríamos escrito así
+``f x y z``.
+
+Vamos a ver más de cerca como funciona. Tenemos un valor ``Just "johntra"`` y
+un valor ``Just "volta"`` y queremos unirlos en una sola ``String`` dentro
+de un funtor ``Maybe``. Hacemos esto:
+
+.. code-block:: console
+
+    ghci> (++) <$> Just "johntra" <*> Just "volta"  
+    Just "johntravolta"
+    
+Antes de que veamos qué sucede aquí, compara lo anterior con esto:
+
+.. code-block:: console
+
+    ghci> (++) "johntra" "volta"  
+    "johntravolta"
+
+¡Bien! Para usar una función normal con funtores aplicativos, simplemente
+tenemos que que esparcir unos cuantos ``<$>`` y ``<*>`` y la función
+operará sobre funtores aplicativos ¿No es genial?
+
+De cualquier modo, cuando hacemos
+``(++) <$> Just "johntra" <*> Just "volta"``, primero ``(++)``, que tiene un
+tipo ``(++) :: [a] -> [a] -> [a]``, se mapea sobre ``Just "johntra"``, lo cual
+da como resultado un valor ``Just ("johntra"++)`` cuyo tipo es
+``Maybe ([Char] -> [Char])``. Fíjate como el primer parámetro de ``(++)`` ha
+desaparecido y que ``a`` se ha convertido en un ``Char``. Luego nos
+encontramos con ``Just ("johntra"++) <*> Just "volta"``, que extrae la
+función que se encuentra en el primer ``Just`` y la mapea sobre
+``Just "volta"``, lo cual devuelve ``Just "johntravolta"``. Si alguno de los
+dos valores hubiera sido ``Nothing``, el resultado habría sido ``Nothing``.
+
+Hasta ahora, solo hemos usado ``Maybe`` en nuestros ejemplos y puede que estés 
+pensado que los funtores aplicativos solo funcionan con ``Maybe``. Existen un
+buen puñado de instancias de ``Applicative``, así que vamos a probarlas.
+
+Las listas (en realidad, el constructor de tipos ``[]``) son funtores
+aplicativos ¡Qué sorpresa! Aquí tienes la instancia de ``[]`` para
+``Applicative``: ::
+
+    instance Applicative [] where  
+        pure x = [x]  
+        fs <*> xs = [f x | f <- fs, x <- xs]
+        
+Antes dijimos que ``pure`` toma un valor y lo inserta en un contexto por
+defecto. En otras palabras, un contexto mínimo que contenga ese valor. El
+contexto mínimo para las listas sería la lista vacía, ``[]``, pero la lista
+vacía representa el hecho de tener un valor, así que no puede mantener un
+valor por si mismo. Por este motivo, ``pure`` toma un valor y lo introduce en
+una lista unitaria. De forma similar, el contexto mínimo para el funtor
+aplicativo de ``Maybe`` sería ``Nothing``, pero este representa el hecho de
+no tener un valor, así que ``pure`` está implementado usando ``Just``.
+
+.. code-block:: console
+
+    ghci> pure "Hey" :: [String]  
+    ["Hey"]  
+    ghci> pure "Hey" :: Maybe String  
+    Just "Hey"
+    
+¿Qué pasa con ``<*>``? Si vemos el tipo de ``<*>`` como si estuviera limitado
+a las listas tendríamos algo como ``(<*>) :: [a -> b] -> [a] -> [b]``. Está
+implementado usado :ref:`listas por comprensión <comprension>`. ``<*>`` debe
+extraer de alguna forma la función que contiene el primer parámetro y mapearla
+sobre el segundo parámetro. El problema es que aquí puede haber una función,
+varias de ellas, o incluso ninguna. La lista de la derecha también puede
+contener varios valores. Por este motivo se utiliza una lista por comprensión
+para extraer valores de ambas listas. Aplicamos cada posible función de la
+lista de la izquierda en cada posible valor de la lista de la derecha. El
+resultado será una lista con cada posible combinación de aplicar una función
+de la primera lista sobre un valor de la segunda lista.
+
+.. code-block:: console
+
+    ghci> [(*0),(+100),(^2)] <*> [1,2,3]  
+    [0,0,0,101,102,103,1,4,9]
+    
+La lista de la izquierda tiene tres funciones y la lista de la derecha tiene
+tres valores, así que el resultado tendrá nueve elementos. Cada función de la
+lista de la izquierda se aplica a cada valor de la lista de la derecha. Si
+tuviéramos funciones que tomen dos parámetros, podemos aplicar estas funciones
+entre dos listas.
+
+.. code-block:: console
+
+    ghci> [(+),(*)] <*> [1,2] <*> [3,4]  
+    [4,5,5,6,3,4,6,8]
+    
+Como ``<*>`` es asociativo por la izquierda, lo primero que se resuelve es
+``[(+),(*)] <*> [1,2]``, que da como resultado una lista como esta
+``[(1+),(2+),(1*),(2*)]``, ya que cada función de la lista de la izquierda se
+aplica a cada valor de la lista de la derecha. Luego, se calcula 
+``[(1+),(2+),(1*),(2*)] <*> [3,4]``, que devuelve el resultado anterior.
+
+Usar el estilo aplicativo con listas es divertido. Mira:
+
+.. code-block:: console
+
+    ghci> (++) <$> ["ha","heh","hmm"] <*> ["?","!","."]  
+    ["ha?","ha!","ha.","heh?","heh!","heh.","hmm?","hmm!","hmm."]
+    
+De nuevo, fíjate en que hemos usado una función normal que toma dos cadenas
+entre dos funtores aplicativos de cadenas simplemente insertando los
+operadores aplicativos apropiados.
+
+Puedes ver las listas como computaciones no deterministas. Un valor como
+``100`` o ``"que"`` puede ser visto como una computación determinista que solo
+tienen un valor, mientras que una lista como ``[1,2,3]`` puede ser visto como
+un computación que no puede decidir que resultado queremos, así que nos
+muestra una lista con todos los resultados posibles. Así que cuando hacemos
+algo como ``(+) <$> [1,2,3] <*> [4,5,6]``, puedes pensar que se trata de
+sumar dos computaciones no deterministas con ``+``, para que produzca otra
+computación no determinista que esté incluso menos segura de que valor es el
+resultado final. 
+
+El estilo aplicativo con listas suele ser un buen remplazo par la listas por
+comprensión. En el segundo capítulo, queríamos saber todos los posibles
+productos entre ``[2,5,10]`` y ``[8,10,11]``, así que hicimos esto: 
+
+.. code-block:: console
+
+    ghci> [ x*y | x <- [2,5,10], y <- [8,10,11]]     
+    [16,20,22,40,50,55,80,100,110]
+    
+Simplemente extraemos valores de las dos listas y aplicamos una función para
+combinar los elementos. Esto también se puede hacer usando el estilo
+aplicativo: 
+
+.. code-block:: console
+
+    ghci> (*) <$> [2,5,10] <*> [8,10,11]  
+    [16,20,22,40,50,55,80,100,110]
+    
+En mi opinión la segunda versión es más clara, ya que es más fácil de ver que
+simplemente estamos aplicando ``*`` entre dos computaciones no deterministas.
+Si quisiéramos todos los posibles productos entre ambas listas que fueran
+mayores que 50, podríamos hacer algo como:
+
+.. code-block:: console
+
+    ghci> filter (>50) $ (*) <$> [2,5,10] <*> [8,10,11]  
+    [55,80,100,110]
+    
+Es fácil de ver como ``pure f <*> xs`` es igual a ``fmap f xs`` con la listas.
+``pure f`` es ``[f]`` y ``[f] <*> xs`` aplicará cada función que esté en la
+primera lista sobre cada valor que este en la segunda lista, pero solo hay una
+función en la lista de la izquierda, así que es como un ``fmap``. 
+
+Otra instancia de ``Applicative`` con la que ya nos hemos encontrado es
+``IO``. Así es como se implementa: ::
+
+    instance Applicative IO where  
+        pure = return  
+        a <*> b = do  
+            f <- a  
+            x <- b  
+            return (f x)
+            
+.. image:: /images/knight.png
+   :align: left
+   :alt: ¡Jajaja!
+
+Como todo lo que hace ``pure`` es insertar un valor en un contexto mínimo que
+pueda albergar ese valor, tiene sentido que ``pure`` sea simplemente
+``return``, ya que ``return`` hace exactamente eso: crea una acción de E/S 
+que no hace nada, simplemente tiene como resultado el valor que le pasemos,
+pero en realidad no ejecuta ninguna operación de E/S como mostrar texto por
+un terminal o leer algo de algún archivo.
+
+Si ``<*>`` fuera exclusivo para ``IO`` su tipo sería
+``(<*>) :: IO (a -> b) -> IO a -> IO b``. Tomaría una acción de E/S que
+devuelve una función como resultado y otra acción de E/S y crearía una una
+nueva acción de E/S a partir de estas dos, que cuando fuera ejecutada, primero
+ejecutaría la primera acción para obtener la función y luego ejecutaría la
+segunda acción para obtener un valor que luego aplicaría a la primera función
+para obtener el resultado de la acción que crea. Hemos utilizado la *sintaxis
+do* para implementarlo. Recuerda que la *sintaxis do* trata de tomar varias
+acciones de E/S y unirlas en una sola, que es exactamente lo que hacemos aquí.
+
+Con ``Maybe`` y ``[]``, podemos que pensar que ``<*>`` simplemente extrae una
+función de su parámetro izquierdo y luego lo aplica al de la derecha. Con
+``IO``, seguimos extrayendo una función, pero ahora también existe una
+*secuenciación* , ya que estamos tomando dos acciones de E/S y las estamos
+secuenciando, o uniéndolas, en una sola acción. Hay que extraer una función
+de la primera acción de E/S, pero para extraer un resultado de una acción de
+E/S, primero tiene que ser ejecutada.
+
+Considera esto: ::
+
+    myAction :: IO String  
+    myAction = do  
+        a <- getLine  
+        b <- getLine  
+        return $ a ++ b
+
+Esta acción de E/S preguntará al usuario por dos líneas de texto y las
+devolverá concatenadas. Esto se consigue gracias a que hemos unido dos 
+acciones de E/S ``getLine`` y un ``return``, ya que queríamos una nueva acción
+de E/S que contuviera el resultado ``a ++ b++``. Otra forma de escribir esto
+sería usando el estilo aplicativo. ::
+
+    myAction :: IO String  
+    myAction = (++) <$> getLine <*> getLine
+    
+Lo que hacíamos antes era crear una acción de E/S que aplicará una función
+entre los resultados de otras dos acciones de E/S, y esto es exactamente lo
+mismo. Recuerda, ``getLine`` es una acción de E/S con el tipo
+``getLine :: IO String``. Cuando utilizamos ``<*>`` entre dos funtores
+aplicativos, el resultado es un funtor aplicativo, así que parece que tiene
+sentido.
+
+Si volvemos a la analogía de la caja, podemos imaginar a ``getLine`` como 
+una caja que viajará al mundo real y nos traerá una cadena. Al hacer
+``(++) <$> getLine <*> getLine`` creamos un nueva caja más grande, que
+enviará esas dos cajas para obtener las dos líneas de la terminal y devolver
+la concatenación de ambas como resultado.
+
+El tipo de la expresión ``(++) <$> getLine <*> getLine`` es ``IO String``,
+esto quiere decir que esta expresión es una acción de E/S normal y corriente
+que también contiene un resultado, al igual que todas las demás acciones de
+E/S. Por esta razón podemos hacer cosas como esta: ::
+
+    main = do  
+        a <- (++) <$> getLine <*> getLine  
+        putStrLn $ "Las dos líneas concatenadas son: " ++ a
+        
+Si alguna vez te encuentras ligando una acción de E/S a algún nombre y luego 
+utilizas una función sobre ella para luego devolver ese valor como resultado
+usando ``return``, considera utilizar el estilo aplicativo ya que es sin
+duda alguna más conciso.
+
+Otra instancia de ``Applicative`` es ``(-> r)``, es decir, funciones. No es
+una instancia muy utilizada, pero sigue siendo interesante como aplicativo,
+así que vamos a ver como se implementa. 
+
+.. note:: Si estas confudido acerca del significado de ``(-> r)``, revisa la
+          sección anterior donde explicamos como ``(-> r)`` es un funtor.
+          
+::
+
+    instance Applicative ((->) r) where  
+        pure x = (\_ -> x)  
+        f <*> g = \x -> f x (g x)
+        
+Insertamos un valor dentro de un funtor aplicativo con ``pure``, el resultado
+que devuelva éste siempre debe ser el valor anterior. El contexto mínimo que
+siga conteniendo ese valor como resultado. Por este motivo en la
+implementación de la instancia funtor de las funciones, ``pure`` toma un valor
+y crea una función que ignora su parámetro y devuelve siempre ese mismo valor.
+Si vemos el tipo de ``pure``, pero restringido al tipo de la instancia
+``(-> r)``, sería ``pure :: a -> (r -> a)``.
+
+.. code-block:: console
+
+    ghci> (pure 3) "blah"  
+    3  
+    
+Gracias a la currificación, la aplicación de funciones es asociativa por la
+izquierda, así que podemos omitir los paréntesis.
+
+.. code-block:: console
+
+    ghci> pure 3 "blah"  
+    3  
+    
+La implementación de la instancia para ``<*>`` es un poco críptica, así que
+será mejor si simplemente vemos un ejemplo de como utilizar las funciones como
+funtores aplicativos en estilo aplicativo:
+
+.. code-block:: console
+
+    ghci> :t (+) <$> (+3) <*> (*100)  
+    (+) <$> (+3) <*> (*100) :: (Num a) => a -> a  
+    ghci> (+) <$> (+3) <*> (*100) $ 5  
+    508
+
+Al llamar ``<*>`` con dos funtores aplicativos obtenemos otro funtor
+aplicativo, así que si utilizamos dos funciones, obtenemos de nuevo una
+función. Así que, ¿Qué sucede aquí? Cuando hacemos
+``(+) <$> (+3) <*> (*100)``, creamos una función que utilizará ``+`` en los
+resultados de ``(+3)`` y ``(*100)`` y devolverá ese resultado. Para demostrar
+este ejemplo real, hemos hecho ``(+) <$> (+3) <*> (*100) $ 5``, el primer
+``5`` se aplica a ``(+3)`` y ``(*100)``, obteniendo ``8`` y ``500``. Luego, se
+llama a ``+`` con ``8`` y ``500``, obteniendo ``508``.
+
+.. code-block:: console
+
+    ghci> (\x y z -> [x,y,z]) <$> (+3) <*> (*2) <*> (/2) $ 5  
+    [8.0,10.0,2.5]
+    
+.. image:: /images/jazzb.png
+   :align: right
+   :alt: SLAP
+   
+Lo mismo. Hemos creado una función que llamará a ``\x y z -> [x,y,z]`` con los
+resultados finales de ``(+3)``, ``(*2)`` y ``(/2)``. El ``5`` será pasado a
+estas tres funciones y luego se llamará a ``\x y z -> [x, y, z]`` con los
+resultados.
+
+Puedes verlo como si las funciones fueran cajas que contienen los resultados
+finales, así que si hacemos ``k <$> f <*> g`` se crea una función que llamará
+a ``k`` con los resultados de ``f`` y ``g``. Cuando hacemos algo como
+``(+) <$> Just 3 <*> Just 5``, estamos usando ``+`` en valores que pueden
+estar ahí o no, por lo tanto el resultado será un valor o ninguno. Cuando
+hacemos algo como ``(+) <$> (+10) <*> (+5)``, estamos usando ``+`` en los
+futuros resultados de las funciones ``(+10)`` y ``(+5)``, y el resultado 
+también será algo que producirá un valor siempre y cuando sea llamado con un
+parámetro. 
+
+No solemos utilizar las funciones como funtores aplicativos, pero siguen
+siendo interesantes. Tampoco es muy importante que no entiendas como funciona
+la instancia de las funciones para los funtores aplicativos, así que no te
+preocupes mucho. Intenta jugar un poco con el estilo aplicativo y las
+funciones para hacerte una idea de como funionan.
+
+Una instancia de ``Applicative`` que aún no nos hemos encontrado es
+``ZipList`` y reside en ``Control.Applicative``.
+
+Este tipo sugiere que en realidad hay mas formas de utilizar las listas como
+funtores aplicativos. Una forma es la que ya hemos visto, cuando utilizamos
+``<*>`` con una lista de funciones y una lista de valores devuelve una lista
+de todas las posibles combinaciones de aplicar esas funciones de la lista de
+la izquierda a los valores de la derecha. Si hacemos algo como
+``[(+3),(*2)] <*> [1,2]``, ``(+3)`` será aplicado a ``1`` y ``2`` y ``(*2)``
+también será aplicado a ambos, por lo que obtendremos una lista con cuatro
+elementos, ``[4,5,2,4]``.
+
+Sin embargo, ``[(+3),(*2)] <*> [1,2]`` también podría funcionar de forma que
+la primera función de la izquierda fuera aplicada a el primer valor de la
+derecha y la segunda función fuera aplicada al segundo valor. Esto nos daría
+una lista con dos valores, ``[4,4]``. Lo podríamos ver como
+``[1 + 3, 2 * 2]``.
+
+Como un mismo tipo no puede tener dos instancias para una misma clase de
+tipos, se utiliza el tipo ``ZipList a``, que tiene un constructor ``ZipList``
+con un solo campo, la lista. Aquí esta la instancia: ::
+
+    instance Applicative ZipList where  
+            pure x = ZipList (repeat x)  
+            ZipList fs <*> ZipList xs = ZipList (zipWith (\f x -> f x) fs xs)
+            
+.. note:: Sí, también sería válido ``ZipList (zipWith ($) fs xs)``.
+
+``<*>`` hace lo que acabamos de explicar. Aplica la primera función a el
+primer valor, la segunda función al segundo valor, etc. Esto se consigue con
+``zipWith (\f x -> f x) fs xs``. Debido a como funciona ``zipWith``, la lista
+final será tan larga como la lista más corta de las dos. 
+
+``pure`` es bastante interesante. Toma un valor y lo introduce en una lista 
+que tiene ese valor repetido indefinidamente. ``pure "jaja"`` devolvería algo
+como ``ZipList (["jaja","jaja","jaja"...``. Quizá esto sea algo confuso ya que
+hemos dicho que ``pure`` debe introducir un valor en el contexto mínimo que
+albergue ese valor. Y quizá estés pensado que una lista infinita difícilmente
+es un contexto mínimo. Pero tiene sentido con esta listas, ya que tiene que
+producir un valor en cada posición. De esta forma también se cumple la ley que
+dice que ``pure f <*> xs`` debe ser igual a ``fmap f xs``. Si ``pure 3`` solo
+devolviera ``ZipList [3]``, ``pure (*2) <*> ZipList [1,5,10]`` devolvería
+``ZipList [2]``, ya que la lista resultante es tan larga como la mas corta de
+las dos que utilizamos como parámetros. Si utilizamos una lista infinita y
+otra finita, la lista resultante siempre tendrá el tamaño de la lista finita.
+
+¿Cómo funcionan estas listas al estilo aplicativo? Veamos. El tipo
+``ZipList a`` no tiene una instancia para ``Show``, así que tenemos que
+utilizar la función :cpp:member:`getZipList` para extraer una lista primitiva.
+
+.. code-block:: console
+
+    ghci> getZipList $ (+) <$> ZipList [1,2,3] <*> ZipList [100,100,100]  
+    [101,102,103]  
+    ghci> getZipList $ (+) <$> ZipList [1,2,3] <*> ZipList [100,100..]  
+    [101,102,103]  
+    ghci> getZipList $ max <$> ZipList [1,2,3,4,5,3] <*> ZipList [5,3,1,2]  
+    [5,3,3,4]  
+    ghci> getZipList $ (,,) <$> ZipList "dog" <*> ZipList "cat" <*> ZipList "rat"  
+    [('d','c','r'),('o','a','a'),('g','t','t')]
+    
+.. note:: La función ``(,,)`` es lo mismo que ``\x y z -> (x,y,z)``. También,
+          la función ``(,)`` sería igual a ``\x y -> (x,y)``.
+          
+A parte de ``zipWith``, la biblioteca estándar también tiene funciones como
+``zipWith3``, ``zipWith4``, y todas las demás hasta llegar a 7. ``zipWith``
+toma una función que tome dos parámetros y une dos los listas con esta
+función. ``zipWith3`` toma una función que tome tres parámetros y une tres
+listas con ella. Gracias a estas listas y al estilo aplicativo, no tenemos
+que tener una función distinta para cada número de listas que queramos unir
+con una función. Lo único que tenemos que hacer es utilizar el estilo
+aplicativo.
+
+``Control.Applicative`` define una función llamada :cpp:member:`liftA2`, cuyo
+tipo es ``liftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c``.
+Se define así: ::
+
+    liftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c  
+    liftA2 f a b = f <$> a <*> b
+    
+Nada especial, simplemente aplica una función entre dos funtores aplicativos,
+escondiendo el estilo aplicativo al que nos hemos acostumbrado. La razón por
+la cual lo mostramos es para hacer más evidente porque los funtores
+aplicativos son más potentes que los funtores ordinarios. Con lo funtores
+ordinarios solo podemos mapear funciones sobre un funtor. Pero con los
+funtores aplicativos, podemos aplicar una función con varios funtores. También
+es interesante ver la el tipo de la función como
+``(a -> b -> c) -> (f a -> f b -> f c)``. Si lo vemos de esta forma, podemos
+decir que ``liftA2`` toma una función binaria normal y la desplaza para que
+opere con dos funtores. 
+
+Un concepto interesante: podemos tomar dos funtores aplicativos y combinarlos
+en un único funtor aplicativo que contenga los resultados de ambos funtores
+en forma de lista. Por ejemplo, tenemos ``Just 3`` y ``Just 4``. Vamos a
+asumir que el segundo está dentro de una lista unitaria, lo cual es realmente
+fácil de conseguir: 
+
+.. code-block:: console
+
+    ghci> fmap (\x -> [x]) (Just 4)  
+    Just [4]
+    
+Vale, ahora tenemos ``Just 3`` y ``Just [4]`` ¿Cómo obtendríamos
+``Just [3,4]``? Fácil. 
+
+.. code-block:: console
+
+    ghci> liftA2 (:) (Just 3) (Just [4])  
+    Just [3,4]  
+    ghci> (:) <$> Just 3 <*> Just [4]  
+    Just [3,4]
+    
+Recuerda, ``:`` es una función que toma un elemento y una lista y devuelve una
+lista nueva con dicho elemento al principio. Ahora que tenemos ``Just [3,4]``,
+¿podríamos combinarlos con ``Just 2`` para obtener ``Just [2,3,4]``? Por
+supuesto que podríamos. Parece que podemos combinar cualquier cantidad de
+funtores aplicativos en uno que contenga una lista con los resultados de
+dichos funtores. Vamos a intentar implementar una función que tome una lista
+de funtores aplicativos y devuelva un funtor aplicativo que contenga una lista
+con los resultados de los funtores. La llamaremos ``sequenceA``. ::
+
+    sequenceA :: (Applicative f) => [f a] -> f [a]  
+    sequenceA [] = pure []  
+    sequenceA (x:xs) = (:) <$> x <*> sequenceA xs
+    
+¡Ahh, recursión! Primero, veamos su tipo. Transformará una lista funtores
+aplicativos en un funtor aplicativo con un lista. Esto nos da alguna pista
+para el caso base. Si queremos convertir una lista vacía en un funtor
+aplicativo con una lista que contenga los resultados, simplemente insertamos
+la lista en el contexto mínimo. Luego viene la recursión. Si tenemos una lista
+con una cabeza y una cola (recuerda, ``x`` es un funtor aplicativo y ``xs`` es
+una lista de ellos), llamamos a ``sequenceA`` con la cola para que nos
+devuelva un funtor aplicativo que contenga una lista. Luego, anteponemos el
+valor que contiene el funtor aplicativo ``x`` en la lista ¡Y listo!
+
+Si hiciéramos ``sequenceA [Just 1, Just 2]``, tendríamos
+``(:) <$> Just 1 <*> sequenceA [Just 2]``, que es igual a
+``(:) <$> Just 1 <*> ((:) <$> Just 2 <*> sequenceA [])``. Sabemos que
+``sequenceA []`` acabará siendo ``Just []``, así que ahora tendríamos
+``(:) <$> Just 1 <*> ((:) <$> Just 2 <*> Just [])``, que es igual a
+``(:) <$> Just 1 <*> Just [2]``, que es igual a ``Just [1,2]``.
+
+Otra forma de implementar ``sequenceA`` es con un pliegue. Recuerda, casi
+cualquier función en la que recorramos una lista elemento a elemento y vayamos
+acumulando un resultando a lo largo del camino puede ser implementada con
+un pliegue. ::
+
+    sequenceA :: (Applicative f) => [f a] -> f [a]  
+    sequenceA = foldr (liftA2 (:)) (pure [])
+    
+Empezamos recorriendo la lista por la izquierda y con un acumulador inicial
+igual a ``pure []``. Aplicamos ``liftA2 (:)`` entre el acumulador y el último
+elemento de la lista, lo cual resulta en un funtor aplicativo que contiene
+una lista unitaria. Luego volvemos a aplicar ``liftA2 (:)`` con el último
+elemento actual de la lista con el acumulador actual, y así sucesivamente
+hasta que solo nos quedemos con el acumulador, que contendrá todos los
+resultados de los funtores aplicativos. 
+
+Vamos a probar nuestra función.
+
+.. code-block:: console
+
+    ghci> sequenceA [Just 3, Just 2, Just 1]  
+    Just [3,2,1]  
+    ghci> sequenceA [Just 3, Nothing, Just 1]  
+    Nothing  
+    ghci> sequenceA [(+3),(+2),(+1)] 3  
+    [6,5,4]  
+    ghci> sequenceA [[1,2,3],[4,5,6]]  
+    [[1,4],[1,5],[1,6],[2,4],[2,5],[2,6],[3,4],[3,5],[3,6]]  
+    ghci> sequenceA [[1,2,3],[4,5,6],[3,4,4],[]]  
+    []
+    
+Precioso. Cuando lo utilizamos con los valores ``Maybe``, ``sequenceA`` crea
+un valor ``Maybe`` con todos los resultados dentro de una lista. Si alguno
+de los valores es ``Nothing``, entonces el resultado final también lo es. Esto
+puede ser útil cuando tenemos una lista de valores ``Maybe`` y estamos
+interesados en obtener esos valores solo si ninguno de ellos es ``Nothing``.
+
+Cuando se utiliza con funciones, ``sequenceA`` toma una lista de funciones y
+devuelve una función cuyo resultado es una lista. En el ejemplo anterior, 
+creamos una función que tomará un número como parámetro, se aplica a cada una
+de las funciones de la lista y luego devuelve una lista con los resultados.
+``sequenceA [(+3),(+2),(+1)] 3`` llamará a ``(+3)`` con ``3``, a ``(+2)`` con
+``3`` y a ``(+1)`` con ``3``, luego devolverá una lista con todos los
+resultados.
+
+Si hacemos ``(+) <$> (+3) <*> (*2)`` estamos creando una función que toma
+un parámetro, lo aplica a ``(+3)`` y a ``(*2)`` y luego llama a ``+`` con
+ambos resultados. Del mismo modo, si hacemos ``sequenceA [(+3),(*2)]`` estamos
+creando una función que tomará un parámetro y lo aplicará a las funciones de
+la lista. Pero, en lugar de llamar a ``+`` con los resultados de las
+funciones, se utiliza una combinación de ``:`` y ``pure []`` para unir todos
+esos resultados en una lista.
+
+``sequenceA`` puede ser útil cuando tenemos una lista de funciones y queremos
+aplicarlas todas al mismo parámetro y luego tener los resultados en una lista.
+Por ejemplo, si tenemos un número y queremos saber si satisface todos los
+predicados que contiene una lista. Una forma de hacerlo sería así:
+
+.. code-block:: console
+
+    ghci> map (\f -> f 7) [(>4),(<10),odd]  
+    [True,True,True]  
+    ghci> and $ map (\f -> f 7) [(>4),(<10),odd]  
+    True
+    
+Recuerda que ``and`` toma una lista de booleanos y devuelve ``True`` si son
+todos ``True``. Otra forma de hacer lo mismo sería con ``sequenceA``:
+
+.. code-block:: console
+
+    ghci> sequenceA [(>4),(<10),odd] 7  
+    [True,True,True]  
+    ghci> and $ sequenceA [(>4),(<10),odd] 7  
+    True
+    
+``sequenceA [(>4),(<10),odd]`` crea una función que tomará un número y lo 
+aplicará a todos los predicados de la lista, ``[(>4),(<10),odd]``, y devolverá
+una lista con los resultados. Dicho de otra forma, convierte una lista de tipo
+``(Num a) => [a -> Bool]`` en una función cuyo tipo sería
+``(Num a) => a -> [Bool]`` ¿Tiene buena pinta, no?
+
+Ya que las listas son homogéneas, todas las funciones de la lista deben tener
+el mismo tipo. No podemos tener una lista como ``[ord, (+3)]``, porque ``ord``
+toma un carácter y devuelve un número, mientras que ``(+3)`` toma un número y
+devuelve otro número.
+
+Cuando se utiliza con ``[]``, ``sequenceA`` toma una lista y devuelve una
+lista de listas. Mmm... interesante. En realidad crea una lista que contiene
+todas las combinaciones posibles de sus elementos. A título de ejemplo aquí
+tienes unos cuantos usos de ``sequenceA`` con sus equivalentes usando listas
+por comprensión:
+
+.. code-block:: console
+
+    ghci> sequenceA [[1,2,3],[4,5,6]]  
+    [[1,4],[1,5],[1,6],[2,4],[2,5],[2,6],[3,4],[3,5],[3,6]]  
+    ghci> [[x,y] | x <- [1,2,3], y <- [4,5,6]]  
+    [[1,4],[1,5],[1,6],[2,4],[2,5],[2,6],[3,4],[3,5],[3,6]]  
+    ghci> sequenceA [[1,2],[3,4]]  
+    [[1,3],[1,4],[2,3],[2,4]]  
+    ghci> [[x,y] | x <- [1,2], y <- [3,4]]  
+    [[1,3],[1,4],[2,3],[2,4]]  
+    ghci> sequenceA [[1,2],[3,4],[5,6]]  
+    [[1,3,5],[1,3,6],[1,4,5],[1,4,6],[2,3,5],[2,3,6],[2,4,5],[2,4,6]]  
+    ghci> [[x,y,z] | x <- [1,2], y <- [3,4], z <- [5,6]]  
+    [[1,3,5],[1,3,6],[1,4,5],[1,4,6],[2,3,5],[2,3,6],[2,4,5],[2,4,6]]
+    
+Quizá esto es un poco difícil de entender, pero si jugamos un poco con ellos,
+veremos como funciona. Digamos que tenemos ``sequenceA [[1,2],[3,4]]``. Para
+ver lo que sucede, vamos a utilizar la definición
+``sequenceA (x:xs) = (:) <$> x <*> sequenceA xs`` de ``sequenceA`` y el caso
+base ``sequenceA [] = pure []``. No tienes porque seguir esta traza, pero si
+no consigues imaginarte como funciona ``sequenceA`` con las listas puede que
+te resulte de ayuda. 
+
+ * Empezamos con ``sequenceA [[1,2],[3,4]]``.
+ * Lo cual se evalúa a ``(:) <$> [1,2] <*> sequenceA [[3,4]]``.
+ * Si evaluamos el ``sequenceA`` interior una vez más, obtenemos
+   ``(:) <$> [1,2] <*> ((:) <$> [3,4] <*> sequenceA [])``.
+ * Ahora hemos alcanzado el caso base, así que tenemos
+   ``(:) <$> [1,2] <*> ((:) <$> [3,4] <*> [[]])``.
+ * Evaluamos la parte ``(:) <$> [3,4] <*> [[]]``, que utilizará ``:`` con cada
+   posible valor de la lista de la izquierda  (es decir ``3`` y ``4``) con
+   cada posible valor de la lista de la derecha (``[]``), obteniendo así
+   ``[3:[], 4:[]]``, que es ``[[3],[4]]``. Así que ahora tenemos
+   ``(:) <$> [1,2] <*> [[3],[4]]``.
+ * ``:`` se utiliza con cada posible valor de la lista de la izquierda (``1``
+   y ``2``) con cada posible valor de la lista de la derecha (``[3]`` y
+   ``[4]``), de forma que nos quedamos con ``[1:[3], 1:[4], 2:[3], 2:[4]]``,
+   que es igual a ``[[1,3],[1,4],[2,3],[2,4]``. 
+   
+Si hacemos ``(+) <$> [1,2] <*> [4,5,6]`` estamos creando una computación
+no determinista ``x + y`` donde ``x`` toma cualquier valor de ``[1,2]`` e 
+``y`` toma cualquier valor de ``[4,5,6]``. Representamos la solución con una
+lista con todos los posibles resultados. De forma similar, si hacemos
+``sequence [[1,2],[3,4],[5,6],[7,8]]`` estamos creando una computación no
+determinista ``[x,y,z,w]``, donde ``x`` toma cualquier valor de ``[1,2]``,
+``y`` toma cualquier valor de ``[3,4]``, y así sucesivamente. Representamos el
+resultado de la computación no determinista utilizando una lista, donde cada
+elemento es una lista posible. Por este motivo el resultado es una lista de
+listas.
+
+Con acciones de E/S, ``sequenceA`` se comporta igual que ``sequence``. Toma
+una lista de acciones de E/S y devuelve una acción de E/S que ejecutará cada
+una de esas acciones y tendrá como resultado una lista con los resultados de
+todas esas acciones. Por este motivo para convertir un valor ``[IO a]`` en
+un valor ``IO [a]``, o dicho de otra forma, para crear una acción de E/S que
+devuelva una lista de resultados cuando sea ejecutada, todas estas acciones
+tienen que ser secuenciadas de forma que sean ejecutadas unas detrás de otra
+cuando se fuerce la evaluación. No puede obtener el resultado de una acción de
+E/S si no la ejecutas primero.
+
+.. code-block:: console
+
+    ghci> sequenceA [getLine, getLine, getLine]  
+    heyh  
+    ho  
+    woo  
+    ["heyh","ho","woo"]
+    
+Al igual que los funtores normales, los funtores aplicativos vienen con una
+serie de leyes. La mas importante de todas es la que ya hemos mencionado,
+:js:data:`pure f <*> x = fmap f x`. Como ejercicio, puedes intentar comprobar
+esta ley en algunos de los funtores de los que hemos hablado. Las otras leyes
+son:
+
+ * :js:data:`pure id <*> v = v`
+ * :js:data:`pure (.) <*> u <*> v <*> w = u <*> (v <*> w)`
+ * :js:data:`pure f <*> pure x = pure (f x)`
+ * :js:data:`u <*> pure y = pure ($ y) <*> u`
+
+No vamos a verlas en detalle ahora mismo ya que nos tomaría unas cuantas
+página y probablemente sea algo aburrido, pero, si te sientes con ganas,
+puedes echarles una vistazo más de cerca y comprobar si algunas de las
+instancias que hemos visto las cumplen.
+
+Concluyendo, los funtores aplicativos no son solo interesantes, sino que
+también son útiles, ya que nos permiten combinar diferentes computaciones,
+como computaciones de E/S, computaciones no deterministas, computaciones que
+puede fallar, etc. utilizando el estilo aplicativo. Simplemente utilizando
+``<$>`` y ``<*>`` podemos utilizar funciones normales para que operen de forma
+uniforme con cualquier número de funtores aplicativos y tomar ventaja de la
+semántica de cada uno.
+ 
 
 
-
+ 
+    
