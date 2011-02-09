@@ -1657,7 +1657,181 @@ sobre ella de forma que la función solo se aplique a la primera componente: ::
     (200,3)  
     ghci> getPair $ fmap reverse (Pair ("london calling", 3))  
     ("gnillac nodnol",3)
+
     
+La pereza de newtype
+''''''''''''''''''''
+
+Ya hemos hablado de que normalmente ``newtype`` es más rápido que ``data``. Lo
+único que podemos hacer cuando utilizamos ``newtype`` es convertir un tipo
+existente en un nuevo tipo, aunque internamente, Haskell puede representar los
+valores de los tipos definidos con ``newtype`` igual que los originales,
+aunque debe tener en cuenta que sus tipos son diferentes. Esto provoca que
+``newtype`` no solo sea más rápido, sino también más perezoso. Vamos a ver con
+detalle que significa esto.
+
+Como ya dijimos, Haskell perezoso por defecto, lo que significa que solo
+cuando intentamos mostrar el resultado de nuestras funciones tendrá lugar el
+cómputo de estos resultados. Además, solo los cómputos que son necesario para
+calcular el resultado la función serán ejecutados. El valor ``undefined`` de
+Haskell representa un cómputo erróneo. Si intentamos evaluarlo (es decir,
+forzamos a Haskell a que lo calcule) mostrándolo por la terminal, Haskell se
+lanzará un berrinche (técnicamente conocido como excepción):
+
+.. code-block:: console
+
+    ghci> undefined  
+    *** Exception: Prelude.undefined  
+    
+Sin embargo, si insertamos algunos valores ``undefined`` en una lista pero
+solo necesitamos la cabeza de la lista, la cual no es ``undefined``, todo
+funcionará bien ya que Haskell no necesita evaluar ningún otro elemento de la
+lista si solo estamos interesados en el primer elemento: 
+
+.. code-block:: console
+
+    ghci> head [3,4,5,undefined,2,undefined]  
+    3
+    
+Ahora consideremos el siguiente tipo: ::
+
+    data CoolBool = CoolBool { getCoolBool :: Bool }  
+    
+Es uno de los muchos tipos de datos algebraicos que se pueden definir con la
+palabra clave ``data``. Tiene un único constructor de datos, y este
+constructor solo posee un campo cuyo tipo es ``Bool``. Vamos a crear una
+función que use un ajuste de patrones en un ``CoolBool`` y devuelva el valor
+``"hola"`` independientemente de que el valor ``Bool`` contenido en
+``CoolBool`` sea ``True`` o ``False``: ::
+
+    helloMe :: CoolBool -> String  
+    helloMe (CoolBool _) = "hola"
+
+En lugar de aplicar esta función a un valor normal de ``CoolBool``, vamos a
+complicarnos la vida y aplicar el valor ``undefined``.
+
+.. code-block:: console
+
+    ghci> helloMe undefined  
+    "*** Exception: Prelude.undefined
+    
+¡Una excepción! ¿Por qué sucede esto? Los tipos definidos con la palabra clave
+``data`` pueden tener varios constructores de datos (aunque ``CoolBool`` solo
+tiene uno). Así que para saber si un valor dado a nuestra función se ajusta al
+patrón ``(CoolBool _)``, Haskell tiene que evaluar el valor lo suficiente como
+para saber el constructor de datos que se ha utilizado para crear el valor. Y
+cuando tratamos de evaluar un valor ``undefined``, por muy poco que lo
+evaluemos, se lanzará una excepción. 
+
+En lugar de utilizar la palabra clave ``data`` para definir ``CoolBool``,
+vamos a intentar utilizar ``newtype``: ::
+
+    newtype CoolBool = CoolBool { getCoolBool :: Bool }  
+    
+No tenemos que cambiar nada de la función ``helloMe`` porque la sintaxis que
+se utiliza en el ajuste de patrones es igual para ``data`` que para
+``newtype``. Vamos a hacer lo mismo y aplicar ``helloMe`` a un valor
+``undefined``:
+
+.. code-block:: console
+
+    ghci> helloMe undefined  
+    "hola"
+
+.. image:: /images/shamrock.png
+   :align: right
+   :alt: ¡Te deseo lo mejor!
+
+¡Funcionó! Mmm... ¿Por qué? Bueno, como ya hemos dicho, cuando utilizamos
+``newtype``, Haskell puede representar internamente los valores del nuevo
+tipo como si se tratasen del original. No tiene que añadir ningún envoltorio a
+estos valores, simplemente debe tener en cuenta de que poseen un tipo
+distinto. Y como Haskell sabe que los tipos definidos con la palabra clave
+``newtype`` solo pueden tener un constructor de datos, no tiene porque evaluar
+el parámetro pasado a la función para estar seguro de que se ajusta al patrón
+``(CoolBool _)`` ya que los tipos ``newtype`` solo pueden tener un constructor
+de datos con un solo campo. 
+
+Esta diferencia de comportamiento puede parecer trivial, pero en realidad es
+muy importante ya que nos ayuda a entender que aunque los tipos definidos con
+``data`` y ``newtype`` se comportan de forma muy similar desde el punto de
+vista de un programador, en realidad son dos mecanismos diferentes. Mientras
+``data`` se puede utilizar para crear nuestros propios tipos de datos desde
+cero, ``newtype`` sirve para crear un tipo completamente nuevo a partir de uno
+ya existente. Cuando utilizamos un ajuste de patrones con un tipo ``newtype``
+no estamos extrayendo ningún dato de él (como ocurriría con ``data``), sería
+más bien como una conversión directa entre un dato y otro.
+
+
+type vs. newtpe vs. data
+''''''''''''''''''''''''
+
+Llegados a este punto, quizás estés algo confundido sobre que diferencias
+existen entre ``type``, ``data`` y ``newtype``. Vamos a refrescar la memoria.
+
+La palabra clave ``type`` se utiliza para crear sinónimos. Básicamente lo que
+hacemos es dar otro nombre a un tipo que ya existe de forma que nos sea más
+fácil referirnos a él. Por ejemplo: ::
+
+    type IntList = [Int]  
+    
+Todo lo que hace es permitirnos llamar al tipo ``[Int]`` como ``IntList``. Se
+puede utilizar indistintamente. No obtenemos ningún constructor de datos nuevo
+a partir de ``IntList`` ni nada por el estilo. Como ``[Int]`` y ``IntList``
+son dos formas de referirse al mismo tipo, no importa que nombre usemos en las
+declaraciones de tipo: ::
+
+    ghci> ([1,2,3] :: IntList) ++ ([1,2,3] :: [Int])  
+    [1,2,3,1,2,3]
+    
+Utilizamos los sinónimos de tipos cuando queremos que nuestras declaraciones
+de tipo sean más descriptivas, de forma que los sinónimos que demos expliquen
+algo acerca de su propósito en un determinado contexto. Por ejemplo, si
+utilizamos listas de asociación del tipo ``[(String,String)]`` para
+representar una agenda telefónica, podemos darle el sinónimo de tipo
+``PhoneBook`` de forma que las declaraciones de tipo de las funciones sean más
+legibles.
+
+La palabra clave ``newtype`` se utiliza para crear nuevos tipos a partir de
+uno ya existente. Su uso es común para facilitar la declaración de ciertas
+instancias de clases de tipos. Cuando utilizamos ``newtype`` con un tipo ya
+existente, el tipo que obtenemos es diferente del original. Si tenemos el
+siguiente tipo: ::
+
+    newtype CharList = CharList { getCharList :: [Char] }  
+    
+No podemos utilizar ``++`` para concatenar un ``CharList`` con un ``[Char]``.
+Ni siquiera podemos utilizar ``++`` para concatenar dos ``CharList`` porque
+``++`` solo funciona con listas. ``CharList`` no es una lista, incluso aunque 
+sepamos que contiene una. Sin embargo, podemos convertir dos ``CharList`` en
+listas, luego utilizar ``++`` con ellas y más tarde convertir el resultado en
+un ``CharList``.
+
+Cuando utilizamos la sintaxis de registro en las declaraciones ``newtype``,
+obtenemos funciones para convertir ente el nuevo tipo y el original. El nuevo
+tipo no posee automáticamente las instancias para clases de tipos de las que
+formaba parte el tipo original, así que tenemos que derivarlas manualmente.
+
+En la practica, puedes considerar las declaraciones de tipo ``newtype``
+iguales a las declaraciones ``data``, aunque solo puede tener un constructor
+de datos y un solo campo. Si te encuentras declarando un tipo como ese,
+plantéate utilizar ``newtype`` en lugar de ``type``.
+
+La palabra clave ``data`` la utilizamos para crear nuestros propios tipos de
+datos, y podemos hacer lo que se nos antoje con ellos. Pueden tener tantos
+constructores de datos y tantos campos como quieras y se pueden utilizar para
+implementar cualquier tipo de dato algebraico. Cualquier cosa, desde listas
+hasta tipos como ``Maybe`` o árboles.
+
+Si quieres que las declaraciones de tipo sean más descriptivas y legibles,
+probablemente lo que estés buscando sean los sinónimos de tipos. Si lo que
+quieres es crear un nuevo tipo que contenga a otro para poder declarar una
+instancia de una clase de tipos, seguramente quieras utilizar ``newtype``. Y
+si lo que quieres es crear algo completamente nuevo, apostaría a que debes
+utilizar ``data``. 
+
+
+
 
 
 

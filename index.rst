@@ -9,9 +9,11 @@
          instancia, tipo o ley nueva.
    TODO: Currarse un parser para GHCi
    TODO: Cambiar todas las "librería" por "biblioteca"
-   TODO: ¿Cambiar todos los zip / unión, por cierre?
+   TODO: ¿Cambiar todos los zip / unión, por cierre? Habrá que buscar en el
+         original por "zip" ya que ha traducido como unión, etc.
    TODO: Revisar lo de tipo / declaración de tipo
    TODO: ¿Cambiar computación por cómputo? (refiriéndose a cálculo)
+   TODO: Parámetros de tipo /= campos ("parámetros del constructor")
    
 .. toctree::
    :maxdepth: 2
