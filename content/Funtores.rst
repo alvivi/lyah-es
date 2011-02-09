@@ -1452,6 +1452,212 @@ uniforme con cualquier número de funtores aplicativos y tomar ventaja de la
 semántica de cada uno.
  
 
+La palabra clave newtype
+------------------------
 
- 
+
+.. image:: /images/maoi.png
+   :align: left
+   :alt: ¿Por qué estas tan serio?
+
+Hasta ahora hemos creado nuestros propios tipos de datos algebraicos
+utilizando el palabra clave ``data``. También hemos visto como dar sinónimos
+de tipos ya existentes utilizando la palabra clave ``type``. En esta sección,
+veremos como crear nuevos tipos de datos a partir de tipos datos ya existentes
+utilizando la palabra clave ``newtype`` y el porqué de hacerlo de este modo.
+
+En la sección anterior vimos que en realidad hay más de una forma para que una
+lista sea un funtor aplicativo. Una manera es que ``<*>`` tome cada función de
+la lista que se le pasa como parámetro izquierdo y la aplique a cada valor que
+contenga la lista de la derecha, de forma que devuelva todas las posibles
+combinaciones de aplicar una función de la izquierda con un valor de la
+derecha. 
+
+.. code-block:: console
+
+    ghci> [(+1),(*100),(*5)] <*> [1,2,3]  
+    [2,3,4,100,200,300,5,10,15]
     
+La segundo forma es que tome la primera función de la lista de la izquierda de
+``<*>`` y la aplique a el primer valor de la lista de la derecha, luego tomará
+la segunda función de la lista izquierda y la aplicara al segundo valor de la
+lista derecha, y así sucesivamente. Al final es algo como unir dos listas en
+una. Pero las listas ya tienen una instancia para ``Applicative``, así que
+¿Cómo hemos creado una segunda instancia de ``Applicative``? Si haces memoria,
+recordarás que dijimos que el tipo ``ZipList a`` se utilizaba por este motivo,
+el cual tiene un constructor de datos, ``ZipList``, con un solo campo. Pusimos
+la lista con la que íbamos a trabajar en ese campo. Luego, como ``ZipList``
+tenia su propia instancia de ``Applicative``, el comportamiento de las listas
+como funtores aplicativos era diferente. Solo teníamos que utilizar el
+constructor ``ZipList`` con la lista y cuando termináramos debíamos usar
+``getZipList`` para recuperarla.
+
+.. code-block:: console
+
+    ghci> getZipList $ ZipList [(+1),(*100),(*5)] <*> ZipList [1,2,3]  
+    [2,200,15]
+    
+Y bien ¿Qué tiene que ver todo esto con la palabra clave ``newtype``? Bueno,
+piensa un poco en como deberíamos declarar el tipo de datos ``ZipList a``. Una
+forma sería así: ::
+
+    data ZipList a = ZipList [a]  
+    
+Un tipo que solo tiene un constructor de datos y este constructor solo tiene
+un campo el cual es una lista de cosas. También podríamos utiliza la sintaxis
+de registro para obtener de forma automática una función que extraiga la lista
+de un ``ZipList``: ::
+
+    data ZipList a = ZipList { getZipList :: [a] }  
+    
+Todo esto parece correcto y de hecho funciona bien. Simplemente hemos
+utilizado la palabra clave ``data`` para insertar un tipo dentro dentro de
+otro y así poder crear una segunda instancia de el tipo original.
+
+En Haskell, la palabra clave ``newtype`` se utiliza exactamente para estos
+casos en los que simplemente queremos insertar un tipo dentro de otro para que
+parezca un tipo distinto. En realidad, ``ZipList`` se define así: ::
+
+    newtype ZipList a = ZipList { getZipList :: [a] }  
+    
+Se utiliza ``newtype`` en lugar de ``data``. Y ¿Por qué? Te estarás
+preguntando. Muy sencillo, ``newtype`` es más rápido. Si utilizamos la palabra
+clave ``data`` para insertar un tipo dentro de otro, se genera cierta
+sobrecarga cuando el programa se ejecuta debido a las operaciones que insertan
+y extraen el tipo. Pero si utilizamos ``newtype``, Haskell sabe que lo estamos
+utilizando para insertar un tipo existente en un nuevo tipo (de ahí viene el
+nombre). En realidad lo que buscamos es que internamente sean iguales pero que
+su tipo sea distinto. Teniendo esto en cuenta, Haskell puede deshacerse de las
+operaciones de inserción y extracción una vez sepa de que tipo es cada valor.
+ 
+Entonces ¿Por qué no utilizamos siempre ``newtype`` en lugar de ``data``?
+Cuando creamos un nuevo tipo a partir de uno ya existente utilizando la
+palabra clave ``newtype``, solo podemos utilizar un constructor de datos y
+éste solo puede tener un campo. Mientras que con ``data`` podemos tener varios
+constructores de datos y cada uno de ellos con cero o varios campos. ::
+
+    data Profession = Fighter | Archer | Accountant  
+
+    data Race = Human | Elf | Orc | Goblin  
+
+    data PlayerCharacter = PlayerCharacter Race Profession
+    
+Cuando utilizamos ``newtype`` estamos restringidos a utilizar a utilizar un
+solo constructor con un solo campo.
+
+También podemos utilizar la palabra clave ``deriving`` con ``newtype`` de la
+misma forma que hacemos con ``data``. Podemos derivar las instancias de
+``Eq``, ``Ord``, ``Enum``, ``Bounded``, ``Show`` y ``Read``. Si derivamos la
+instancia de una clase de tipos, el tipo original tiene que ser miembro de
+dicha clase de tipos. Tiene sentido, ya que ``newtype`` solo sustituye a un
+tipo existente. Si tenemos el siguiente código, podríamos mostrar por pantalla
+y equiparar valores del nuevo tipo: ::
+
+    newtype CharList = CharList { getCharList :: [Char] } deriving (Eq, Show)  
+    
+Vamos a probarlo: 
+
+.. code-block:: console
+
+    ghci> CharList "this will be shown!"  
+    CharList {getCharList = "this will be shown!"}  
+    ghci> CharList "benny" == CharList "benny"  
+    True  
+    ghci> CharList "benny" == CharList "oisters"  
+    False
+
+En este caso en particular, el constructor de datos tiene el siguiente tipo:
+::
+    
+    CharList :: [Char] -> CharList  
+    
+Toma un valor del tipo ``[Char]``, como ``"My Sharona"`` y devuelve un valor
+del tipo ``CharList``. En el ejemplo anterior lo podemos ver en
+funcionamiento. Po el contrario, la función ``getCharList``, que ha sido
+generada automáticamente gracias al uso de la sintaxis de registro, tiene este
+tipo: ::
+
+    getCharList :: CharList -> [Char]  
+    
+Toma un valor del tipo ``CharList`` y devuelve uno del tipo ``[Char]``. Estas
+son las operaciones de inserción y extracción de las que antes hablábamos,
+aunque también puedes verlo como una transformación de un tipo a otro. Gracias
+a las propiedades de ``newtype``, estas operaciones no tendrán ningún coste
+en tiempo de ejecución. 
+
+
+Utilizando newtype para crear instancias de clase
+'''''''''''''''''''''''''''''''''''''''''''''''''
+
+A menudo queremos crear instancias de nuestros tipos para ciertas clases
+de tipos, pero los parámetros de tipo no encajan en lo que queremos hacer. Es
+muy fácil crear una instancia de ``Maybe`` para ``Functor``, ya que la clase
+de tipos ``Functor`` se define como: ::
+
+    class Functor f where  
+        fmap :: (a -> b) -> f a -> f b
+        
+Así que simplemente tenemos que hacer esto: ::
+
+    instance Functor Maybe where   
+    
+E implementar ``fmap``. Todos los parámetros de tipo encajan porque ``Maybe``
+toma el lugar de ``f`` en la definición de la clase de tipos ``Functor``, de
+forma que si vemos el tipo de ``fmap`` como si solo funcionara para ``Maybe``
+quedaría así: ::
+
+    fmap :: (a -> b) -> Maybe a -> Maybe b  
+    
+.. image:: /images/krakatoa.png
+   :align: right
+   :alt: ¡Muy peligroso!
+ 
+Ahora ¿Qué pasaría si quisiéramos crear una instancia para ``Functor`` para 
+las duplas de forma que cuando utilizamos ``fmap`` con una función sobre una
+dupla, se aplicara la función al primer componente de la dupla? De este modo,
+si hiciéramos algo como ``fmap (+3) (1,1)`` obtendríamos ``(4,1)``. Pues
+resulta que escribir una instancia para lograr este comportamiento no es tan
+sencillo. Con ``Maybe`` solo teníamos que utilizar
+``instance Functor Maybe where`` porque solo los constructores de tipos que
+toman exactamente un parámetro pueden crear una instancia para la clase
+``Functor``. Pero parece que no hay ninguna forma de hacer que algo como que
+el parámetro ``a`` de ``(a,b)`` acabe siendo el que cambie cuando utilicemos
+``fmap``. Para solucionarlo, podemos utilizar ``newtype`` con las duplas de
+forma que el segundo parámetro de tipo represente el primer parámetro de tipo
+de las duplas: ::
+
+    newtype Pair b a = Pair { getPair :: (a,b) }  
+    
+Y ahora podemos hacer la instancia para ``Functor`` de forma que la función
+sea aplicada únicamente en la primera componente: ::
+
+    instance Functor (Pair c) where  
+        fmap f (Pair (x,y)) = Pair (f x, y)
+        
+Como puede observar, podemos utilizar el ajuste de patrones con tipos
+definidos con ``newtype``. Utilizamos el ajuste de patrones para obtener la
+dupla subyacente, luego aplicamos la función ``f`` al primer componente de la
+tupla y luego utilizamos el constructor de datos ``Pair`` para convertir la
+tupla de nuevo al tipo ``Pair b a``. El tipo de ``fmap`` restringido al nuevo
+tipo quedaría así: ::
+
+    fmap :: (a -> b) -> Pair c a -> Pair c b  
+    
+De nuevo, hemos utilizado ``instance Functor (Pair c) where`` así que 
+``(Pair c)`` toma el lugar de ``f`` en la definición de clase de ``Functor``:
+::
+
+    class Functor f where  
+        fmap :: (a -> b) -> f a -> f b
+        
+Ahora podemos convertir una dupla en un ``Pair b a``, y utilizar ``fmap`` 
+sobre ella de forma que la función solo se aplique a la primera componente: ::
+
+    ghci> getPair $ fmap (*100) (Pair (2,3))  
+    (200,3)  
+    ghci> getPair $ fmap reverse (Pair ("london calling", 3))  
+    ("gnillac nodnol",3)
+    
+
+
+
