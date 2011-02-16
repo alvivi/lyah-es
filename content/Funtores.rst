@@ -1831,7 +1831,511 @@ si lo que quieres es crear algo completamente nuevo, apostaría a que debes
 utilizar ``data``. 
 
 
+Monoides
+--------
 
 
+.. image:: /images/pirateship.png
+   :align: right
+   :alt: Probablemente el barco pirata más inofensivo.
+   
+En Haskell, las clases de tipos se utilizan crear una interfaz de un
+comportamiento que comparten varios tipos. Empezamos viendo la sencillas
+clases de tipos, como ``Eq``, que representa los tipos que pueden ser
+equiparados, o ``Ord``, que representa los tipos cuyos valores pueden ser
+puestos en un determinado orden. Luego continuamos viendo clases de tipos más
+interesantes, como ``Functor`` o ``Applicative``.
+
+Cuando creamos un tipo debemos pensar en que comportamientos debe soportar,
+es decir, pensar si puede actuar como esos comportamientos, y luego decidir si
+es oportuno crear una instancia de estos. Si tiene sentido que los valores de
+un determinado tipo sean equiparados, entonces creamos una instancia de ``Eq``
+para ese tipo. Si vemos que un tipo es un especie de funtor, podemos crear una
+instancia de ``Functor``, y así sucesivamente.
+
+Ahora consideremos esto: la función ``*`` toma dos números y los multiplica.
+Si multiplicamos un número por ``1``, el resultado es siempre igual a ese
+número. No importa si hacemos ``1 * x`` o ``x * 1``, el resultado es siempre
+el mismo. De forma similar, ``++`` también es una función que toma dos
+parámetros y devuelve una tercera. Solo que en lugar de multiplicar números,
+toma dos listas y las concatena. Al igual que pasaba con ``*``, ``++`` también
+posee un valor que hará que el resultado final solo dependa del otro valor. En
+este caso el valor es la lista vacía, ``[]``.
+
+.. code-block:: console
+
+    ghci> 4 * 1  
+    4  
+    ghci> 1 * 9  
+    9  
+    ghci> [1,2,3] ++ []  
+    [1,2,3]  
+    ghci> [] ++ [0.5, 2.5]  
+    [0.5,2.5]
+    
+Parece que tanto ``*`` junto a ``1`` como ``++`` junto a ``[]`` comparten
+ciertas propiedades:
+
+ * La función toma dos parámetros.
+ * Los parámetros y el valor de retorno comparten el mismo tipo.
+ * Existe un valor que hará que el resultado de la función binaria solo
+   dependa del otro parámetro.
+
+Existe también otra propiedad que ambos comparte pero que quizá no sea tan
+obvia: cuando tenemos tres o mas valores y queremos utilizar la función
+binaria para reducirlos a un solo valor, el orden en el que apliquemos la
+función binaria no importa. No importa si hacemos ``(3 * 4) * 5`` o
+``3 * (4 * 5)``, al final el resultado será ``60``. Lo mismo ocurre para
+``++``:
+
+.. code-block:: console
+
+    ghci> (3 * 2) * (8 * 5)  
+    240  
+    ghci> 3 * (2 * (8 * 5))  
+    240  
+    ghci> "la" ++ ("di" ++ "da")  
+    "ladida"  
+    ghci> ("la" ++ "di") ++ "da"  
+    "ladida"
+
+Llamamos a esta propiedad *asociatividad*. ``*`` es asociativa, y también lo
+es ``++``, pero ``-``, por ejemplo, no lo es. Las expresiones ``(5 - 3) - 4``
+y ``5 - (3 - 4)`` tienen resultados diferentes. 
+
+Si observamos estas propiedades nos encontraremos con los *monoides*. Un
+monoide es cuando tienes una función binaria asociativa y valor que actúa como
+identidad respecto a esa función. Cuando se dice que un valor actúa como
+identidad respecto a una función significa que, cuando se utiliza en esa
+función junto con otro valor, el resultado siempre siempre es igual al otro
+valor. ``1`` es la identidad respecto a ``*`` y ``[]`` es la identidad
+respecto a ``++``. En el mundo de Haskell existen muchos más monoides y por
+este motivo existe la clase de tipos ``Monoid``. Es para tipos que pueden
+actuar como monoides. Vamos a ver como se define: ::
+
+    class Monoid m where  
+        mempty :: m  
+        mappend :: m -> m -> m  
+        mconcat :: [m] -> m  
+        mconcat = foldr mappend mempty
+        
+.. image:: /images/balloondog.png
+   :align: right
+   :alt: ¡Wau wau!
+   
+La clase ``Monoid`` está definida en ``Data.Monoid``. Vamos a tomarnos un rato
+para familiarizarnos con ella. 
+
+Antes de nada, podemos ver que solo los tipo concretos pueden tener una
+instancia de ``Monoid``, ya que ``m``, en la definición de la clase, no toma 
+ningún parámetro de tipo. Es diferente de lo que sucede con ``Functor`` y
+``Applicative``, ya que sus instancias requieren que los constructores de
+tipos tomen un parámetro.
+
+La primera función es ``mempty``. En realidad no es un función porque no toma
+ningún parámetro, así que es una constante polimórfica, parecido a 
+``minBound`` o ``maxBound``. ``mempty`` representa el valor identidad para
+un determinado monoide.
+
+A continuación tenemos ``mappend``, que, como ya habrás adivinado, es la
+función binaría. Toma dos parámetros del mismo tipo y devuelve un valor del
+mismo tipo también. La decisión de llamar a esta función ``mappend`` (añadir)
+no fue la más correcta, ya que implica que de algún modo vamos añadir dos
+cosas. Mientras que ``++`` toma dos listas y añade una a la otra, ``*`` no
+añade nada, simplemente multiplica dos números. Cuando veamos más instancias
+de ``Monoid``, veremos que muchas de ellas tampoco añaden valores con esta
+función, así que evita pensar en términos de añadir y piensa que ``mappend``
+es la función binaria del monoide.
+
+La última función definida por esta clase de tipos es ``mconcat``. Toma una
+lista de monoides y la reduce y la reduce a uno solo valor aplicando
+``mappend`` entre los elementos de la lista. Posee una implementación por
+defecto, que toma ``mempty`` como valor inicial y pliega la lista por la
+derecha con la función ``mappend``. Como la implementación por defecto de
+``mconcat`` es válida para la mayoría de la instancias, no nos vamos a 
+preocupar mucho por ella. Cuando creamos una instancia de ``Monoid`` basta
+con implementar ``mempty`` y ``mappend``. La razón por la que ``mconcat`` se
+encuentra en la declaración de clase es que para ciertas instancias, puede
+que exista una forma más eficiente de implementar ``mconcat``, pero para la
+mayoría de la instancias la implementación por defecto es perfecta.
+
+Antes de ver algunas de las instancias de ``Monoid``, vamos a echar un pequeño
+vistazo a las leyes de los monoides. Hemos mencionado que debe existir un
+valor que actúe como identidad con respecto a la función binaria y que dicha
+función debe ser asociativa. Es posible crear instancias de ``Monoid`` que no
+sigan estas reglas, pero estas instancias no serán útiles para nadie ya que
+cuando utilizamos la clase ``Monoid``, confiamos en que estas instancias se
+comporten como monoides De otro modo, ¿qué sentido tendría todo eso? Por esta
+razón, cuando creamos instancias debemos asegurarnos de cumplir estas leyes:
+
+ * :js:data:`mempty \`mappend\` x = x` 
+ * :js:data:`x \`mappend\` mempty = x` 
+ * :js:data:`(x \`mappend\` y) \`mappend\` z = x \`mappend\` (y \`mappend\` z)` 
+
+Las primeras dos leyes establecen que ``mempty`` debe actuar como identidad
+respecto a ``mappend`` y la tercera dice que ``mappend`` debe ser asociativa,
+es decir, que el orden en el que utilicemos ``mappend`` para reducir varios
+valores de un monoide en uno no debe importar. Haskell no comprueba estas
+leyes, así que nosotros como programadores debemos ser cautelosos y
+asegurarnos de obedecer estas leyes.
+
+
+Las listas son monoides
+'''''''''''''''''''''''
+
+¡Sí, las listas son monoides! Como ya hemos visto, la función ``++`` y la
+lista vacía ``[]`` forman un monoide. La instancia es muy simple: ::
+
+    instance Monoid [a] where  
+        mempty = []  
+        mappend = (++)
+        
+Las listas poseen su propia instancia para la clase de tipos ``Monoid``
+independientemente del tipo de dato que alberguen. Fíjate que hemos utilizado
+``instance Monoid [a]`` y no ``instance Monoid []``, ya que ``Monoid``
+requiere un tipo concreto para formar la instancia.
+
+Si realizamos algunas pruebas no nos encontraremos ninguna sorpresa:
+    
+.. code-block:: console
+
+    ghci> [1,2,3] `mappend` [4,5,6]  
+    [1,2,3,4,5,6]  
+    ghci> ("one" `mappend` "two") `mappend` "tree"  
+    "onetwotree"  
+    ghci> "one" `mappend` ("two" `mappend` "tree")  
+    "onetwotree"  
+    ghci> "one" `mappend` "two" `mappend` "tree"  
+    "onetwotree"  
+    ghci> "pang" `mappend` mempty  
+    "pang"  
+    ghci> mconcat [[1,2],[3,6],[9]]  
+    [1,2,3,6,9]  
+    ghci> mempty :: [a]  
+    []
+    
+.. image:: /images/smug.png
+   :align: left
+   :alt: ¡Presumiendo!
+   
+Fíjate en la última línea, hemos tenido que usar una anotación de tipo
+explícita, ya que si solo hubiésemos puesto ``mempty``, ``GHCi`` no sabría que
+instancia usar así que tenemos que especificar que queremos utilizar la
+instancia de las listas. Hemos sido capaces de utilizar un tipo general como
+``[a]`` (en lugar de especificar un tipo concreto como ``[Int]`` o
+``[String]``) porque las listas vacías puede actuar como si contuvieran
+cualquier tipo.
+
+Como ``mconcat`` tiene una implementación por defecto, obtenemos esta función
+automáticamente cuando creamos una instancia de ``Monoid``. En el caso de las
+listas`,` ``mconcat`` se comporta igual que ``concat``. Toma una lista de
+listas y las une utilizando ``++`` entre entre las listas adyacentes
+contenidas en la lista.
+
+Las leyes de los monoides se cumplen para la instancia de las listas. Cuando
+tenemos varias listas y utilizamos ``mappend`` (o ``++``) para unirlas, no
+importa que unión hagamos primero, ya que al final acabaran siendo unidas de
+todas formas. También, la lista vacía actúa como identidad. Ten en cuenta que
+los monoides no requieren que ``a `mappend` b`` sea igual a
+``b `mappend` a`` (es decir, no son conmutativos). En el caso de las listas,
+se puede observar fácilmente: ::
+
+    ghci> "one" `mappend` "two"  
+    "onetwo"  
+    ghci> "two" `mappend` "one"  
+    "twoone"
+    
+No pasa nada. El hecho de que la multiplicación ``3 * 5`` y ``5 * 3`` tengan
+el mismo resultado es solo una propiedad de la multiplicación, pero no tiene
+porque cumplirse para los monoides.
+
+
+``Product`` y ``Sum``
+'''''''''''''''''''''
+
+Ya hemos visto una forma de que los números sean considerados monoides, con la
+función ``*`` y la identidad ``1``. Resulta que no es la única forma de que
+los números formen un monoide. Otra forma sería utilizando la función binaria
+``+`` y como identidad ``0``:
+
+.. code-block:: console
+
+    ghci> 0 + 4  
+    4  
+    ghci> 5 + 0  
+    5  
+    ghci> (1 + 3) + 5  
+    9  
+    ghci> 1 + (3 + 5)  
+    9
+
+La leyes de los monoides se cumplen. Si sumamos a un número 0, el resultado es
+ese número. Además la suma también es asociativa, así que no tenemos ningún
+problema. Entonces tenemos dos formas de que los números sean monoides,
+¿cuál elegimos? Bueno, no tenemos porque elegir. Recuerda, cuando existen
+varias instancias de un tipo válidas para una misma clase de tipos, podemos
+utilizar ``newtype`` con ese tipo y crear una instancia para cada
+comportamiento.
+
+En este caso el módulo ``Data.Monoid`` exporta dos tipos, llamados ``Product``
+y ``Sum``. ``Product`` se define así: ::
+
+    newtype Product a =  Product { getProduct :: a }  
+        deriving (Eq, Ord, Read, Show, Bounded)
+        
+Simple, es solo un tipo ``newtype`` con un parámetro de tipo y algunas clases
+derivadas. Su instancia para la clase ``Monoid`` es esta: ::
+
+    instance Num a => Monoid (Product a) where  
+        mempty = Product 1  
+        Product x `mappend` Product y = Product (x * y)
+        
+``mempty`` es simplemente un ``1`` envuelto en el constructor ``Product``. El
+patrón de ``mappend`` se ajusta al constructor ``Product``, multiplica los dos
+números y devuelve el resultado como ``Product``. Como puedes ver, existe una
+restricción de clase ``Num a``. Esto quiere decir que ``Product a`` tendrá una
+instancia para ``Monoid`` siempre que ``a`` sea miembro de la clase ``Num``.
+Para utilizar ``Product a`` como monoide, tenemos que introducir y extraer los
+valores:
+
+.. code-block:: console
+
+    ghci> getProduct $ Product 3 `mappend` Product 9  
+    27  
+    ghci> getProduct $ Product 3 `mappend` mempty  
+    3  
+    ghci> getProduct $ Product 3 `mappend` Product 4 `mappend` Product 2  
+    24  
+    ghci> getProduct . mconcat . map Product $ [3,4,2]  
+    24
+    
+Es bonito como ejemplo de la clase de tipos ``Monoid``, pero nadie en su sano
+juicio utilizaría esta forma para multiplicar números en lugar de escribir
+``3 * 9`` y ``3 * 1``. Aún así, dentro de poco veremos como estas instancias
+de ``Monoid`` que parece triviales ahora pueden ser muy útiles.
+
+``Sum`` se define como ``Product`` y su instancia es similar. Lo utilizamos
+del mismo modo: 
+
+.. code-block:: console
+
+    ghci> getSum $ Sum 2 `mappend` Sum 9  
+    11  
+    ghci> getSum $ mempty `mappend` Sum 3  
+    3  
+    ghci> getSum . mconcat . map Sum $ [1,2,3]  
+    6
+
+
+``Any`` y ``All``
+'''''''''''''''''
+
+Otro tipo que puede comportarse como un monoide de dos formas diferentes y
+válidas es ``Bool``. La primera forma es tener la función lógica *O* ``||``
+como función binaria junto al valor ``False`` como identidad. La función
+lógica *O* devuelve ``True`` si alguno de sus dos parámetros es ``True``,
+en caso contrario devuelve ``False``. Así que si utilizamos ``False`` como 
+valor identidad, la función binaria devolverá ``False`` si su otro parámetro
+es ``False`` y ``True`` si su otro parámetro es ``True``. El constructor
+``newtype`` ``Any`` tiene una instancia para ``Monoid``. Se define así: ::
+
+    newtype Any = Any { getAny :: Bool }  
+        deriving (Eq, Ord, Read, Show, Bounded)
+        
+Y la instancia así: ::
+
+    instance Monoid Any where  
+            mempty = Any False  
+            Any x `mappend` Any y = Any (x || y)
+            
+La razón por la que se llama ``Any`` (*Algún*) es porque devuelve ``True`` si
+*alguno* de sus parámetros es ``True``. Aunque tres o más valores ``Bool``
+envueltos en ``Any`` sean reducidos con ``mappend``, el resultado se
+mantendrá a ``True`` si alguno de ellos es ``True``:
+
+.. code-block:: console
+
+    ghci> getAny $ Any True `mappend` Any False  
+    True  
+    ghci> getAny $ mempty `mappend` Any True  
+    True  
+    ghci> getAny . mconcat . map Any $ [False, False, False, True]  
+    True  
+    ghci> getAny $ mempty `mappend` mempty  
+    False
+    
+La otra forma de que ``Bool`` sea miembro de la clase ``Monoid`` es la
+contraría: tener ``&&`` como función binaría y ``True`` como valor identidad.
+La función lógica *Y* devuelve ``True`` solo si ambos parámetros son ``True``.
+Aquí tienes la declaración de ``newtype``: ::
+
+    newtype All = All { getAll :: Bool }  
+            deriving (Eq, Ord, Read, Show, Bounded)
+            
+Y la instancia es: ::
+
+    instance Monoid All where  
+            mempty = All True  
+            All x `mappend` All y = All (x && y)
+            
+Cuando utilizamos ``mappend`` con tipos ``All``, el resultado será ``True``
+solo si todos los valores son ``True``:
+
+.. code-block:: console
+
+    ghci> getAll $ mempty `mappend` All True  
+    True  
+    ghci> getAll $ mempty `mappend` All False  
+    False  
+    ghci> getAll . mconcat . map All $ [True, True, True]  
+    True  
+    ghci> getAll . mconcat . map All $ [True, True, False]  
+    False
+    
+Al igual que la multiplicación y la suma, normalmente especificamos
+explícitamente la función binaria en lugar de introducir los datos en un tipo
+``newtype`` para luego utilizar ``mappend``. ``mconcat`` parece útil para
+``Any`` y ``All``, pero normalmente es más fácil usar las funciones ``or`` o
+``and``, las cuales toman una lista de ``Bool`` y devuelven ``True`` si hay
+algún ``True`` o ``True`` si todos los son, respectivamente.
+
+
+El monoide ``Ordering``
+'''''''''''''''''''''''
+
+¿Recuerdas el tipo ``Ordering``? Se utiliza como resultado al comparar cosas y
+tiene tres posibles valores: ``LT``, ``EQ`` y ``GT``, cuyo significado es
+*menor que*, *igual que* y *mayor que* respectivamente:
+
+.. code-block:: console
+
+    ghci> 1 `compare` 2  
+    LT  
+    ghci> 2 `compare` 2  
+    EQ  
+    ghci> 3 `compare` 2  
+    GT
+    
+Con las listas, los números, los valores booleanos simplemente era cuestión de
+buscar una función ya existente que mostrara un comportamiento de monoide. Con
+``Ordering`` tenemos que buscar más detalladamente para encontrar el monoide,
+pero resulta que su instancia de ``Monoid`` es tan intuitiva como las otras
+que ya hemos visto: ::
+
+    instance Monoid Ordering where  
+        mempty = EQ  
+        LT `mappend` _ = LT  
+        EQ `mappend` y = y  
+        GT `mappend` _ = GT
+        
+.. image:: /images/bear.png
+   :align: right
+   :alt: ¿Alguien pidio una pizza?
+   
+La instancia funciona de este modo: cuando aplicamos ``mappend`` a dos valores
+``Ordering``, el valor de la izquierda se mantiene como resultado, a no ser
+que dicho valor sea ``EQ``, en cuyo el resultado será el valor de la derecha.
+La identidad es ``EQ``. A primera vista puede parecer un poco arbitrario, pero
+en realidad se asemeja a la forma en la que comparamos las palabras por orden
+alfabético. Comparamos las dos primeras letras y si son diferentes ya podemos
+decidir cual irá primero en el diccionario. Sin embargo, si las primeras dos
+letras son iguales, tenemos que comparar el siguiente par de letras y repetir
+el proceso.
+
+Por ejemplo, si comparamos alfabéticamente las palabras ``"le"`` y ``"la"``,
+primero comparamos las primeras letras de ambas palabras, al comprobar que son
+iguales continuamos con las segundas letras de cada palabra. Vemos que ``'e'``
+es alfabéticamente mayor que ``'a'`` y de este modo obtenemos el resultado.
+Para aclarar porque ``EQ`` es la identidad, podemos ver que en caso de
+comparar la misma letra en la misma posición de ambas palabras, ``EQ`` no
+cambiaría el resultado de su orden alfabético. ``"lxe"`` sigue siendo
+alfabéticamente mayor que ``"lxa"``.
+
+Es importante tener en cuenta que la instancia de ``Monoid`` para
+``Ordering``, ``x `mappend` y`` no es igual ``y `mappend` x``. Como el primer
+parámetro se mantiene como resultado a no ser que sea ``Eq``,  ``LT `mappend`
+GT`` devuelve ``LT``, mientras que ``GT `mappend` LT`` devuelve ``GT``: 
+
+.. code-block:: console
+
+    ghci> LT `mappend` GT  
+    LT  
+    ghci> GT `mappend` LT  
+    GT  
+    ghci> mempty `mappend` LT  
+    LT  
+    ghci> mempty `mappend` GT  
+    GT
+
+Vale, así que, ¿cuál es la utilidad de este monoide? Digamos que estamos
+escribiendo una función que toma dos cadenas, compara sus longitudes y
+devuelve un resultado del tipo ``Ordering``. Pero si las cadenas son del mismo
+tamaño, en lugar de devolver ``EQ``, las compara alfabéticamente. Una forma
+de escribir esto sería así: ::
+
+    lengthCompare :: String -> String -> Ordering  
+    lengthCompare x y = let a = length x `compare` length y   
+                            b = x `compare` y  
+                        in  if a == EQ then b else a
+                        
+Damos el nombre ``a`` al resultado de comparar las cadenas por sus longitudes
+y ``b`` al resultado de compararlas alfabéticamente. Si resulta que sus
+longitudes son idénticas, devolvemos ``b``.
+
+Pero ahora que sabemos que ``Ordering`` es un monoide, podemos reescribir esta
+función de una forma mucho más simple: ::
+
+    import Data.Monoid  
+
+    lengthCompare :: String -> String -> Ordering  
+    lengthCompare x y = (length x `compare` length y) `mappend`  
+                        (x `compare` y)
+                        
+Vamos a probarla:
+
+.. code-block:: console
+
+    ghci> lengthCompare "zen" "peces"  
+    LT  
+    ghci> lengthCompare "zen" "pez"  
+    GT
+
+Recuerda, cuando utilizamos ``mappend`` el parámetro izquierdo será el
+resultado a no ser que sea igual a ``Eq``, en cuyo caso el resultado será el
+parámetro derecho. Por esta razón ponemos la comparación que según nuestro 
+criterio es más importante como primer parámetro. Si queremos expandir esta
+función para que también compare por el número de vocales a modo de segundo
+criterio más importante, simplemente tenemos que modificarla así: ::
+
+    import Data.Monoid  
+
+    lengthCompare :: String -> String -> Ordering  
+    lengthCompare x y = (length x `compare` length y) `mappend`  
+                        (vowels x `compare` vowels y) `mappend`  
+                        (x `compare` y)  
+        where vowels = length . filter (`elem` "aeiou")
+
+Hemos creado una función auxiliar que toma una cadena y nos dice cuantas
+vocales tiene. Para ello filtra las letras que estén contenidas en la cadena
+``"aeiou"`` y luego aplica ``length``.
+
+.. code-block:: console
+    
+    ghci> lengthCompare "zen" "anna"  
+    LT  
+    ghci> lengthCompare "zen" "ana"  
+    LT  
+    ghci> lengthCompare "zen" "ann"  
+    GT
+    
+Genial. En el primer ejemplo vemos que si las longitudes de las cadenas son
+distintas devuelve ``LT``, ya que la longitud de ``"zen"`` es menor que la de
+``"anna"``. En el segundo ejemplo, las longitudes son iguales, pero la segunda
+cadena tiene más vocales, así que devuelve ``LT`` de nuevo. En el tercer
+ejemplo, ambas cadenas tienen la misma longitud y el mismo número de vocales,
+así que se comparan alfabéticamente y ``"zen"`` gana.
+
+El monoide ``Ordering`` es muy útil ya que nos facilita comparar cosas por
+varios criterios en un cierto orden, del más importante al menos importante.
 
 

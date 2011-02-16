@@ -14,6 +14,7 @@
    TODO: Revisar lo de tipo / declaración de tipo
    TODO: ¿Cambiar computación por cómputo? (refiriéndose a cálculo)
    TODO: Parámetros de tipo /= campos ("parámetros del constructor")
+   TODO: Revisar ¿?¡!. Pueden empezar en minúsculas si hay una coma antes.
    
 .. toctree::
    :maxdepth: 2
