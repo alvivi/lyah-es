@@ -15,6 +15,8 @@
    TODO: ¿Cambiar computación por cómputo? (refiriéndose a cálculo)
    TODO: Parámetros de tipo /= campos ("parámetros del constructor")
    TODO: Revisar ¿?¡!. Pueden empezar en minúsculas si hay una coma antes.
+   TODO: Capitulo 11: se utiliza a menudo ``monoide`` cuando en realidad
+         quiere decir valor monoidal.
    
 .. toctree::
    :maxdepth: 2

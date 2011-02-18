@@ -2339,3 +2339,296 @@ El monoide ``Ordering`` es muy útil ya que nos facilita comparar cosas por
 varios criterios en un cierto orden, del más importante al menos importante.
 
 
+El monoide ``Maybe``
+''''''''''''''''''''
+
+Vamos a ver varias formas en las que ``Maybe a`` puede actuar como un monoide
+y para que son útiles.
+
+Una forma sería tratar ``Maybe a`` como monoide solo si su parámetro de tipo
+``a`` es también un monoide, de forma que ``mappend`` se implemente utilizando
+``mappend`` con los valores contenidos en ``Just``.  Utilizamos ``Nothing``
+como identidad, de modo que si uno de los dos valores que pasamos a
+``mappend`` es ``Nothing``, el resultado será el otro valor. Así sería la
+declaración de la instancia: ::
+
+    instance Monoid a => Monoid (Maybe a) where  
+        mempty = Nothing  
+        Nothing `mappend` m = m  
+        m `mappend` Nothing = m  
+        Just m1 `mappend` Just m2 = Just (m1 `mappend` m2)
+        
+Fíjate en la restricción de clase. Dice que ``Maybe a`` tendrá una instancia
+de ``Monoid`` solo si ``a`` posee una instancia de ``Monoid``. Si aplicamos
+``mappend`` a algo y a ``Nothing``, el resultado será ese algo. Si aplicamos
+``mappend`` a dos valores ``Just``, se aplicará ``mappend`` al contenido de
+ambos valores y el resultado de dicha operación se introducirá en un valor
+``Just``. Somos capaces de realizar esta operación porque la restricción de
+clase nos asegura que el tipo que contiene los valores ``Just`` posee una
+instancia de ``Monoid``.
+
+.. code-block:: console
+
+    ghci> Nothing `mappend` Just "andy"  
+    Just "andy"  
+    ghci> Just LT `mappend` Nothing  
+    Just LT  
+    ghci> Just (Sum 3) `mappend` Just (Sum 4)  
+    Just (Sum {getSum = 7})
+    
+Este monoide es útil cuando estamos trabajando con resultados de cómputos que
+pueden fallar. Gracias a esta instancia, no nos tenemos que preocupar por
+comprobar si los cómputos han fallado y por lo tanto son ``Nothing`` o bien
+son ``Just``. Simplemente debemos tratarlos como valores normales.
+
+Pero, ¿qué sucede si el contenido de ``Maybe`` no forma parte de la clase
+``Monoid``? Si te fijas, en la declaración de la instancia anterior, el único
+lugar donde necesitábamos que los contenidos fueran monoides era cuando los
+dos parámetros de ``mappend`` eran ``Just``. Pero si desconocemos si los
+contenidos son monoides o no, no podemos utilizar ``mappend`` con ellos, así
+que, ¿qué podemos hacer? Bueno, una de las cosas que podemos hacer es
+descartar el segundo valor y quedarnos con el primero. Por este motivo existe
+el tipo ``First a`` y esta es su definición: ::
+
+    newtype First a = First { getFirst :: Maybe a }  
+        deriving (Eq, Ord, Read, Show)
+        
+Tomamos un tipo ``Maybe a`` y lo envolvemos en un ``newtype``. La instancia de
+``Monoid`` sería así: ::
+
+    instance Monoid (First a) where  
+        mempty = First Nothing  
+        First (Just x) `mappend` _ = First (Just x)  
+        First Nothing `mappend` x = x
+        
+Tal y como hemos dicho. ``mempty`` es simplemente ``Nothing`` dentro del
+constructor ``newtype`` ``First``. Si el primer parámetro de ``mappend`` es un
+valor ``Just`` ignoramos el segundo parámetro. Si el primer parámetro es
+``Nothing``, entonces damos el segundo parámetro como resultado,
+independientemente de que sea ``Nothing`` o ``Just``: 
+
+.. code-block:: console
+
+    ghci> getFirst $ First (Just 'a') `mappend` First (Just 'b')  
+    Just 'a'  
+    ghci> getFirst $ First Nothing `mappend` First (Just 'b')  
+    Just 'b'  
+    ghci> getFirst $ First (Just 'a') `mappend` First Nothing  
+    Just 'a'
+    
+``First`` es útil cuando tenemos un montón de valores ``Maybe`` y solamente
+queremos saber si alguno de ellos es ``Just``. La función ``mconcat`` será
+útil en esos momentos:
+
+.. code-block:: console
+
+    ghci> getFirst . mconcat . map First $ [Nothing, Just 9, Just 10]  
+    Just 9
+    
+Si queremos que un monoide ``Maybe a`` conserve el segundo parámetro cuando
+se aplica ``mappend`` sobre dos valores ``Just`` en lugar del primero,
+``Data.Monoid`` proporciona el tipo ``Last a`` que funciona igual que
+``First a``, solo que el último valor no ``Nothing`` se mantiene como
+resultado cuando se utiliza ``mappend`` o ``mconcat``:
+
+.. code-block:: console
+
+    ghci> getLast . mconcat . map Last $ [Nothing, Just 9, Just 10]  
+    Just 10  
+    ghci> getLast $ Last (Just "one") `mappend` Last (Just "two")  
+    Just "two"
+    
+
+Utilizando monoides para plegar estructuras de datos
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Una de las formas más interesante de utilizar los monoides es para que nos
+ayuden a la hora de definir pliegues sobre estructuras de datos. Hasta ahora
+solo hemos utilizados pliegues sobre listas, pero las listas no son el único
+tipo de dato que se puede plegar. Podemos definir pliegues sobre casi
+cualquier tipo de estructura. Lo árboles, por ejemplo, encajan perfectamente
+con este concepto.
+
+Debido a que existen tantos tipos de datos que funcionan perfectamente con los
+pliegues, utilizamos la clase de tipos :cpp:class:`Foldable`. De la misma
+forma ``Functor`` es para cosas que pueden ser mapeadas, ``Foldable`` es para
+cosas que puede ser plegadas. Se encuentra en ``Data.Foldable`` y como exporta
+funciones con nombres iguales a funciones residentes en ``Prelude``, se mejor
+importarlo cualificado: ::
+
+    import qualified Foldable as F 
+    
+Para evitar sobre-esforzar nuestros queridos dedos, hemos elegido importarlo
+con el nombre ``F``. ¿Y bien?, ¿cuáles son las funciones que define esta clase
+de tipos? Bueno, básicamente son ``foldr``, ``foldl``, ``foldr1`` y
+``foldl1``. ¿Cómo? Ya conocemos estas funciones así que, ¿qué tienen
+diferente? Vamos a comparar los tipos de ``foldr`` de ``Prelude`` y de
+``foldr`` de ``Foldable`` para ver las diferencias:
+
+.. code-block:: console
+
+    ghci> :t foldr  
+    foldr :: (a -> b -> b) -> b -> [a] -> b  
+    ghci> :t F.foldr  
+    F.foldr :: (F.Foldable t) => (a -> b -> b) -> b -> t a -> b
+    
+Mientras que ``foldr`` toma una lista y la pliega, el ``foldr`` de
+``Data.Foldable`` toma cualquier tipo que pueda ser plegado , ¡no solo listas!
+Como era de esperar, ambas funciones se comportan igual con las listas.
+
+.. code-block:: console
+
+    ghci> foldr (*) 1 [1,2,3]  
+    6  
+    ghci> F.foldr (*) 1 [1,2,3]  
+    6
+    
+Bien, ¿qué otras estructuras soportan pliegues? Pues nuestro querido ``Maybe``
+por ejemplo.
+
+.. code-block:: console
+
+    ghci> F.foldl (+) 2 (Just 9)  
+    11  
+    ghci> F.foldr (||) False (Just True)  
+    True
+    
+Pero plegar valores ``Maybe`` no es que sea especialmente interesante, ya que
+cuando realiza el pliegue actúa como si se tratara de una lista con un solo
+elemento en caso de que valor sea ``Just`` o como una lista vacía si el valor
+es ``Nothing``. Vamos a examinar una estructura de datos que sea más compleja.
+
+¿Recuerdas la estructura de datos de árbol que utilizamos en el capítulo de
+":ref:`Creando nuestros propios tipos de datos <estrucrec>`"? Lo definimos
+así: ::
+
+    data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)  
+    
+Dijimos que un árbol es o bien en un árbol vacío que no contiene ningún valor
+o bien un nodo que contiene un valor y también otros dos árboles. Después de
+definirlo, creamos su instancia para la clase ``Functor`` y con ella ganamos
+la habilidad de usar ``fmap`` con estos árboles. Ahora vamos a crear la
+instancia de ``Foldable`` de forma que podamos plegar estos árboles. Una forma
+de crear la instancia de ``Foldable`` para un determinado constructor de tipos 
+es simplemente implementar la función ``foldr`` para él. Pero existe otra
+forma, normalmente mucho más sencilla, y es implementar la función
+``foldMap``, que también forma parte de la clase de tipos ``Foldable``. La
+función ``foldMap`` tiene la siguiente declaración de tipo: ::
+
+    foldMap :: (Monoid m, Foldable t) => (a -> m) -> t a -> m  
+    
+El primer parámetro es una función que toma un valor del tipo que la
+estructura de datos plegable contiene (denominada aquí ``a``) y devuelve un
+monoide. El segundo parámetro es una estructura plegable que contiene valores
+del tipo ``a``. Mapea esa función sobre la estructura de datos plegable,
+produciendo de esta forma una estructura plegable que contiene monoides.
+Luego, aplicando ``mappend`` entre estos monoides, los reduce todos en un solo
+valor. Esta función puede parece algo rara ahora mismo, pero veremos que es
+realmente fácil de implementar. Otra cosa que también es interesante es que
+cuando implementemos estas función no necesitaremos hacer nada más para 
+implementar el resto de la instancia ``Foldable``. Así que simplemente
+tenemos que implementar la función ``foldMap`` para un tipo, y obtenemos
+automáticamente ``foldr`` y ``foldl``.
+
+Aquí tienes como definimos la instancia de ``Foldable`` para ``Tree``: ::
+
+    instance F.Foldable Tree where  
+        foldMap f Empty = mempty  
+        foldMap f (Node x l r) = F.foldMap f l `mappend`  
+                                 f x           `mappend`  
+                                 F.foldMap f r
+                                 
+.. image:: /images/accordion.png
+   :align: right
+   :alt: Encuentra la analogía visual
+
+Si tenemos una función que toma un elemento del árbol y devuelve un monoide,
+¿cómo reducimos el árbol entero a un único monoide? Cuando aplicamos ``fmap``
+a un árbol, aplicamos la función que estamos mapeando a un nodo y luego
+mapeamos recursivamente esa misma función sobre el sub-árbol izquierdo y el
+sub-árbol derecho. En este caso nuestra tarea no consiste únicamente en
+mapear una función, sino que también tenemos que reducir todos los resultados
+en un único monoide utilizando ``mappend``. Primero consideramos el caso de
+un árbol vacío, un triste y solitario árbol que no contienen ningún valor ni
+ningún sub-árbol. Como no contiene ningún valor no podemos aplicar la función
+binaria del monoide, así que nos limitamos a decir que el árbol está vacío
+devolviendo el valor ``mempty``.
+
+El caso de un nodo no vacío es algo más interesante. Contiene dos sub-árboles
+y también un valor. En este caso, aplicamos recursivamente la función
+``foldMap`` junto a ``f`` al sub-árbol izquierdo y derecho. Recuerda, la
+función ``foldMap`` devuelve un único valor, un monoide. También aplicamos la
+función ``f`` al valor contenido en el nodo. De este modo, ahora tenemos tres
+monoides (dos de los sub-árboles y otro de aplicar ``f`` al nodo actual) y
+solo tenemos que reducirlos a un único valor. Para lograrlo utilizamos la
+función ``mappend``, primero con el valor del sub-árbol izquierdo, luego con
+el valor del nodo y para terminar con el valor del sub-árbol derecho.
+
+Ten en cuenta que no somos los encargados de crear la función que toma un
+valor y devuelve un monoide. Recibimos esa función como parámetro de
+``foldMap`` y todo lo que debemos hacer es decidir donde vamos a aplicarla y
+como reducir los monoides a un único valor.
+
+Ahora que tenemos una instancia de ``Foldable`` para el tipo árbol, obtenemos
+``foldr`` y ``foldl`` automáticamente. Considera este árbol: ::
+
+    testTree = Node 5  
+                (Node 3  
+                    (Node 1 Empty Empty)  
+                    (Node 6 Empty Empty)  
+                )  
+                (Node 9  
+                    (Node 8 Empty Empty)  
+                    (Node 10 Empty Empty)  
+                )
+                
+Tiene un ``5`` como raíz y luego su nodo izquierdo tiene un ``3`` con un ``1``
+a su izquierda y un ``6`` a su derecha. El nodo raíz de la derecha contiene un
+``9`` junto con un ``8`` a su izquierda y un ``10`` a la derecha. Gracias a
+la instancia de ``Foldable`` ahora podemos utilizar todos los pliegues que
+usábamos con las listas:
+
+.. code-block:: console
+
+    ghci> F.foldl (+) 0 testTree  
+    42  
+    ghci> F.foldl (*) 1 testTree  
+    64800
+    
+``foldMap`` no solo es útil para crear nuevas instancias de ``Foldable``.
+También es útil para reducir una estructura a un único valor monoidal. Por
+ejemplo, si queremos saber si algún número de un árbol es igual a ``3``
+podemos hacer lo siguiente: 
+
+.. code-block:: console
+
+    ghci> getAny $ F.foldMap (\x -> Any $ x == 3) testTree  
+    True
+    
+Aquí, ``\x -> Any $ x == 3`` es una función que toma un número y devuelve un
+valor monoidal, en concreto un ``Bool`` dentro de un ``Any``. ``foldMap``
+aplica esta función a todos los elementos del árbol y luego reduce todos los
+resultados monoidales a un único valor monoidal. Si hacemos esto: ::
+
+    ghci> getAny $ F.foldMap (\x -> Any $ x > 15) testTree  
+    False
+    
+Todos los nodos del árbol contendrían el valor ``Any False`` después de que
+la función lambda se aplicara sobre ellos. Para que ``mappend`` sobre valores
+del tipo ``Any`` devuelva ``True`` al menos uno de sus parámetros debe ser
+``True``. Por este motivo el resultado que obtenemos al final es ``False``, y
+tiene sentido ya que no hay ningún valor mayor que ``15`` en el árbol.
+
+También podemos convertir el árbol en una lista fácilmente. Para ello
+utilizamos ``foldMap`` con la función ``\x -> [x]``. Al proyectar la función
+sobre el árbol obtenemos un árbol que contendrá listas unitarias. Luego se
+aplicará ``mappend`` sobre todas esas listas de forma que obtendremos una
+única lista que contendrá todos los valores del árbol original.
+
+.. code-block:: console
+
+    ghci> F.foldMap (\x -> [x]) testTree  
+    [1,3,6,5,8,9,10]
+    
+Lo mejor de todo es que este truco no se limita únicamente a los árboles,
+funciona para cualquier tipo miembro de la clase ``Foldable``.

@@ -1053,6 +1053,7 @@ Podríamos haber utlizado el tipo ``Maybe a`` para representar el resultado
 pero entonces no sabríamos el motivo por el cual no podemos obtener el código.
 Ahora, tenemos información acerca del fallo en nuestro tipo del resultado.
 
+.. _estrucrec:
 
 Estructuras de datos recursivas
 -------------------------------
