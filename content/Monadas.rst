@@ -363,14 +363,357 @@ patrones. Y aún así no perdemos el contexto de los tipo ``Maybe``, porque
 cuando es ``Nothing``, el resultado de ``>>=`` será ``Nothing`` también.
 
 
-         
+En la cuerda floja
+------------------
 
+.. image:: /images/pierre.png
+   :align: left
+   :alt: Pierre
 
+Ahora que ya sabemos como parar un valor del tipo ``Maybe a`` a una función
+del tipo ``a -> Maybe b`` teniendo en cuenta el contexto de un posible fallo,
+vamos a ver como podemos usar ``>>=`` repetidamente para manejar varios
+valores ``Maybe a``.
 
- 
+Pierre ha decidido tomar un descanso en su trabajo en la piscifactoria e
+intentar caminar por la cuerda floja. No lo hace nada mal, pero tiene un
+problema: ¡los pájaros se posan sobre su barra de equilibrio! Aterrizan y se
+toman un pequeño respiro, hablan con sus respectivos amigos ovíparos y luego
+se marchan en busca de algo de comida. Ha Pierre no le importaría demasiado si
+el número de pájaros que se posan en cada lado de la barra fuera el mismo. Sin
+embargo, a menudo, todos los pájaros se posan en el mismo lado y desequilibran
+a Pierre tirándolo de la cuerda de forma embarazosa (utiliza un red de
+seguridad obviamente).
 
+Digamos que matiene el equilibrio si el número de pájaros posados a la
+izquierda y a la derecha de la barra no difere en más de tres. Así que si hay
+un pájaro en la parte derecha y otros cuatro pájaros en la parte izquierda no
+pasa nada. Pero si un quinto pájaro aterriza en la parte derecha pierde el
+quilibrio y cae.
 
+Vamos a simular un grupo de pájaros que aterrizan o inician el vuelo desde la
+barra y ver si Pierre sigue sobre la barra tras un número de eventos
+relacionados con estas aves. Por ejemplo, queremos saber que le pasará a
+Pierre si primero llega un pájaro al lado izquierdo de la barra, luego cuatro
+pájaros más se posan sobre la parte derecha y luego el pájaro de la izquierda
+decide volar de nuevo.
 
+Podemos representar la barra con un par de enteros. El primer componente 
+indicará el número de pájaros a la izquierda mientras que el segundo indicará
+el número de pájaros de la derecha: ::
+
+    type Birds = Int  
+    type Pole = (Birds,Birds)
     
+Primero creamos un sinónimo para ``Int``, llamado *pájaros* (``Birds``), ya
+que estamos utilizando enteros para representar el número de pájaros. Luego
+creamos otro sinónimo de tipos ``(Birds, Birds)`` y lo llamamos *barra*
+(``Pole``).
 
+A continuación creamos una función que toma un número de pájaros y los posa
+sobre un determinado lado de la barra. Aquí están las funciones: ::
 
+    landLeft :: Birds -> Pole -> Pole  
+    landLeft n (left,right) = (left + n,right)  
+
+    landRight :: Birds -> Pole -> Pole  
+    landRight n (left,right) = (left,right + n)
+    
+Bastante simple. Vamos a probarlas:
+
+.. code-block:: console
+
+    ghci> landLeft 2 (0,0)  
+    (2,0)  
+    ghci> landRight 1 (1,2)  
+    (1,3)  
+    ghci> landRight (-1) (1,2)  
+    (1,1)  
+    
+Para hacer que los pájaros vuelen simplemente tenmos que pasarles a estas
+funciones un número negativo. Como estas funciones devuelven un valor del
+tipo ``Pole``, podemos encadenarlas: 
+
+.. code-block:: console
+
+    ghci> landLeft 2 (landRight 1 (landLeft 1 (0,0)))  
+    (3,1)
+    
+Cuando aplicamos la función ``landLeft 1`` a ``(0, 0)`` obtenemos ``(1, 0)``.
+Luego aterrizamos un pájaro sobre el lado derecho, por lo que obtenemos
+``(1, 1)``. Para terminar aterrizamos dos pájaros más sobre el lado izquierdo,
+lo cual resulta en ``(3, 1)``. Aplicamos una función a algo escribirendo
+primero el nombre de la función y luego sus parámetros, pero en este caso
+sería mejor si la barra fuera primero y luego las funciones de aterrizar. Si
+creamos una función como: ::
+
+    x -: f = f x  
+
+Podríamos aplicar funciones escribiendo primero el parámetro y luego el nombre
+de la función:
+    
+.. code-block:: console
+
+    ghci> 100 -: (*3)  
+    300  
+    ghci> True -: not  
+    False  
+    ghci> (0, 0) -: landLeft 2  
+    (2,0)
+
+Utilizando esto podemos aterrrizar varios pájaros de un forma mucho más
+legible:
+
+.. code-block:: console
+
+    ghci> (0, 0) -: landLeft 1 -: landRight 1 -: landLeft 2  
+    (3,1)
+    
+¡Genial! Es ejemplo es equivalente al ejemplo anterior en el que
+aterrizamos varias aves en la barra, solo que se ve más limpio. Así es más
+obvio que empezamos con ``(0, 0)`` y luego aterrizamos un pájaro sobre la
+izquierda, otro sobre la derecha y finalmente dos más sobre la izquierda.
+
+Hasta aquí bien, pero, ¿qué sucede si aterrizan diez pájaros sobre un lado?
+
+.. code-block:: console
+
+    ghci> landLeft 10 (0,3)  
+    (10,3)
+    
+¿Diez pájaros en la parte izquierda y solo tres en la derecha? Seguro que
+Pierre ya debe estar volando por los aires en esos momentos. En este ejemplo
+es bastante obvio pero, ¿y si tenemos una secuencia como esta?:
+
+.. code-block:: console
+
+    ghci> (0,0) -: landLeft 1 -: landRight 4 -: landLeft (-1) -: landRight (-2)  
+    (0,2)
+    
+A primera vista puede parecer que todo esta bien pero si seguimos los pasos,
+veremos que en un determinado momento hay cuatro pájaros a la derecha y
+ninguno a la izquierda. Para arreglar esto debemos darle una vuelta de tuerca
+a las funciones ``landLeft`` y ``landRight``. A partir de lo que hemos
+aprendido queremos que estas funciones sean capaces de fallar. Es decir,
+queremos que devuelvan una barra si Pierre consigue mantener el equilibrio
+pero que fallen en caso de que Pierre lo pierda. ¡Y qué mejor manera de
+añadir el contexto de un posible fallo a un valor que utilizar ``Maybe``!
+Vamos a reescribir estas funciones: ::
+
+    landLeft :: Birds -> Pole -> Maybe Pole  
+    landLeft n (left,right)  
+        | abs ((left + n) - right) < 4 = Just (left + n, right)  
+        | otherwise                    = Nothing  
+
+    landRight :: Birds -> Pole -> Maybe Pole  
+    landRight n (left,right)  
+        | abs (left - (right + n)) < 4 = Just (left, right + n)  
+        | otherwise                    = Nothing
+        
+En lugar de devolver un ``Pole`` estas funciones devuelven un ``Maybe Pole``.
+Siguen tomando el número de pájaros y el estado de la barra anterior, pero
+ahora comprueban si el número de pájaros y la posición de estos es suficiente
+como para desquilibrar a Pierre. Utilizamos guardas para comprabar si
+diferencia entre el número de pájaros en cada lado es menor que cuatro. Si lo
+es devuelve una nueva barra dentro de un ``Just``. Si no lo es, devuelven
+``Nothing``.
+
+Vamos a jugar con estas pequeñas:
+
+.. code-block:: console
+
+    ghci> landLeft 2 (0,0)  
+    Just (2,0)  
+    ghci> landLeft 10 (0,3)  
+    Nothing
+
+¡Bien! Cuando aterrizamos pájaros sin que Pierre pierda el equilibrio
+obtenemos una nueva barra dentro de un ``Just``. Pero cuando unos cunatos
+pájaros de más acaban en un lado de la barra obtenemos ``Nothing``. Esto esta
+muy bien pero ahora hemos perido la posibilidad de aterrizar pájaros de forma
+repetiva sobre la barra. Ya no podemos usar ``landLeft 1 (landRight 1 (0,0))``
+ya que cuando aplicamos ``landRight 1`` a ``(0, 0)`` no obtenemos un ``Pole``,
+sino un ``Maybe Pole``. ``landLeft 1`` toma un ``Pole`` y no un
+``Maybe Pole``.
+
+Necesitamos una forma de tomar un ``Maybe Pole`` y pasarlo a una función que
+toma un ``Pole`` y devuelve un ``Maybe Pole``. Por suerte tenemos ``>>=``, que
+hace exáctamen lo que buscamos para ``Maybe``. Vamos a probarlo:
+
+.. code-block:: console
+
+    ghci> landRight 1 (0,0) >>= landLeft 2  
+    Just (2,1)
+    
+Recuerda, ``landLeft 2`` tiene un tipo ``Pole -> Maybe Pole``. No podemos
+pasarle directamente un valor del tipo ``Maybe Pole`` que es el resultado de
+``landRight 1 (0, 0)``, así que utilizamos ``>>=`` que toma un valor con un
+determinado contexto y se lo pasa a ``landLeft 2``. De hecho ``>>=`` nos
+permite tratar valores ``Maybe`` como valores en un contexto si pasamos
+``Nothing`` a ``landLeft 2``, de forma que el resultado será ``Nothing`` y el
+fallo ser propagará:
+
+.. code-block:: console
+
+    ghci> Nothing >>= landLeft 2  
+    Nothing
+    
+Gracias a esto ahora podemos encadenar varios aterrizajes que pueden consguir
+tirar a Pierre ya que ``>>=`` nos permite pasar valores monádicos a funciones
+que toman valores normales.
+
+Aquí tienes una secuencia de aterrizajes:
+
+.. code-block:: console
+
+    ghci> return (0,0) >>= landRight 2 >>= landLeft 2 >>= landRight 2  
+    Just (2,4)
+    
+Al principio hemos utilizado ``return`` para insertar una barra dentro de un
+``Just``. Podríamos haber aplicado ``landRight 2`` directamente a ``(0, 0),
+hubiéramos llegado al mismo resultado, pero de esta forma podemos utilizar
+``>>=`` para cada función de forma más consistente. Se pasa ``Just (0, 0)`` a
+``landRight 2``, lo que devuelve ``Just (0, 2)``. Luego se le pasa este valor
+a ``landLeft 2`` obteniendo ``Just (2, 2)`` y así sucesivamente.
+
+Recuerda el ejemplo que dijimos que tiraría a Pierre:
+
+.. code-block:: console
+    
+    ghci> (0,0) -: landLeft 1 -: landRight 4 -: landLeft (-1) -: landRight (-2)  
+    (0,2)
+    
+Como vemos no simula la interacción con las aves correctamente ya que en medio
+la barra ya estaría volando por los aires pero el resultado no lo refleja.
+Pero ahora vamos a probar a utilizar la aplicación monádica (``>>=``) en lugar
+de la aplicación normal:
+
+.. code-block:: console
+
+    ghci> return (0,0) >>= landLeft 1 >>= landRight 4 >>= landLeft (-1) >>= landRight (-2)  
+    Nothing
+    
+.. image:: /images/banana.png
+   :align: right
+   :alt: Soy un platano
+    
+Perfecto. El resultado final representa un fallo, que es justo lo que
+esperamos. Vamos a ver como se consigue este resultado. Primero, ``return``
+introduce ``(0, 0)`` en el contexto por defecto, convirtiéndolo en
+``Just (0, 0)``. Luego sucede ``Just (0,0) >>= landLeft 1``. Como
+``Just (0,0)`` es un valor ``Just``, ``landLeft 1`` es aplicado a ``(0, 0)``,
+obteniendo así ``Just (1, 0)`` ya que Pierre sigue manteniendo el equilibrio.
+Luego nos encontramos con ``Just (1,0) >>= landRight 4`` lo cual resulta en
+``Just (1, 4)`` ya que Pierre sigue manteniendo el equilibrio, aunque
+malamente. Se aplica ``landLeft (-1)`` a ``Just (1, 4)``, o dicho de otra
+forma, se computa ``landLeft (-1) (1,4)``. Ahora, debido a como funciona
+``landLeft``, esto devuelve ``Nothing`` porque nuestro esta volando por los
+aires en este mismo momento. Ahora que tenemos ``Nothing`` como resultado,
+éste se pasado a ``landRight (-2), pero como es un valor ``Nothing``, el
+resultado es automáticamente ``Nothing`` ya que no existe ningún valor que se
+puede aplicar a ``landRight (-2)``.
+
+No podíamos haber conseguido esto utilizando solo ``Maybe`` como funtor
+aplicativo. Si lo intentas te quedarás atascado, porque los funtores
+aplicativos no permiten que los valores aplicativos interactuen con los
+otros lo sufiente. Pueden, como mucho, ser utilizados como parámetros de una
+función utilizando el estilo aplicativo. Los operadores aplicativos tomarán
+los resultados y se los pasarán a la función de forma apropiada para cada
+funto aplicativo y luego obtendrán un valor aplicativo, pero no existe ninguna
+interacción entre ellos. Aquí, sin embargo, cada paso depende del resultado
+anterior. Por cada aterrizaje se examina el resultado anterior y se comprueba
+que la barra está balanceada. Esto determina si el aterrizaje se completará
+o fallará.
+
+Podemos divisar una función que ignora el número de pájaros en la barra de
+equilibrio y simplemente haga que Pierre caiga. La llamaremos ``banana``: ::
+
+    banana :: Pole -> Maybe Pole  
+    banana _ = Nothing
+    
+Ahora podemos encadenar esta función con los aterrizajes de las aves. Siempre
+hara que Pierre se caiga ya que ignora cualquier cosa que se le pasa y
+devuelve un fallo. Compruebalo:
+
+.. code-block:: console
+
+    ghci> return (0,0) >>= landLeft 1 >>= banana >>= landRight 1  
+    Nothing
+    
+El valor ``Just (1, 0)`` se le pasa a ``banana``, pero este produce
+``Nothing``, lo cual hace que el resultado final sea ``Nothing``. Menuda
+suerte.
+
+En lugar de crear funciones que ignoren el resultado y simplemente devuelvan
+un valor monádico, podemos utilizar la función ``>>`` cuya implementación por
+defecto es esta: ::
+
+    (>>) :: (Monad m) => m a -> m b -> m b  
+    m >> n = m >>= \_ -> n
+    
+Normalmente, si pasamos un valor a una función que toma un parámetro y siempre
+devuelve un mismo valor por defecto el resultado será este valor por defecto.
+En cambio con la mónadas también debemos conseiderar el contexto y el
+siguinificado de éstas. Aquí tienes un ejemplo de como funciona ``>>`` con
+``Maybe``:
+
+.. code-block:: console
+
+    ghci> Nothing >> Just 3  
+    Nothing  
+    ghci> Just 3 >> Just 4  
+    Just 4  
+    ghci> Just 3 >> Nothing  
+    Nothing
+    
+Si reemplazamos ``>>`` por ``>>= \_ ->`` es fácil de ver lo que realmente
+sucede.
+
+Podemos cambiar la función ``banana`` por ``>>`` y luego un ``Nothing``:
+
+.. code-block:: console
+
+    ghci> return (0,0) >>= landLeft 1 >> Nothing >>= landRight 1  
+    Nothing
+    
+Ahí lo tienes, ¡garantizamos que Pierre se va ir al suelo!
+
+También vale la pena echar un vistazo a como se veria esto si no hubiesemos
+tratado los valores ``Maybe`` como valores en un contexto y no hubiersemos
+pasado las parámetros a las funciones como hemos hecho. Así es como se vería
+una serie de aterrizajes: ::
+
+    routine :: Maybe Pole  
+    routine = case landLeft 1 (0,0) of  
+        Nothing -> Nothing  
+        Just pole1 -> case landRight 4 pole1 of   
+            Nothing -> Nothing  
+            Just pole2 -> case landLeft 2 pole2 of  
+                Nothing -> Nothing  
+                Just pole3 -> landLeft 1 pole3  
+    
+.. image:: /images/centaur.png
+   :align: right
+   :alt: John Joe Glanton
+  
+Aterrizamos un pájaro y comprobamos la posibiliadad de que que ocurra un fallo
+o no. En caso de fallo devolvemos ``Nothing``. En caso contrario aterrizamos
+unos cuantos pájaros más a la derecha y volemos a comprobar lo mismo una y
+otra vez. Convertir esto es un limpia concatenación de aplicaciones monádicas
+con ``>>=`` es un ejemplo clásico de porque la mónada ``Maybe`` nos ahorra
+mucho tiempo cuando tenemos una secuecnia de cómputos que dependen del
+resultado de otros cómputos que pueden fallar.
+
+Fíjate en como la implementación de ``>>=`` para ``Maybe`` interpreta
+exactamente la lógica de que en caso encontrarnos con un ``Nothing``, lo
+devolvemos como resultado y en caso contrario continuamos con lo que hay
+dentro de ``Just``.
+
+En esta sección hemos tomado varias funciones que ya teniamos y hemos visto
+que funcionan mejor si el valor que devuelven soporta fallos. Conviertiendo
+estos valores en valores del tipo ``Maybe`` y cambiando la aplicación de
+funciones normal por ``>>=`` obtenemos un mecanismo para manejar fallos casi
+de forma automática, ya que se supone ``>>=`` preserva el contexto del valor
+que se aplica a una función. En este caso el contexto que tenían estos valores
+era la posibiliadad de fallo de forma que cuando aplicábamos funciones sobre
+estos valores, la posibilidad de fallo siempre era tomada en cuenta.
