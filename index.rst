@@ -17,6 +17,7 @@
    TODO: Revisar ¿?¡!. Pueden empezar en minúsculas si hay una coma antes.
    TODO: Capitulo 11: se utiliza a menudo ``monoide`` cuando en realidad
          quiere decir valor monoidal.
+   TODO: Tipos de datos ó Tipos de dato
    
 .. toctree::
    :maxdepth: 2
@@ -32,4 +33,5 @@
    content/EntradaSalida
    content/Problemas
    content/Funtores
+   content/Monadas
    
