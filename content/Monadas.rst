@@ -1363,10 +1363,218 @@ como modificar esta función de forma que también pasemos como parámetro el
 número de pasos.
 
 
+Las leyes de las mónadas
+------------------------
 
 
+.. image:: /images/judgedog.png
+   :align: right
+   :alt: El jurado te declara culpable de mearte por todas partes.
+   
+De la misma forma que lo funtores aplicativos, a la vez que lo funtores
+normales, las mónadas vienen con una serie de leyes que todas las mónadas que
+se precien deben cumplir. Solo porque algo tenga una instancia de la clase
+``Monad`` no significa que sea una mónada, solo significa que ese algo tiene
+una instancia para la clase ``Monad``. Para que un tipo sea realmente una
+mónada debe satisfacer las leyes. Estas leyes nos permiten asumir muchas cosas
+acerca del comportamiento del tipo.
 
+Haskell permite que cualquier tipo tenga una instancia de cualquier clase de
+tipos siempre que los tipos concuerden. No puede comprobar si las leyes de las
+mónadas se cumplen o no, así que si estamos creando una instancia para la
+clase ``Monad``, tenemos que estar lo suficientemente seguros de que la mónada
+satisface las leyes para ese tipo. Los estar seguros de que los tipos que
+vienen en la biblioteca estándar cumplen estas leyes, pero luego, cuando
+creemos nuestras própias mónadas, tendremos que comprobar manualmente si se
+cumplen las leyes o no. No te asuste, no son complicadas.
+
+
+Identidad por la izquierda
+''''''''''''''''''''''''''
+
+La primera ley establece que tomamos un valor, lo introducimos en el contexto
+por defecto utilizando ``return`` y luego pasamos el resultado a una función
+utilizando ``>>=``, el resultado debe ser igual que aplicar la función
+directamente a ese valor. Informalmente:
+
+ * :js:data:`return x >>= f` es exactamente lo mismo que :js:data:`f x`.
+ 
+Si vemos los valores monádicos como valores con un cierto contexto y
+``return`` toma un valor y lo introduce en el contexto mínimo por defecto que
+puede albergar ese valor, tiene sentido que, como ese contexto en realidad es
+mínimo, al pasar el valor monádico a una función no debe haber mucha
+diferencia con aplicar la función a un valor normal, y de hecho, es
+exactamente lo mismo.
+
+Para la mónada ``Maybe``, ``return`` se define como ``Just``. La mónada
+``Maybe`` trata acerca de posibles fallos, así que si tenemos un valor y lo
+introducimos en dicho contexto, tiene sentido tratar este valor como 
+cómputo correcto, ya que, bueno, sabemos cual es ese valor. Aquí tienes un par
+de usos de ``return``:
+
+.. code-block:: console
+
+    ghci> return 3 >>= (\x -> Just (x+100000))  
+    Just 100003  
+    ghci> (\x -> Just (x+100000)) 3  
+    Just 100003
+
+En cambio para la mónada lista, ``return`` intruce un valor en una lista
+unitaria. La implementación de ``>>=`` para las listas recorre todos los
+elementos de la lista y les aplica una función, pero como solo hay un elemento
+en la lista, es lo mismo que aplicar la función a ese valor:
+
+.. code-block:: console
+
+    ghci> return "WoM" >>= (\x -> [x,x,x])  
+    ["WoM","WoM","WoM"]  
+    ghci> (\x -> [x,x,x]) "WoM"  
+    ["WoM","WoM","WoM"]
+
+Dijimos que para la mónada ``IO``, ``return`` simplemente creaba una acción
+que no tenia ningún efecto secundario y solo albergaba el valor que pasábamos
+como parámetro. Así que también cumple esta ley.
+
+
+Identidad por la derecha
+''''''''''''''''''''''''
+
+La segunda ley establece que si tenemos un valor monádico y utilizamos ``>>=``
+para pasarselo a ``return``, el resultado debe ser el valor monádico original.
+Formalemente: 
+
+ * :js:data:`m >>= return` es igual que :js:data:`m`.
+
+Esta ley puede parecer un poco menos obvia que la primera, pero vamos a echar
+un vistazo para ver porque se debe cumplir. Pasamos valores monádicos a las
+funciones utilizando ``>>=``. Estas funciones toman valores normales y
+devuelven valores monádicos. ``return`` es una también es una de estas
+funciones. Como ya sabemos, ``return`` introduce un valor en el contexto
+mínimo que pueda albergar dicho valor. Esto quiere decir que, por ejemplo
+para ``Maybe``, no introduce ningún fallo; para las listas, no introduce
+ningún no determinismo adicional. Aqui tienes una prueba con algunas mónadas:
+
+.. code-block:: console
+
+    ghci> Just "move on up" >>= (\x -> return x)  
+    Just "move on up"  
+    ghci> [1,2,3,4] >>= (\x -> return x)  
+    [1,2,3,4]  
+    ghci> putStrLn "Wah!" >>= (\x -> return x)  
+    Wah!
+
+Si echamos un vistazo más de cerca al ejemplo de las listas, la implementación
+de ``>>=`` para las listas es: ::
+
+    xs >>= f = concat (map f xs)  
     
+Así que cuando pasamos ``[1,2,3,4]`` a ``return``, primero ``return`` se
+mapea sobre ``[1,2,3,4]``, devolviendo ``[[1],[2],[3],[4]]`` y luego se
+concatena esta lista obteniendo así la original.
+
+La identida por la izquierda y la identadad por la derecha son leyes que
+establecen el comportamiento de ``return``. Es una función importante para
+convertir valores normales en valores monádicos y no sería tan útil si el
+valor monádico que produciera hicera mucha más cosas.
 
 
+Asociatividad
+'''''''''''''
 
+La última ley de las mónadas dice que cuando tenemos una cadena de
+aplicaciones funciones monádicas con ``>>=``, no importa el orden en el que
+estén anidadas. Escrito formalmente:
+
+ * :js:data:`(m >>= f) >>= g` es igual a :js:data:`>>= (\x -> f x >>= g)`.
+ 
+Mmm... ¿Qué esta pasando aquí? Tenemos un valor monádico, ``m`` y dos
+funciones monádica ``f`` y ``g``. Hacemos ``(m >>= f) >>= g``, es decir,
+pasamos ``m`` a ``f``, lo cual devuelve un valor monádico. Luego pasamos ese
+valor monádico a ``g``. En la expresión ``m >>= (\x -> f x >>= g)`` tomamos
+un valor monádico y se lo pasamos a una función que pasa el resultado de
+``f x`` a ``g``. Quizá no es fácil ver como ambas expresiones son iguales, así
+que vamos a ver un ejemplo para aclarár las dudas.
+
+¿Recuerdas cuando el funabulista Pierra caminaba sobre una cuerda con ayuda de
+una barra de equilibrio? Para simular el aterrizaje de los pájaros sobre esta
+barra de equilibrio utilizábamos una cadena de funciones que podían fallar:
+
+.. code-block:: console
+
+    ghci> return (0,0) >>= landRight 2 >>= landLeft 2 >>= landRight 2  
+    Just (2,4)
+
+Empezábamos con ``Just (0,0)`` y luego pasábamos este valor a la siguiente
+función monádica, ``landRight 2``. El resultado de ésta era otro valor
+monádico que pasábamos a la siguiente función de la cadena y así
+sucesivamente. Si mostramos la asociatividad de forma explícita, la expresión
+quedaría así:
+
+.. code-block:: console
+
+    ghci> ((return (0,0) >>= landRight 2) >>= landLeft 2) >>= landRight 2  
+    Just (2,4)
+
+Pero también podemos esxpresarlo así: ::
+
+    return (0,0) >>= (\x -> 
+    landRight 2 x >>= (\y -> 
+    landLeft 2 y >>= (\z -> 
+    landRight 2 z)))
+
+``return (0,0)`` es lo mismo que ``Just (0,0)`` y cuando se lo pasamos a la
+función lambda, ``x`` se convierte en ``(0,0)``. ``landRight`` toma un número
+de pájaros y una barra (una dupla de números) y eso es lo que le pasamos. 
+Devuelve ``Just (0,2)`` y cuando se lo pasamos a la siguiente función lambda,
+``y`` es ``(0,2)``. Continua hasta el último aterrizaje de pájaros que produce
+``Just (2,4)``, que de hecho es el resultado final de la expresión.
+
+Resumiendo, no importa como anides el paso de valores monádicos, lo que
+importa es su significado. Otra forma de ver esta ley sería: consideremos la
+composición de dos funciones, ``f`` y ``g``. La composición de funciones se
+implementa como: ::
+
+    (.) :: (b -> c) -> (a -> b) -> (a -> c)  
+    f . g = (\x -> f (g x))
+    
+El tipo de ``g`` es ``a -> b`` y el de ``f`` es ``b -> c``, y las unimos en
+una nueva función con tipo ``a -> c`` cuyo parámetro será pasado entre las
+funciones anteriores. Y ahora, ¿qué pasaria si estas dos funciones fueran
+monádicas? es decir ¿qué pasaria si estas funciones devolvieran valores
+monádicos? Si tuvieramos una función del tipo ``a -> m b``, no podríamos pasar
+su resultado directamente a una función del tipo ``b -> m c``, ya que esta
+función solo acepta valores normales y no monádicos. Sin embargo podemos
+utilizar ``>>=`` para poder permitirlo. Así que si utilizamos ``>>=``, podemos
+definir la composición de dos funciones monádicas como: ::
+
+    (<=<) :: (Monad m) => (b -> m c) -> (a -> m b) -> (a -> m c)  
+    f <=< g = (\x -> g x >>= f)
+    
+Ahora podemos componer nuevas funciones monádicas a partir de otras:
+
+.. code-block:: console
+
+    ghci> let f x = [x,-x]  
+    ghci> let g x = [x*3,x*2]  
+    ghci> let h = f <=< g  
+    ghci> h 3  
+    [9,-9,6,-6]
+
+Genial ¿Y qué tiene que ver esto con la ley de asociatividad? Bueno, cuando
+vemos la ley como una ley de composiciones, ésta dice que
+:js:data:`f <=< (g <=< h)` debe ser igual a :js:data:`(f <=< g) <=< h`. Es
+otra forma de decir que para las mónadas, no importa el orden del anidamiento.
+
+Si traducimos las dos primeras leyes para que utilicen ``<=<``, entonces, la
+primera ley dice que para cada función monádica ``f``, :js:data:`f <=< return`
+es lo mismo que :js:data:`f` y la ley de identidad por la derecha dice que
+:js:data:`return <=< f` es también igual a :js:data:`f`.
+
+Es parecido a lo que ocurre con las funciones normales, ``(f . g) . h`` es lo
+mismo que ``f . (g . h)``, ``f . id`` es igual a ``f`` y ``id . f`` es también
+igual a ``f``.
+
+En este capítulo hemos visto las bases de la mónadas y hemos aprendido a
+utilizar las mónadas ``Maybe`` y las listas. En el siguiente capítulo,
+echaremos un vistazo a un puñado más de mónadas y también aprenderemos como
+crear nuestras propias mónadas.
