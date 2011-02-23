@@ -18,6 +18,8 @@
    TODO: Capitulo 11: se utiliza a menudo ``monoide`` cuando en realidad
          quiere decir valor monoidal.
    TODO: Tipos de datos ó Tipos de dato
+   TODO: Sintaxis sugar = alternativa sintáctica
+   
    
 .. toctree::
    :maxdepth: 2

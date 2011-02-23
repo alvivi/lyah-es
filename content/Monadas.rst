@@ -974,6 +974,399 @@ Este fallo en el ajuste de un patrón genera un fallo en el contexto de nuestra
 mónada en lugar de generar un fallo en el programa, lo cual es muy elegante.
 
 
+La mónada lista
+---------------
+
+
+.. image:: /images/deadcat.png
+   :align: left
+   :alt: Un gato muerto
+
+Hasta ahora hemos visto como los valores del tipo ``Maybe`` pueden verse como
+valores en un contexto de un posible fallo y que podemos incorportar el
+tratamiento de estos posibles fallos utilizando ``>>=`` para pasar los
+parámetros a las funciones. En esta sección vamos a echar un vistazo a como
+podemos utilizar los aspectos monádicos de las listas llevanso así el no
+determinsmo a nuestro código de forma legible.
+
+Ya hemos hablado de como las listas representan valores no deterministas
+cuando se utilizan como funtores aplicativos. Un valor como ``5`` es
+determinista. Tiene un único valor y sabemos exactamente cual es. Por otra
+parte, un valor como ``[3,8,9]`` consiste en varios resultados, así que lo
+podemos ver como un valor que en realidad es varios valores al mismo tiempo.
+
+Al utilizar las listas como funtores aplicativos vemos fácilmente este
+no determinismo:
+
+.. code-block:: console
+
+    ghci> (*) <$> [1,2,3] <*> [10,100,1000]  
+    [10,100,1000,20,200,2000,30,300,3000]
+    
+Todas la posibles soluciones de multiplicar los elementos de la izquierda por
+los elementos de la derecha aparecen en la lista resultado. Cuando trabajamos
+con el no determinismo, exsiten varias opciones que podemos tomar, así que
+básicamente probamos todas ellas y por lo tanto el resultado también otro
+valor no determinista, solo que con unos cuantos valores más.
+
+Este contexto de no determinismo se translada a las mónadas fácilmente. Vamos
+a ver como luce la instancia de ``Monad`` para las listas: ::
+
+    instance Monad [] where  
+        return x = [x]  
+        xs >>= f = concat (map f xs)  
+        fail _ = []
+        
+``return`` es lo mismo que ``pure``, así que ya estamos familiarizados con
+ella. Toma un valor y lo introducie en el mínimo contexto por defecto que es
+capaz de albergar ese valor. En otras palabras, crea una lista que contiene 
+como único elemento dicho valor. Resulta útil cuando necesitmos que un valor
+determinista interactue con otros valores no deterministas.
+
+Para entender mejor como funciona ``>>=`` con las listas veremos un ejemplo de
+su uso. ``>>=`` toma un valor con un contexto (un valor monádico) y se lo pasa
+a una función que toma valores normales y devuelve otro valor en el mismo
+contexto. Si esta función devolviera un valor normal en luegar de un valor
+monádico, ``>>=`` no sería muy útil ya que depués de usarlo perderíamos el
+contexto. De cualquier modo, vamos vamos a intentar pasar un valor no
+determinista a una función:
+
+.. code-block:: console
+
+    ghci> [3,4,5] >>= \x -> [x,-x]  
+    [3,-3,4,-4,5,-5]
+    
+Cuando utilizamos ``>>=`` con ``Maybe``, el valor monádico se pasaba a la
+función teniendo en cuenta la existencia de un posible fallo. Aquí ``>>=``
+se preocupa del no determinismo por nosotros. ``[3,4,5]`` es un valor no
+determinista y se lo hemos pasado a otra función que devuelve valores no
+deterministas también. El resultado final también es no determinista y
+contiene los posibles resultados de aplicar la función ``\x -> [x,-x]`` a
+todos los elementos de ``[3,4,5]``. Esta función toma un número y produce dos
+resultados: uno negado y otro igual que el original. De esta forma cuando
+utilizamos ``>>=`` para pasar la lista a esta función todos los números son
+negados pero también se mantienen los originales. La ``x`` de la función
+lambda toma todos los posibles valores de la lista que pasamos como parámetro.
+
+Para ver como se consigue este resultado solo tenemos que ver la
+implementación. Primero, empezamos con la list ``[3,4,5]``. Luego mapeamos
+la función lambda sobre ella y obtenemos el siguiente resultado: ::
+
+    [[3,-3],[4,-4],[5,-5]]  
+    
+La función lambda se aplica a cada elemento por lo que obtenemos una lista de
+listas. Para terminar simplemente concatenamos las listas y punto final
+¡Acabamos de aplicar un función no determinista a una valor no determinista!
+
+El no determinismo también soporta la existencia de fallos. La lista vacía
+``[]`` es muy parecido a ``Nothing`` ya que ambos representan la ausencia de
+un resultado. Por este motivo la función ``fail`` se define simplemente con
+la lista vacía. El mensaje de error se ignora. 
+
+.. code-block:: console
+
+    ghci> [] >>= \x -> ["bad","mad","rad"]  
+    []  
+    ghci> [1,2,3] >>= \_ -> []  
+    []  
+    
+En la primera línea se pasa una lista vacía a la función lambda. Como la lista
+no tienen ningún elemento, no podemos pasar nada a la función así que el
+resultado final es también la lista vacía. Es similiar a pasar ``Nothing`` a
+una función. En la segunda línea, cada elemento de la lista se pasa a la
+función, pero estos elementos son ignorados y la función simplemente devuelve
+una lista vacía. Como la función falla para todos los elementos de la lista,
+el resultado final es la lista vacía. 
+
+Del mismo modo que pasaba con los valores del tipo ``Maybe``, podemos
+concatenar varios ``>>=`` propagando así el no deterministmo:
+
+.. code-block:: console
+
+    ghci> [1,2] >>= \n -> ['a','b'] >>= \ch -> return (n,ch)  
+    [(1,'a'),(1,'b'),(2,'a'),(2,'b')]  
+    
+.. image:: /images/concatmap.png
+   :align: left
+   :alt: concat . map
+
+Los elemenots de lista ``[1,2]`` se ligan a ``n`` y los elementos de
+``['a','b']`` se ligan a ``ch``. Luego, hacemos ``return (n,ch)`` (o
+``[(n,ch)]``), lo que significa que tomamos una dupla ``(n,ch)`` y la
+introducimos en el contexto mínimo por defecto. En este caso, se crea la lista
+más pequeña posible que pueda albergar ``(n,ch)`` como resultado de forma que
+posea tan poco no determinismo como sea posible. Dicho de otro modo, el efecto
+del contexto es mínimo. Lo que estamos implementando es: para cada elemento
+en ``[1,2]`` y para cada elemento de ``['a','b']`` producimos una dupla para
+combinación posible.
+
+En términos generales, como ``return`` lo único que hace es introducir un
+valor en el contexto mínimo, no posee ningún efecto extra (como devolver un
+fallo en ``Maybe`` o devolver en un valor aún menos determinista en caso de
+las listas) sino que sólamete toma un valor como resultado.
+
+.. note:: Cuando tenemos varios valores no deterministas interactuando,
+          podemos ver su cómputo como un árbol donde cada posible resultado
+          representa una rama del árbol.
+          
+Aquí tienes la expresión anterior escrita con notación ``do``: ::
+
+    listOfTuples :: [(Int,Char)]  
+    listOfTuples = do  
+        n <- [1,2]  
+        ch <- ['a','b']  
+        return (n,ch)
+
+Así parece más obvio que ``n`` toma cada posible valor de ``[1,2]`` y que
+``ch`` toma cada posible valor de ``['a','b']``. Del mismo modo que con
+``Maybe``, estamos extrayendo valores normales de un valor monádico y dejamos
+que ``>>=`` se preocupe por el contexto. El contexto en este caso es el
+no determinismo.
+
+Cuando vemos las listas utilizando la notación ``do`` puede que nos recuerde
+a algo que ya hemos visto. Mira esto:
+
+.. code-block:: console
+
+    ghci> [ (n,ch) | n <- [1,2], ch <- ['a','b'] ]  
+    [(1,'a'),(1,'b'),(2,'a'),(2,'b')]
+    
+¡Sí! ¡Listas por comprensión! Cuando utilizábamos la notación ``do``, ``n``
+tomaba cada posible elemento de ``[1,2]`` y ``ch`` tomaba cada posible
+elemento de ``['a','b']`` y luego introducíamos ``(n,ch)`` en el contexto por
+defecto (una lista unitaria) para devolverlo como resultado final sin tener
+que introducir ningún tipo de no determinismo adicional. En esta lista por
+comprensión hacemos exactamente lo mismo, solo que no tenemos que escribir
+``return`` al final para dar como resultado ``(n,ch)`` ya que la lista por
+comprensión se encarga de hacerlo.
+
+De hecho, las listas por comprensión no son más que una alternativa sintáctica
+al uso de listas como mónadas. Al final, tanto las listas por comprensión como
+la notación ``do`` se traduce a una concatenación de ``>>=`` que representan
+el no determinismo.
+
+Las listas por comprensión nos perminten filtrar la lista. Por ejemplo,
+podemos filtrar una lista de número para quedarnos únicamente con los números
+que contengan el dígito ``7``:
+
+.. code-block:: console
+
+    ghci> [ x | x <- [1..50], '7' `elem` show x ]  
+    [7,17,27,37,47]
+    
+Aplicamos ``show`` a ``x`` para convertir el número en una cadena y luego
+comprobamos si el carácter ``'7'`` froma parte de en esa cadena. Muy
+ingenioso. Para comprender como se traduce estos filtros de las listas por
+comprensión a la mónada lista tenemos que ver la función ``guard`` y la clase
+de tipos ``MonadPlus``. La clase de tipos ``MonadPlus`` representa mónadas
+que son también monoides. Aquí tienes la definición: ::
+
+    class Monad m => MonadPlus m where  
+        mzero :: m a  
+        mplus :: m a -> m a -> m a
+        
+``mzero`` es un sinónimo del ``mempty`` que nos encontramos en la clase
+``Monoid`` y ``mplus`` correponde con ``mappend``. Como las listas también
+son monoides a la vez que mónadas podemos crear una isntancia para esta
+clase de tipos: ::
+
+    instance MonadPlus [] where  
+        mzero = []  
+        mplus = (++)
+        
+Para las listas ``mzero`` representa un cómputo no determinista que no
+devuelve ningún resultado, es decir un cómputo que falla. ``mplus`` une dos
+valores no deterministas en uno. La función ``guard`` se define así: ::
+
+    guard :: (MonadPlus m) => Bool -> m ()  
+    guard True = return ()  
+    guard False = mzero
+
+Toma un valor booleano y si es ``True``, introduce ``()`` en el mínimo
+contexto por defecto. En caso contrario devuleve un valor monádico que
+representa un fallo. Aquí la tienes en acción: 
+
+.. code-block:: console
+
+    ghci> guard (5 > 2) :: Maybe ()  
+    Just ()  
+    ghci> guard (1 > 2) :: Maybe ()  
+    Nothing  
+    ghci> guard (5 > 2) :: [()]  
+    [()]  
+    ghci> guard (1 > 2) :: [()]  
+    []
+
+Parece interesante pero, ¿es útil? En la mónada lista utilizamos esta función
+para filtrar una series de cómputos no deterministas. Observa:
+
+.. code-block:: console
+
+    ghci> [1..50] >>= (\x -> guard ('7' `elem` show x) >> return x)  
+    [7,17,27,37,47]
+    
+El resultado es el mismo que la lista por comprensión anterior. ¿Cómo
+consigue ``guard`` este resultado? Primero vamos a ver se utiliza ``guard``
+junto a ``>>``:
+
+.. code-block:: console
+
+    ghci> guard (5 > 2) >> return "cool" :: [String]  
+    ["cool"]  
+    ghci> guard (1 > 2) >> return "cool" :: [String]  
+    []
+
+Si el predicado de ``guard`` se satisface, el resultado es una lista con una
+tupla vacía. Luego utilizamos ``>>`` para ignorar esta tupla vacía y devolver
+otra cosa como resultado. Sin embargo, si ``guard`` falla, no alcanzaremos 
+el ``return`` ya que si pasamos una lista vacía a una funcón con ``>>=`` el
+resultado siempre será una lista vacía. ``guard`` simplemente dice: si el
+predicado es ``False`` entonces devolvemos un fallo, en caso contrario
+devolvemos un valor que contiene un resultado ficticio ``()``. Esto permite
+que el encadenamiento continue. 
+
+Así sería el ejemplo anterior utilizando la notación ``do``: ::
+
+    sevensOnly :: [Int]  
+    sevensOnly = do  
+        x <- [1..50]  
+        guard ('7' `elem` show x)  
+        return x
+
+Si hubiéramos olvidado devolver ``x`` como resultado final con ``return``, la
+lista resultante sería una lista de tuplas vacías en lugar de una lista de
+enteros. Aquí tienes de nuevo la lista por comprensión para que compares:
+
+.. code-block:: console
+
+    ghci> [ x | x <- [1..50], '7' `elem` show x ]  
+    [7,17,27,37,47]
+
+Filtrar una lista por comprensión es igual que usar ``guard``.
+
+
+El salto del caballo
+''''''''''''''''''''
+
+Vamos a ver un problema que tiende a resolverse utilizando no determinismo.
+Digamos que tenemos un tablero de ajedrez y como única pieza un caballo.
+Queremos saber si el caballo peude alcanzar una determinada posición en tres
+movimientos. Utilizaremos una dupla de números para representar la posición
+del caballo en el tablero. El primer número representará la columna en la que
+está el caballo y el segundo representará la fila.
+
+.. image:: /images/chess.png
+   :align: center
+   :alt: ¡Soy un caballo!
+   
+Vamos a crear un sinónimo de tipo para representar la posición actual del
+caballo: ::
+
+    type KnightPos = (Int,Int)  
+
+Digamos que el caballo empieza en ``(6,2)`` ¿Puede alcanzar ``(6,1)`` en solo
+tres movimientos? Vamos a ver. Si empezamos en ``(6,2)``, ¿cuál sería el mejor
+movimiento a realizar? Ya se, ¡Todos! Tenemos el no determinismo a nuestra
+disposición, así que en lugar de decidirnos por un movimiento, hagámoslos
+todos. Aquí tienes una función que toma la posición del caballo y devuelve
+todos las posibles posiciones en las que se encontrará depués de moverse. ::
+
+    moveKnight :: KnightPos -> [KnightPos]  
+    moveKnight (c,r) = do  
+        (c',r') <- [(c+2,r-1),(c+2,r+1),(c-2,r-1),(c-2,r+1)  
+                   ,(c+1,r-2),(c+1,r+2),(c-1,r-2),(c-1,r+2)  
+                   ]  
+        guard (c' `elem` [1..8] && r' `elem` [1..8])  
+        return (c',r')
+
+El caballo puede tomar un paso en horizontal o vertical y otros dos pasos
+en horizontal o vertical pero siempre haciendo un movimiento horizontal y otro
+vertical. ``(c',r')`` toma todos los valores de los elementos de la lista y
+luego ``guard`` se encarga de comprobar que la nueva posicion permanece dentro
+del tablero. Si no lo está, produce una lista vacía y por lo tanto no se
+alcanza ``return (c',r')`` para esa posición.
+
+También se puede escribir esta función sin hacer uso de la mónada lista,
+aunque lo acabamos de hacer solo por diversión. Aquí tienes la misma función
+utilizando ``filter``: ::
+
+    moveKnight :: KnightPos -> [KnightPos]  
+    moveKnight (c,r) = filter onBoard  
+        [(c+2,r-1),(c+2,r+1),(c-2,r-1),(c-2,r+1)  
+        ,(c+1,r-2),(c+1,r+2),(c-1,r-2),(c-1,r+2)  
+        ]  
+        where onBoard (c,r) = c `elem` [1..8] && r `elem` [1..8]
+
+Ambas son iguales, así que elige la que creas mejor. Vamos a probarla:
+
+.. code-block:: console
+
+    ghci> moveKnight (6,2)  
+    [(8,1),(8,3),(4,1),(4,3),(7,4),(5,4)]  
+    ghci> moveKnight (8,1)  
+    [(6,2),(7,3)]
+
+¡Funciona perfectamente! Toma una posición y devuelve todas las siguientes
+posiciones de golpe. Así que ahora que tenemos la siguiente
+posición de forma no determinista, solo tenemos que aplicar ``>>=`` para
+pasársela a ``moveKnight``. Aquí tienes una función que toma una posición y
+devuelve todas las posiciones que se pueden alcanzar en tres movimientos: ::
+
+    in3 :: KnightPos -> [KnightPos]  
+    in3 start = do   
+        first <- moveKnight start  
+        second <- moveKnight first  
+        moveKnight second
+
+Si le pasamos ``(6,2)``, el resultado será un poco grande porque si existe
+varias formas de llegar a la misma posición en tres movimientos, tendremos
+varios elementos repetidos. A continuación sin usar la notación ``do``: ::
+
+    in3 start = return start >>= moveKnight >>= moveKnight >>= moveKnight  
+
+Al utiliza ``>>=`` obtenemos todos los posibles movimientos desde el inicio y
+luego cuando utilizamos ``>>=`` por segunda vez, para cada posible primer
+movimiento calculamos cada posible siguiente movimiento. Lo mismo sucede para
+el tercer movimiento.
+
+Introducir un valor en el contexto por defecto utilizando ``return`` para
+luego pasarlo como parámetro utilizando ``>>=`` es lo mismo que aplicar
+normalemente la función a dicho valor, aunque aquí lo hemos hecho de todas
+formas.
+
+Ahora vamos a crear una función que tome dos posiciones y nos diga si la
+última posición puede ser alcanzada con exáctamente tres pasos: ::
+
+    canReachIn3 :: KnightPos -> KnightPos -> Bool  
+    canReachIn3 start end = end `elem` in3 start
+
+Generamos todas las posibles soluciones que se pueden generar con tres pasos
+y luego comprobamos si la posición destino se encuentra dentro de estas
+posibles soluciones. Vamos a ver si podemos alcanzar ``(6,1)`` desde ``(6,2)``
+en tres movimientos:
+
+.. code-block:: console
+
+    ghci> (6,2) `canReachIn3` (6,1)  
+    True
+    
+¡Sí! ¿Y de ``(6,2)`` a ``(7,3)``?
+
+.. code-block:: console
+
+    ghci> (6,2) `canReachIn3` (7,3)  
+    False
+
+¡No! Como ejercicio, puedes intentar modificar esta función para que cuando
+se pueda alcanzar esta posición te diga que pasos debes seguir. Luego, veremos
+como modificar esta función de forma que también pasemos como parámetro el
+número de pasos.
+
+
+
+
+
+    
 
 
 
