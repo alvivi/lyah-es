@@ -717,3 +717,263 @@ de forma automática, ya que se supone ``>>=`` preserva el contexto del valor
 que se aplica a una función. En este caso el contexto que tenían estos valores
 era la posibiliadad de fallo de forma que cuando aplicábamos funciones sobre
 estos valores, la posibilidad de fallo siempre era tomada en cuenta.
+
+
+La notación Do
+--------------
+
+
+Las mónadas son tan útiles en Haskell que tienen su propia sintaxis especial
+llamada notación ``do``. Ya nos hemos topado con la notación ``do`` cuando
+reliazabamos acciones de E/S y dijimos que servia para unir varias de estas
+acciones en una sola. Bueno, pues resulta que la notación ``do`` no solo 
+funciona con ``IO`` sino que puede ser utilizada para cualquier mónada. El
+principio sigue siendo el mismo: unir varios valores monádicos en secuencia.
+Vamos a ver como funiona la notación ``do`` y porque es útil. 
+
+Considera el siguiente ejemplo familiar de una aplicación monádica:
+
+.. code-block:: console
+
+    ghci> Just 3 >>= (\x -> Just (show x ++ "!"))  
+    Just "3!"
+    
+Pasamos un valor monádico a una función que devuelve otro valor monádico. Nada
+nuevo. Fíjate que en el ejemplo anterior, ``x`` se convierte en ``3``, es
+decir, una vez dentro de la función lambda, ``Just 3`` pasa a ser un valor
+normal en vez de un valor monádico. Ahora, ¿qué pasaría si tuviésemos otro
+``>>=`` dentro de la función?
+
+.. code-block:: console
+
+    ghci> Just 3 >>= (\x -> Just "!" >>= (\y -> Just (show x ++ y)))  
+    Just "3!"
+
+¡Wau, un ``>>=`` anidado! En la función lambda interior, simplemente pasamos
+``Just !`` a ``\y -> Just (show x ++ y)``. Dentro de esta lambda, ``y`` se
+convierte en ``"!"``. ``x`` sigue siendo el ``3`` que obtuvimos de la lambda
+exterior. Esto se parece a la siguiente expresión: 
+
+.. code-block:: console
+
+    ghci> let x = 3; y = "!" in show x ++ y  
+    "3!"
+    
+La diferencia principal entre ambas es que los valores de la primera son
+valores monádicos. Son valores con el contexto de un posible fallo. Podemos
+remplazar cualquier valor por un fallo:
+
+.. code-block:: console
+
+    ghci> Nothing >>= (\x -> Just "!" >>= (\y -> Just (show x ++ y)))  
+    Nothing  
+    ghci> Just 3 >>= (\x -> Nothing >>= (\y -> Just (show x ++ y)))  
+    Nothing  
+    ghci> Just 3 >>= (\x -> Just "!" >>= (\y -> Nothing))  
+    Nothing
+
+En la primera línea, pasamos ``Nothing`` a una función y naturalmente resulta
+en ``Nothing``. En la segunda línea pasamos ``Just 3`` a la función de forma
+que ``x`` se convierte en ``3``, pero luego pasamos ``Nothing`` a la función
+lambda interior así que el resultado es también ``Nothing``. Todo esto es
+parecido a ligar nombres con ciertos valores utilizando las expresiones
+``let``, solo que en lugar de valores normales son valores monádicos.
+
+El siguiente ejemplo ilustra esta idea. Vamos a escribir lo mismo solo que
+cada valor ``Maybe`` esté en una sola línea: ::
+
+    foo :: Maybe String  
+    foo = Just 3   >>= (\x -> 
+          Just "!" >>= (\y -> 
+          Just (show x ++ y)))
+          
+En lugar de escribir todos estas funciones lambdas, Haskell nos proporciona
+la sintaxis ``do`` que nos permite escribir el anterior trozo de código como:
+::
+
+    foo :: Maybe String  
+    foo = do  
+        x <- Just 3  
+        y <- Just "!"  
+        Just (show x ++ y)  
+    
+.. image:: /images/owld.png
+   :align: right
+   :alt: Búo de los noventa.
+   
+Puede parecer que hemos ganado la habilidad de cosas de valores ``Maybe`` sin
+tener que preocuparnos por comprobar en cada paso si dichos valores son
+valores ``Just`` o valores ``Nothing`` ¡Genial! Si alguno de los valores que
+intentamos extraer es ``Nothing``, la expresión ``do`` entera se reducirá a
+``Nothing``. Estamos extrayendo sus (probablemente existentes) valores y
+dejamos a ``>>=`` que se preocupe por el contexto de dichos valores. Es
+importante recordar que la notación ``do`` es solo una sintaxis diferente para
+encanedar valores monádicos.
+
+En una expresión ``do`` cada línea es un valor monádico. Para inspecionar el
+resultado de una línea utilizamos ``<-``. Si tenemos un ``Maybe String`` y le
+damos una variable utilizando ``<-``, esa variable será del tipo ``String``,
+del mismo modo que cuando utilizábamos ``>>=`` para pasar valores monádicos a
+las funciones lambda. El último valor monádico de una expresión, en este caso
+``Just (show x ++ y)``, no se puede utilizar junto a ``<-`` porque no tendría
+mucho sentido traducimos de nuevo la expresión ``do`` a una ecandención de
+aplicaciones ``>>=``. Esta última línea será el resultado de unir toda la
+expresión ``do`` en un único valor monádico, teniendo en cuenta el hecho de
+que puede ocurrir un fallo en cualquiera de los pasos anteriores.
+
+Por ejemplo:
+
+.. code-block:: console
+
+    ghci> Just 9 >>= (\x -> Just (x > 8))  
+    Just True
+    
+Como el parámetro a la izquierda de ``>>=`` es un valor ``Just``, la función
+lambda es aplicada a ``9`` y el resultado es ``Just True``. Si reescribimos
+esto en notación ``do`` obtenemos: ::
+
+    marySue :: Maybe Bool  
+    marySue = do   
+        x <- Just 9  
+        Just (x > 8)
+
+Si comparamos ambas es fácil deducir porque el resultado de toda la expresión
+``do`` es el último valor monádico.
+
+La función ``routine`` que escribimos anteriormente también puede ser escrita
+con una expresión ``do``. ``landLeft`` y ``landRight`` toman el número de
+pájaros y la barra para producir una nueva barra dentro de un valor ``Just``,
+a no ser que nuestro funabulista se caiga y produzca ``Nothing``. Utilizamos
+``>>=`` porque cada uno de los pasos depende del anterior y cada uno de ellos
+tiene el contexto de un posible fallo. Aquí tienes dos pájaros posandose en
+lado izquierdo, luego otros dos pájaros posandose en lado derecho y luego
+otro más aterrizando en la izquierda: ::
+
+    routine :: Maybe Pole  
+    routine = do  
+        start <- return (0,0)  
+        first <- landLeft 2 start  
+        second <- landRight 2 first  
+        landLeft 1 second
+
+Vamos a ver si funciona:
+
+.. code-block:: console
+
+    ghci> routine  
+    Just (3,2)
+    
+¡Lo hace! ¡Genial! Cuando creamos esta función utilizando ``>>=``,
+utilizábamos cosas como ``return (0,0) >>= landLeft 2``, porque ``landLeft 2``
+es una función que devuelve un valor del tipo ``Maybe``. Sin embargo con las
+expresiones ``do``, cada línea debe representar un valor monádico. Así que
+tenemos que pasar explícitamente cada ``Pole`` anterior a las funciones
+``landLeft`` y ``landRight``. Si examinamos las variables a las que ligamos
+los valores ``Maybe``, ``start`` sería ``(0,0)``, ``first`` sería ``(2,0)`` y
+así sucesivamente.
+
+Debido a que las expresiones ``do`` se escriben línea a línea, a mucha gente
+le puede parecer código imperativo. Pero lo cierto es que son solo
+secuenciales, de forma que cada línea depende del resultado de las líneas
+anteriores, junto con sus contextos (en este caso, dependen de si las
+anterioeres fallan o no).
+
+De nuevo, vamos a volver a ver como sería este código si no tuvieramos en
+cuenta los aspectos monádicos de ``Maybe``: ::
+
+    routine :: Maybe Pole  
+    routine =   
+        case Just (0,0) of   
+            Nothing -> Nothing  
+            Just start -> case landLeft 2 start of  
+                Nothing -> Nothing  
+                Just first -> case landRight 2 first of  
+                    Nothing -> Nothing  
+                    Just second -> landLeft 1 second
+
+Fíjate como en caso de no fallar, la tupla dentro de ``Just (0,0)`` se
+convierte en ``start``, el resultado de ``landLeft 2 start`` se convierte en
+``first``, etc.
+
+Si queremos lanzar a Pierre una piel de plátano en notación ``do`` solo
+tenemos que hacer lo siguiente: ::
+
+    routine :: Maybe Pole  
+    routine = do  
+        start <- return (0,0)  
+        first <- landLeft 2 start  
+        Nothing  
+        second <- landRight 2 first  
+        landLeft 1 second
+        
+Cuando escribirmos una línea en la notación ``do`` sin ligar el valor monádico
+con ``<-``, es como poner ``>>`` después de ese valor monádico cuyo reulstado
+queremos que ignore. Secuenciamos el valor monádico pero ignoramos su
+resultado ya que no nos importa y es más cómodo que escribir ``_ <- Nothing``,
+que por cierto, es lo mismo.
+
+Cuando utilizar la notación ``do`` y cuando utilizar ``>>=`` depende de ti. 
+Creo que este ejemplo se expresa mejor escribiendo explícitamente los ``>>=``
+ya que cada paso depende específicamente del anterior. Con la notación ``do``
+tenemos que especificar en que barra van a aterrizar los pájaros incluso
+aunque siempre aterrizen en la barra anterior. 
+
+En la notación ``do``, cuando ligamos valore monádicos a variables, podemos
+utilizar ajustes de patrones de la misma forma que los usábamos con las
+expresiones ``let`` o con los parámetros de las funciones. Aquí tienes un
+ejemplo de uso de ajuste de patrones dentro de una expresión ``do``: ::
+
+    justH :: Maybe Char  
+    justH = do  
+        (x:xs) <- Just "hello"  
+        return x
+        
+Hemos ajustado un patrón para obtener el primer carácter de la cadena
+``"hello"`` y luego lo devolvemos como resultado. Así que ``JustH`` se
+evalua a ``Just 'h'``.
+
+¿Qué pasaria si este ajuste fallara? Cuando un ajuste de patrones falla en
+una función se utiliza el siguiente ajuste. Si el ajuste falla en todos los
+patrones de una función, se lanza un error y el programa podría terminar. Por
+otra parte si el ajuste falla en una expresión ``let``, se lanza un error
+directamente ya que no existe ningún mecanismo que no lleve a otro patrón que
+ajustar. Cuando un ajuste falla dentro de una expresión ``do`` se llama a la
+función ``fail``. Ésta es parte de la clase de tipos ``Monad`` y nos permite
+ver este fallo como un fallo en el contexto del valor monádico en lugar de
+hacer que el programa termine. Su implementación por defecto es: ::
+
+    fail :: (Monad m) => String -> m a  
+    fail msg = error msg
+    
+Así que por defecto hace que el programa termine, pero las mónadas que 
+incorporan un contexto para un posible fallo (como ``Maybe``) normalmente
+implementan el suyo propio. En ``Maybe`` se implementa así: ::
+
+    fail _ = Nothing  
+
+Ignora el mensaje de error y devuelve ``Nothing``. Así que cuando un ajuste
+falla dentro de un valor ``Maybe`` que utiliza una expresión ``do``, el valor
+entero se reduce a ``Nothing``. Suele ser preferiable a que el programa
+termine. Aquí tienes una expresión ``do`` con un patrón que no se ajustará y
+por tanto fallará: ::
+
+    wopwop :: Maybe Char  
+    wopwop = do  
+        (x:xs) <- Just ""  
+        return x
+        
+El ajuste falla, así que sería igual a remplazar toda la línea por
+``Nothing``. Vamos a probarlo:
+
+.. code-block:: console
+
+    ghci> wopwop  
+    Nothing
+
+Este fallo en el ajuste de un patrón genera un fallo en el contexto de nuestra
+mónada en lugar de generar un fallo en el programa, lo cual es muy elegante.
+
+
+
+
+
