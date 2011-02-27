@@ -1,5 +1,8 @@
 
 
+.. _cfuntores:
+
+
 Funtores, funtores aplicativos y monoides
 =========================================
 
@@ -1831,6 +1834,9 @@ quieres es crear un nuevo tipo que contenga a otro para poder declarar una
 instancia de una clase de tipos, seguramente quieras utilizar ``newtype``. Y
 si lo que quieres es crear algo completamente nuevo, apostaría a que debes
 utilizar ``data``. 
+
+
+.. _monoides:
 
 
 Monoides

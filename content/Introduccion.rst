@@ -147,7 +147,7 @@ puedes trabajar con Haskell con ese extraño ratón de un solo botón, pero no
 estoy seguro. Sea cual sea tu plataforma, `aquí
 <http://hackage.haskell.org/platform/>`_ tienes más información.
 
-GHC puede tomar un script de Haskell (normalmente tienen la extensión .hs) y
+GHC puede tomar un script de Haskell (normalmente tienen la extensión *.hs*) y
 compilarlo pero también tiene un modo interactivo el cual te permite
 interactuar con dichos scripts. Puedes llamar a las funciones de los scripts
 que hayas cargado y los resultados serán mostrados de forma inmediata. Para
@@ -157,8 +157,9 @@ invocado tecleando ``ghci`` desde tu terminal. Si has definido algunas
 funciones en un fichero llamado, digamos, ``myFunctions.hs``, puedes cargar
 esas funciones tecleando ``:l myFunctions`` y jugar con ellas, siempre que
 ``myFunctions.hs`` esté en el mismo directorio en el que fue invocado
-``ghci``. Si modificas el script .hs, simplemente ejecuta de nuevo ``:l
-myFunctions`` o haz ``:r``, que es equivalente, ya recarga el script actual.
-Mi forma de trabajo habitual es definir algunas funciones en un fichero .hs,
-las cargo y paso el rato con ellas, luego modifico el fichero .hs volviendo a
-cargarlo y así sucesivamente. Lo haremos así durante toda la guía.
+``ghci``. Si modificas el script *.hs*, simplemente ejecuta de nuevo ``:l
+myFunctions`` o haz ``:r``, que es equivalente, ya que recarga el script
+actual. Habitualmente trabajo definiendo algunas funciones en un fichero
+*.hs*, las cargo y paso el rato jugando con ellas, luego modifico el fichero
+*.hs* volviendo a cargarlo y así sucesivamente. Lo haremos así durante toda la
+guía.

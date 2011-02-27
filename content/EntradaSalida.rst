@@ -1755,6 +1755,10 @@ erróneo para realizar el informe. Otra forma sería utilizando excepciones, lo
 cual veremos dentro de poco.
 
 
+.. _aleatoriedad:
+
+
+
 Aleatoriedad
 ------------
 
