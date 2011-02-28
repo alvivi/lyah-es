@@ -10,6 +10,10 @@ el problema, luego intentaremos resolverlo y trataremos de encontrar la mejor
 (o al menos no la peor) forma de resolverlo.
 
 
+.. _rpn:
+
+
+
 Notación polaca inversa
 -----------------------
 

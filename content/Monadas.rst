@@ -843,7 +843,7 @@ Si comparamos ambas es fácil deducir porque el resultado de toda la expresión
 La función ``routine`` que escribimos anteriormente también puede ser escrita
 con una expresión ``do``. ``landLeft`` y ``landRight`` toman el número de
 pájaros y la barra para producir una nueva barra dentro de un valor ``Just``,
-a no ser que nuestro funabulista se caiga y produzca ``Nothing``. Utilizamos
+a no ser que nuestro funambulista se caiga y produzca ``Nothing``. Utilizamos
 ``>>=`` porque cada uno de los pasos depende del anterior y cada uno de ellos
 tiene el contexto de un posible fallo. Aquí tienes dos pájaros posandose en
 lado izquierdo, luego otros dos pájaros posandose en lado derecho y luego
@@ -972,6 +972,10 @@ El ajuste falla, así que sería igual a remplazar toda la línea por
 
 Este fallo en el ajuste de un patrón genera un fallo en el contexto de nuestra
 mónada en lugar de generar un fallo en el programa, lo cual es muy elegante.
+
+
+.. _mlista:
+
 
 
 La mónada lista
@@ -1495,9 +1499,10 @@ un valor monádico y se lo pasamos a una función que pasa el resultado de
 ``f x`` a ``g``. Quizá no es fácil ver como ambas expresiones son iguales, así
 que vamos a ver un ejemplo para aclarár las dudas.
 
-¿Recuerdas cuando el funabulista Pierra caminaba sobre una cuerda con ayuda de
-una barra de equilibrio? Para simular el aterrizaje de los pájaros sobre esta
-barra de equilibrio utilizábamos una cadena de funciones que podían fallar:
+¿Recuerdas cuando el funambulista Pierra caminaba sobre una cuerda con ayuda
+de una barra de equilibrio? Para simular el aterrizaje de los pájaros sobre
+esta barra de equilibrio utilizábamos una cadena de funciones que podían
+fallar:
 
 .. code-block:: console
 
