@@ -19,6 +19,7 @@
          quiere decir valor monoidal.
    TODO: Tipos de datos ó Tipos de dato
    TODO: Sintaxis sugar = alternativa sintáctica
+   TODO: Zippers, cambiar selañadas por seleccionadas.
    
    
 .. toctree::
@@ -37,4 +38,5 @@
    content/Funtores
    content/Monadas
    content/MasMonadas
+   content/Zippers
   
