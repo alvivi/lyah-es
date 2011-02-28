@@ -303,7 +303,7 @@ entrada para este caso.
     8  
     0
 
-Para analizar mentalmente el archivo de entrada, separa los números en grupos
+Para analizar mentalmente el fichero de entrada, separa los números en grupos
 de tres. Cada grupo se compone de la vía A, la vía B y un camino que los
 une. Para que encajen perfectamente en grupos de tres, diremos que hay un
 último camino de cruce que recorrerlo toma cero minutos. Esto se debe a que

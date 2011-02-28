@@ -429,4 +429,451 @@ a selecciona la raíz principal del árbol y ver si hemos modificado
 correctamente el árbol.
 
 
+Seleccionando elementos de la listas
+------------------------------------
 
+
+Los *zippers* se pueden utilizar con casi cualquier tipo de estructura, así
+que no debería sorprendente que también se puedan utilizar con las listas.
+Después de todo, las listas son muy parecidas a los árboles. El los árboles un
+nodo puede tener un elemento (o no) y varios sub-árboles, mientras que en las
+listas un elemento puede tener una sola sub-lista. Cuando implementamos
+:ref:`nuestro propio tipo de listas <estrucrec>`, definimos el tipo así: ::
+
+    data List a = Empty | Cons a (List a) deriving (Show, Read, Eq, Ord)
+
+.. image:: /images/picard.png
+   :align: right
+   :alt: El mejor de todos.
+
+Si lo comparamos con la definición anterior de los árboles binarios podemos
+observar como las listas pueden definirse como un árbol que solo posee un
+sun-árbol.
+
+La lista ``[1,2,3]`` es igual que ``1:2:3:[]``. Está formada por la cabeza de
+la lista, que es ``1`` y su cola, que es ``2:3:[]``. Al mismo tiempo,
+``2:3:[]`` está formado por su cabeza, que es ``2``,  y por su cola, que es
+``3:[]``. ``3:[]`` está formado por su cabeza ``3`` y su cola que es la lista
+vacía ``[]``.
+
+Vamos a crear un *zipper* para las listas. Para modificar el elemento
+seleccionado de una lista, podemos mover hacia adelante o hacia atrás
+(mientras que con los árboles podíamos movernos a la derecha, a la izquierda,
+y arriba). La parte que seleccionábamos con los árboles era un sub-árbol, a la
+vez que el rastro que dejábamos cuando avanzábamos. Ahora, ¿qué tendremos que
+dejar como rastro? Cuando estábamos trabajando con árboles binarios, vimos que
+el rastro tenía que albergar el elemento raíz de su nodo padre junto a todos
+los sub-árboles que recorrimos. También teníamos que recordar si habíamos ido
+por la izquierda o por la derecha. Resumiendo, teníamos que poseer toda
+la información del nodo que contenía el sub-árbol que estábamos seleccionando.
+
+Las listas son más simples que los árboles, así que no tenemos que recordar
+si hemos ido por la derecha o por la izquierda, ya que solo podemos avanzar
+en una dirección. Como solo hay un posible sub-árbol para cada nodo, tampoco
+tenemos que recordar el camino que tomamos. Parece que lo único que debemos
+recordar el elemento anterior. Si tenemos una lista como ``[3,4,5]`` y sabemos
+que el elemento anterior es ``2``, podemos volver atrás simplemente añadiendo
+dicho elemento a la cabeza de la lista, obteniendo así ``[2,3,4,5]``.
+
+Como cada rastro es un elemento, no necesitamos crear un nuevo tipo de datos
+como hicimos con el tipo de datos ``Crumb`` para los árboles: ::
+
+    type ListZipper a = ([a],[a])
+    
+La primera lista representa la lista que estamos seleccionando y la segunda
+lista es la lista de rastros. Vamos a crear las funcionen que avancen y
+retrocedan por las listas: ::
+
+    goForward :: ListZipper a -> ListZipper a  
+    goForward (x:xs, bs) = (xs, x:bs)  
+
+    goBack :: ListZipper a -> ListZipper a  
+    goBack (xs, b:bs) = (b:xs, bs)
+
+Cuando avanzamos, seleccionamos la cola de la lista actual y dejamos la cabeza
+como rastro. Cuando retrocedemos, tomamos el último rastro y lo insertamos al
+principio de la lista.
+
+Aquí tienes un ejemplo de estas funciones en acción:
+
+.. code-block:: console
+
+    ghci> let xs = [1,2,3,4]  
+    ghci> goForward (xs,[])  
+    ([2,3,4],[1])  
+    ghci> goForward ([2,3,4],[1])  
+    ([3,4],[2,1])  
+    ghci> goForward ([3,4],[2,1])  
+    ([4],[3,2,1])  
+    ghci> goBack ([4],[3,2,1])  
+    ([3,4],[2,1])
+
+Podemos observar que el rastro de una listas no es nada más que la parte
+invertida de la lista que hemos dejado atrás. El elemento que dejamos atrás
+siempre pasa a formar parte de la cabeza de los rastros, así que es fácil
+movernos hacía atrás tomando simplemente el primer elemento de los rastros y
+añadiéndolo a la lista que tenemos seleccionada.
+
+Si estamos creando un editor de texto, podemos utilizar una lista de cadenas
+para representar las líneas de texto del fichero que estemos editando, luego
+podemos utilizar un *zipper* de forma que sepamos donde se encuentra el
+cursor. El hecho de utilizar los *zipper* también facilitaría la introducción
+de líneas de texto nuevas en cualquier parte del texto o barrar líneas
+existentes.
+
+
+Un sistema de fichero simple
+----------------------------
+
+Ahora que sabemos como funcionan los *zippers*, vamos utilizar un árbol para
+representar un sistema de ficheros y luego crearemos un *zipper* para ese 
+sistema, lo cual nos permitirá movernos entre los directorios de la misma
+forma que hacemos nosotros mismos.
+
+Si tomamos una versión simplificada de los sistemas de ficheros jerárquicos,
+podemos observar que básicamente están formados por ficheros y directorios.
+Los ficheros son las unidades de información y poseen un nombre, mientras que
+los directorios se utilizan para organizar estos ficheros y pueden contener
+tanto ficheros como otros directorios. Así que vamos a decir que un objeto de
+sistema de ficheros es o bien un fichero, que viene acompañado de un nombre
+y unos datos, o bien un directorio, que viene acompañado de un nombre y un
+conjunto de objetos que pueden ser tanto ficheros como directorios. Aquí
+tienes el tipo de datos para este sistema junto un par de sinónimos de tipo:
+::
+
+    type Name = String  
+    type Data = String  
+    data FSItem = File Name Data | Folder Name [FSItem] deriving (Show)
+
+Cada fichero viene con dos cadenas, una representa su nombre y otra sus
+contenidos. Cada directorio viene con una cadena que representa su nombre y
+un lista de objetos. Si la lista está vacía, entonces tenemos un directorio
+vacío.
+
+Aquí tienes un ejemplo: ::
+
+    myDisk :: FSItem  
+    myDisk = 
+        Folder "root"   
+            [ File "goat_yelling_like_man.wmv" "baaaaaa"  
+            , File "pope_time.avi" "god bless"  
+            , Folder "pics"  
+                [ File "ape_throwing_up.jpg" "bleargh"  
+                , File "watermelon_smash.gif" "smash!!"  
+                , File "skull_man(scary).bmp" "Yikes!"  
+                ]  
+            , File "dijon_poupon.doc" "best mustard"  
+            , Folder "programs"  
+                [ File "fartwizard.exe" "10gotofart"  
+                , File "owl_bandit.dmg" "mov eax, h00t"  
+                , File "not_a_virus.exe" "really not a virus"  
+                , Folder "source code"  
+                    [ File "best_hs_prog.hs" "main = print (fix error)"  
+                    , File "random.hs" "main = print 4"  
+                    ]  
+                ]  
+            ]
+
+En verdad es el contenido de mi disco duro en este momento. 
+
+
+Un *zipper* para el sistema de ficheros
+'''''''''''''''''''''''''''''''''''''''
+
+.. image:: /images/spongedisk.png
+   :align: right
+   :alt: ¡Discoesponja!
+
+Ahora que tenemos un sistema de ficheros, lo que necesitamos es un *zipper*
+de forma que podamos desplazarnos, crear, modificar o eliminar ficheros al
+vez que directorios. De la misma forma que con los árboles binarios y las
+listas, vamos a ir dejando un rastro que contenga todas las cosas que no hemos
+visitado. Como ya hemos dicho, cada rastro debe ser una especie de nodo, solo
+que no debe contener el sub-árbol que estamos seleccionando para no repetir
+información. También tenemos que tener en cuenta la posición en la que nos
+encontramos, de forma que podamos volver atrás.
+
+En este caso en particular, el rastro será algo parecido a un directorio, solo
+que no debe contener el directorio en el que estamos ¿Y porqué no un fichero?
+Te estarás preguntando. Bueno, porque una vez hemos seleccionado un fichero,
+no podemos avanzar en el sistema de ficheros, así que no tiene mucho sentido
+dejar algo en el rastro que diga que venimos de un fichero. Un fichero es
+algo parecido a un árbol vacío.
+
+Si nos encontramos en el directorio ``"root"`` y queremos seleccionar el 
+fichero ``"dijon_poupon.doc"``, ¿qué debería contener el rastro? Bueno,
+debería contener el nombre del directorio padre junto con todos los elementos
+anteriores al fichero que estamos seleccionando más los elementos posteriores.
+Así que lo que necesitamos es un ``Name`` y dos listas de objetos. Manteniendo
+dos listas separadas de elementos, una con los elementos anteriores y otra con
+los elementos posteriores, sabremos exactamente que seleccionar si volvemos
+atrás.
+
+Aquí tenemos el tipo rastro para nuestro sistema de ficheros: ::
+
+    data FSCrumb = FSCrumb Name [FSItem] [FSItem] deriving (Show)  
+
+Y aquí nuestro sinónimo de tipo para *zipper*: ::
+
+    type FSZipper = (FSItem, [FSCrumb])  
+
+Volver atrás por esta jerarquía es muy fácil. Solo tenemos que tomar el último
+elemento del rastro y seleccionar un nuevo elemento a partir del objeto
+actualmente seleccionado y del rastro. Así: ::
+
+    fsUp :: FSZipper -> FSZipper  
+    fsUp (item, (FSCrumb name ls rs):bs) = (Folder name (ls ++ [item] ++ rs), bs)
+
+Como el rastro contiene el nombre del directorio padre, así como los elementos
+anteriores al objeto seleccionado (es decir, ``ls``) y los posteriores
+(``rs``), retroceder es muy sencillo.
+
+¿Y si queremos avanzar por el sistema de ficheros? Si estamos en ``"root"`` y
+queremos seleccionar ``"dijon_poupon.doc"``, el rastro contendrá el nombre
+``"root"`` junto con los elementos que preceden a ``"dijon_poupon.doc"`` y los
+que van después.
+
+Aquí tienes una función que, dado un nombre, selecciona el fichero o
+directorio que este contenido en el directorio actual: ::
+
+    import Data.List (break)  
+
+    fsTo :: Name -> FSZipper -> FSZipper  
+    fsTo name (Folder folderName items, bs) =   
+        let (ls, item:rs) = break (nameIs name) items  
+        in  (item, FSCrumb folderName ls rs:bs)  
+
+    nameIs :: Name -> FSItem -> Bool  
+    nameIs name (Folder folderName _) = name == folderName  
+    nameIs name (File fileName _) = name == fileName
+
+``fsTo`` toma un ``Name`` y un ``FSZipper`` y devuelve un nuevo ``FSZipper``
+que tendrá seleccionado el fichero con el nombre dado. El dicho debe estar en
+el directorio actual. Esta función no busca el fichero sobre todos los
+directorios, solo con el directorio actual.
+
+.. image:: /images/cool.png
+   :align: left
+   :alt: Cool.
+   
+Primero utilizamos ``break`` par dividir la lista de elementos en un lista
+con los elementos anteriores al fichero que estamos buscando y en una lista
+con los que van después. Si recuerdas, ``break`` toma un predicado y una lista
+y devuelve una dupla que contiene dos listas. La primera lista en la dupla
+contiene los elementos en los que el predicado no se cumplió. Luego, una vez
+encuentra un elemento que cumple el predicado, introduce ese elemento y el
+resto de la lista en la segunda componente de la dupla. Hemos creado un
+función auxiliar llamada ``nameIs`` que toma un nombre y un objeto del sistema
+de ficheros y devuelve ``True`` si coinciden los nombres.
+
+Ahora, ``ls`` es una lista que contiene los elementos que preceden al objetos
+que estamos buscando, ``item`` es dicho objeto y ``rs`` es la lista de
+objetos que viene después del objeto en cuestión. Con todo esto, solo tenemos
+que devolver el objeto que obtuvimos de ``break`` y crear un rastro con toda
+la información requerida.
+
+Fíjate que si el nombre que estamos buscando no está en el directorio actual,
+el patrón ``item:rs`` no se ajustará y por lo tanto obtendremos un error. 
+También, si el elemento seleccionado no es directorio, es decir, es un
+fichero, también obtendremos un error y el programa terminará.
+
+Ahora ya podemos movernos por el sistema de ficheros. Vamos a partir de la
+raíz y recorrer el sistema hasta el fichero ``"skull_man(scary).bmp"``:
+
+.. code-block:: console
+
+    ghci> let newFocus = (myDisk,[]) -: fsTo "pics" -: fsTo "skull_man(scary).bmp"
+
+``newFocus`` es ahora un *zipper* que selecciona el fichero
+``"skull_man(scary).bmp"``. Vamos a obtener el primer componente del *zipper*
+(el objeto seleccionado) y comprobar si es verdad:
+
+.. code-block:: console
+
+    ghci> fst newFocus  
+    File "skull_man(scary).bmp" "Yikes!"
+
+Vamos a volver atrás y seleccionar su fichero vecino "watermelon_smash.gif":
+
+.. code-block:: console
+
+    ghci> let newFocus2 = newFocus -: fsUp -: fsTo "watermelon_smash.gif"  
+    ghci> fst newFocus2  
+    File "watermelon_smash.gif" "smash!!"
+
+
+Manipulando el sistema de ficheros
+''''''''''''''''''''''''''''''''''
+
+Ahora que ya podemos navegar por el sistema de ficheros, manipular los
+elementos es muy fácil. Aquí tienes un función que renombra el fichero o
+directorio actual: ::
+
+    fsRename :: Name -> FSZipper -> FSZipper  
+    fsRename newName (Folder name items, bs) = (Folder newName items, bs)  
+    fsRename newName (File name dat, bs) = (File newName dat, bs)
+
+Podemos renombrar el directorio ``"pics"`` a ``"cspi"``:
+
+.. code-block:: console
+
+    ghci> let newFocus = (myDisk,[]) -: fsTo "pics" -: fsRename "cspi" -: fsUp
+
+Nos hemos metido en el directorio ``"pics"``, lo hemos renombrado, y luego
+hemos vuelto.
+
+¿Qué tal una función que crea un nuevo elemento en el directorio actual? ::
+
+    fsNewFile :: FSItem -> FSZipper -> FSZipper  
+    fsNewFile item (Folder folderName items, bs) =   
+        (Folder folderName (item:items), bs)
+    
+Facilísimo. Ten en cuenta que esta función fallara si intentamos añadir un
+elemento a algo que no sea un directorio.
+
+Vamos a añadir un fichero a nuestro directorio ``"pics"`` y luego volver
+atrás:
+
+.. code-block:: console
+
+    ghci> let newFocus = (myDisk,[]) -: fsTo "pics" -: fsNewFile (File "heh.jpg" "lol") -: fsUp  
+
+Lo realmente interesante de este método es que cuando modificamos el sistema
+de ficheros, en realidad no modifica ese mismo sistema, si no que devuelve uno
+totalmente nuevo. De este modo, podremos acceder al sistema de ficheros
+antiguo (``myDisk`` en este caso) y también al nuevo (el primer componente de
+``newFocus``). Así que gracias a los *zippers*, obtenemos automáticamente
+copias de diferentes versiones, de forma que siempre podremos referenciar a
+versiones antiguas aunque lo hayamos modificado. Esto no es una propiedad
+única de los *zippers*, si no de todas las estructuras de datos de Haskell ya
+que son inmutables. Sin embargo con los *zippers*, ganamos la habilidad de
+recorrer y almacenar eficientemente estas estructuras de datos.
+
+
+Vigila tus pasos
+----------------
+
+Hasta ahora, cuando recorríamos estructuras de datos, ya sean árboles
+binarios, listas o sistemas de ficheros, no nos preocupábamos de sí tomábamos
+un paso en falso y nos salíamos de la estructura. Por ejemplo, la función
+``goLeft`` toma un *zipper* de un árbol binario y mueve el selector al árbol
+izquierdo: ::
+
+    goLeft :: Zipper a -> Zipper a  
+    goLeft (Node x l r, bs) = (l, LeftCrumb x r:bs)
+
+.. image:: /images/bigtree.png
+   :align: right
+   :alt: Cayéndote de un árbol. Última imágen :'(
+   
+Pero, ¿y si el árbol en el que nos encontramos está vacío? Es decir, no es un
+``Node`` si no un ``Empty``. En este caso, obtendremos un error de ejecución
+ya que el ajuste de patrones fallará ya que no hay ningún patrón que se ajuste
+a árboles vacíos, lo cuales no contienen ningún sub-árbol. Hasta ahora,
+simplemente hemos asumido que nunca íbamos a intentar seleccionar el sub-árbol
+izquierdo de un árbol vacío ya que dicho sub-árbol no existe. De todos modos,
+ir al sub-árbol izquierdo de un árbol vacío no tiene mucho sentido, y hasta
+ahora no nos hemos preocupado de ello.
+
+O, ¿qué pasaría si estamos en la raíz de un árbol y no tenemos ningún rastro
+e intentamos continuar hacía arriba? Ocurriría lo mismo. Parece que cuando
+utilizamos los *zipper*, cada paso que demos puede ser el último (reproducir
+música siniestra aquí). En otras palabras, cada movimiento puede ser un
+éxito, pero también fallo. Sí, es la ultima vez que te lo pregunto, y se que
+lo estás deseando, ¿a qué te recuerda esto? Por supuesto, ¡mónadas! en
+concreto la mónada ``Maybe`` que se encarga de contextos con posibles fallos.
+
+Vamos a utilizar la mónada ``Maybe`` para añadir el contexto de un posible
+fallo a nuestro pasos. Vamos a tomar las funciones que ya funcionan con
+el *zipper* de árboles binarios y vamos a convertirlas en funciones monádicas.
+Primero, vamos a añadir el contexto de un posible fallo a ``goLeft`` y
+``goRight``. Hasta ahora, el fallo de una función se reflejaba en su
+resultado y no va ser distinto aquí. ::
+
+    goLeft :: Zipper a -> Maybe (Zipper a)  
+    goLeft (Node x l r, bs) = Just (l, LeftCrumb x r:bs)  
+    goLeft (Empty, _) = Nothing  
+
+    goRight :: Zipper a -> Maybe (Zipper a)  
+    goRight (Node x l r, bs) = Just (r, RightCrumb x l:bs)  
+    goRight (Empty, _) = Nothing
+
+¡Genial! Ahora si intentamos dar un paso a la izquierda por un árbol vacío
+obtendremos un ``Nothing``.
+
+.. code-block:: console
+
+    ghci> goLeft (Empty, [])  
+    Nothing  
+    ghci> goLeft (Node 'A' Empty Empty, [])  
+    Just (Empty,[LeftCrumb 'A' Empty])
+
+Parece que funciona ¿Y si vamos hacia arriba? Aquí el problema está en 
+si queremos ir hacía arriba y no hay ningún rastro más, ya que esta situación
+indica que nos encontramos en la cima del árbol. Esta es la función ``goUp``
+que lanza un error si nos salimos de los límites: ::
+
+    goUp :: Zipper a -> Zipper a  
+    goUp (t, LeftCrumb x r:bs) = (Node x t r, bs)  
+    goUp (t, RightCrumb x l:bs) = (Node x l t, bs)
+
+Y esta la versión modificada: ::
+
+    goUp :: Zipper a -> Maybe (Zipper a)  
+    goUp (t, LeftCrumb x r:bs) = Just (Node x t r, bs)  
+    goUp (t, RightCrumb x l:bs) = Just (Node x l t, bs)  
+    goUp (_, []) = Nothing
+
+Si tenemos un rastro no hay ningún problema y podemos devolver un nuevo
+nodo seleccionado. Si embargo, si no hay ningún rastro devolvemos un fallo.
+
+Antes estas funciones tomaban *zippers* y devolvían *zippers*, por lo tanto
+podíamos encadenarlas así:
+
+.. code-block:: console
+
+    gchi> let newFocus = (freeTree,[]) -: goLeft -: goRight 
+
+Ahora, en lugar de devolver un ``Zipper a``, devuelven ``Maybe (Zipper a)``,
+así que no podemos encadenar las funciones de este modo. Tuvimos un problema
+similar cuando estábamos con nuestro
+:ref:`buen amigo el funambulista <pierre>`, en el capítulo de las mónadas. Él
+también tomaba un paso detrás de otro, y cada uno de ellos podía resultar en
+un fallo porque siempre podían aterrizar un grupo de pájaros en lado y
+desequilibrar la barra.
+
+Ahora el problema lo tenemos nosotros, que somos los que estamos recorriendo
+el árbol. Por suerte, aprendimos mucho de Pierre y de lo que hizo: cambiar
+la aplicación normal de funciones por la monádica, utilizando ``>>=``, que
+toma un valor en un contexto (en nuestro caso, ``Maybe (Zipper a)``, que
+representa el contexto de un posible fallo) y se lo pasa a un función de forma
+que se mantenga el significado del contexto. Así que al igual que nuestro
+amigo, solo tenemos que intercambiar ``-:`` por ``>>=``. Mira:
+
+.. code-block:: console
+
+    ghci> let coolTree = Node 1 Empty (Node 3 Empty Empty)  
+    ghci> return (coolTree,[]) >>= goRight  
+    Just (Node 3 Empty Empty,[RightCrumb 1 Empty])  
+    ghci> return (coolTree,[]) >>= goRight >>= goRight  
+    Just (Empty,[RightCrumb 3 Empty,RightCrumb 1 Empty])  
+    ghci> return (coolTree,[]) >>= goRight >>= goRight >>= goRight  
+    Nothing
+
+Hemos utilizado ``return`` para introducir un *zipper* en un valor ``Just``
+y luego hemos utilizado ``>>=`` para pasar ese valor a la función ``goRight``.
+Primero, creamos un árbol que tiene en su rama izquierda un sub-árbol vacío y
+en su rama derecha dos sub-árbol vacíos. Cuando intentamos ir por la rama
+derecha, el movimiento tiene éxito porque la operación tiene sentido. Volver
+a ir a la derecha también está permitido, acabamos seleccionando un árbol
+vacío. Pero si damos un paso más por tercera vez no tendrá sentido, porque no
+podemos visitar la rama derecha o izquierda de un sub-árbol vacío, por la
+tanto obtenemos ``Nothing``.
+
+Ahora ya tenemos equipadas nuestras funciones con una red de seguridad que nos
+salvará si nos caemos. Momento metafórico.
+
+El sistema de fichero también posee un montón de casos donde podría fallar,
+como intentar seleccionar un fichero o un directorio que no existe. Como
+último ejercicio, si quieres claro, puedes intentar añadir a estas funciones
+el contexto de un posibles fallos utilizando la mónada ``Maybe``. 

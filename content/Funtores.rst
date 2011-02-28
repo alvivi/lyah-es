@@ -982,7 +982,7 @@ pueda albergar ese valor, tiene sentido que ``pure`` sea simplemente
 ``return``, ya que ``return`` hace exactamente eso: crea una acción de E/S
 que no hace nada, simplemente tiene como resultado el valor que le pasemos,
 pero en realidad no ejecuta ninguna operación de E/S como mostrar texto por
-un terminal o leer algo de algún archivo.
+un terminal o leer algo de algún fichero.
 
 Si ``<*>`` fuera exclusivo para ``IO`` su tipo sería
 ``(<*>) :: IO (a -> b) -> IO a -> IO b``. Tomaría una acción de E/S que

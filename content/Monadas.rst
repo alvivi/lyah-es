@@ -363,6 +363,9 @@ patrones. Y aún así no perdemos el contexto de los tipo ``Maybe``, porque
 cuando es ``Nothing``, el resultado de ``>>=`` será ``Nothing`` también.
 
 
+.. _pierre:
+
+
 En la cuerda floja
 ------------------
 

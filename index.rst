@@ -20,7 +20,7 @@
    TODO: Tipos de datos ó Tipos de dato
    TODO: Sintaxis sugar = alternativa sintáctica
    TODO: Zippers, cambiar selañadas por seleccionadas.
-   
+   TODO: sino/si no
    
 .. toctree::
    :maxdepth: 2
@@ -39,4 +39,6 @@
    content/Monadas
    content/MasMonadas
    content/Zippers
-  
+
+
+Toda esta obra está licenciada bajo la `licencia Creative Commons Reconocimiento-NoComercial-CompartirIgual 3.0 <http://creativecommons.org/licenses/by-nc-sa/3.0/es/>`_ porque no encontré un licencia con un nombre más largo.

@@ -1421,7 +1421,7 @@ hemos abierto. El fichero original permanece sin cambios y el fichero temporal
 ahora contiene todas las tareas que contiene el original, excepto la que
 queremos eliminar.
 
-Después de cerrar ambos archivos, tanto el original como el temporal,
+Después de cerrar ambos ficheros, tanto el original como el temporal,
 eliminamos el original con :cpp:member:`removeFile`, que, como puedes ver, toma la
 ruta de un fichero y lo elimina. Después de eliminar el ``todo.txt`` original,
 utilizamos :cpp:member:`renameFile` para renombrar el fichero temporal a
