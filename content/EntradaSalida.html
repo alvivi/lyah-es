@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>        
+    <script type="text/javascript" src="../_static/cms.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Resolviendo problemas de forma funcional" href="Problemas.html" />
@@ -370,7 +370,7 @@ normalmente termina la ejecución de un método o una subrutina y devuelve algú
 tipo de valor a quien quiera que lo llamó. En Haskell (dentro de la acciones
 <tt class="docutils literal"><span class="pre">IO</span></tt> concretamente), lo que hace es convertir un valor puro en una acción
 <tt class="docutils literal"><span class="pre">IO</span></tt>. Si lo piensas como en la analogía de la caja que vimos, <tt class="docutils literal"><span class="pre">return</span></tt>
-coge un valor y lo pone dentro de una caja. La acción <tt class="docutils literal"><span class="pre">IO</span></tt> resultante
+toma un valor y lo pone dentro de una caja. La acción <tt class="docutils literal"><span class="pre">IO</span></tt> resultante
 realmente no hace nada, simplemente tiene dicho valor como resultado. Así que
 en un contexto <tt class="docutils literal"><span class="pre">IO</span></tt>, <tt class="docutils literal"><span class="pre">return</span> <span class="pre">&quot;haha&quot;</span></tt> tendrá el tipo <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">String</span></tt> ¿Cuál es
 el motivo de transformar un valor puro en una acción que realmente no hace
@@ -1348,7 +1348,7 @@ cadena utilizando <tt class="docutils literal"><span class="pre">unlines</span><
 hemos abierto. El fichero original permanece sin cambios y el fichero temporal
 ahora contiene todas las tareas que contiene el original, excepto la que
 queremos eliminar.</p>
-<p>Después de cerrar ambos archivos, tanto el original como el temporal,
+<p>Después de cerrar ambos ficheros, tanto el original como el temporal,
 eliminamos el original con <tt class="xref cpp cpp-member docutils literal"><span class="pre">removeFile</span></tt>, que, como puedes ver, toma la
 ruta de un fichero y lo elimina. Después de eliminar el <tt class="docutils literal"><span class="pre">todo.txt</span></tt> original,
 utilizamos <tt class="xref cpp cpp-member docutils literal"><span class="pre">renameFile</span></tt> para renombrar el fichero temporal a
@@ -1652,7 +1652,7 @@ erróneo para realizar el informe. Otra forma sería utilizando excepciones, lo
 cual veremos dentro de poco.</p>
 </div>
 <div class="section" id="aleatoriedad">
-<h2>Aleatoriedad<a class="headerlink" href="#aleatoriedad" title="Enlazar permanentemente con este título">¶</a></h2>
+<span id="id1"></span><h2>Aleatoriedad<a class="headerlink" href="#aleatoriedad" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="Aleatorio" class="align-right" src="../_images/random.png" />
 <p>Muchas veces mientras programamos, necesitamos obtener algunos datos
 aleatorios. Quizá estemos haciendo un juego en el que se tenga que lanzar un
@@ -2235,7 +2235,7 @@ de un error cuando dicho error suceda.</p>
 excepciones. Tiene sentido ¿Pero qué sucede con el código puro? Bueno, también
 puede lanzar excepciones. Piensa en las funciones <tt class="docutils literal"><span class="pre">div</span></tt> y <tt class="docutils literal"><span class="pre">head</span></tt>. Tienen
 los tipos <tt class="docutils literal"><span class="pre">(Integral</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span></tt> y <tt class="docutils literal"><span class="pre">[a]</span> <span class="pre">-&gt;</span> <span class="pre">a</span></tt> respectivamente. No
-hay ningún <tt class="docutils literal"><span class="pre">Maybe</span></tt> ni <tt class="docutils literal"><span class="pre">Either</span></tt> en el tipo que devuelven pero aún así
+hay ningún <tt class="docutils literal"><span class="pre">Maybe</span></tt> ni <tt class="docutils literal"><span class="pre">Either</span></tt> en el tipo que devuelven pero aun así
 pueden fallar. <tt class="docutils literal"><span class="pre">div</span></tt> puede fallar si intentas dividir algo por cero y
 <tt class="docutils literal"><span class="pre">head</span></tt> cuando le das una lista vacía.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; 4 `div` 0</span>
@@ -2519,7 +2519,7 @@ del programa.</p>
 <p>Ahora ya sabes como tratar las excepciones de la E/S. No hemos visto como
 lanzar excepciones desde código puro y trabajar con ellas, porque, como ya
 hemos dicho, Haskell ofrece mejores formas de informar de errores sin recurrir
-a partes de la E/S. Incluso aún teniendo que trabajar con acciones de la E/S
+a partes de la E/S. Incluso aun teniendo que trabajar con acciones de la E/S
 que puede fallar, prefiero tener tipos como <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">(Either</span> <span class="pre">a</span> <span class="pre">b)</span></tt>, que indiquen
 que son acciones de E/S normales solo que su resultado será del tipo
 <tt class="docutils literal"><span class="pre">Either</span> <span class="pre">a</span> <span class="pre">b</span></tt>, así que o bien devolverán <tt class="docutils literal"><span class="pre">Left</span> <span class="pre">a</span></tt> o  <tt class="docutils literal"><span class="pre">Right</span> <span class="pre">b</span></tt>.</p>

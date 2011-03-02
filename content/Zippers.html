@@ -1,0 +1,812 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Zippers &mdash; ¡Aprende Haskell por el bien de todos! v0 documentation</title>
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <script type="text/javascript" src="../_static/cms.js"></script>    
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
+    <link rel="prev" title="Unas cuantas mónadas más" href="MasMonadas.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="MasMonadas.html" title="Unas cuantas mónadas más"
+             accesskey="P">anterior</a></li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="zippers">
+<h1>Zippers<a class="headerlink" href="#zippers" title="Enlazar permanentemente con este título">¶</a></h1>
+<img alt="¡Soy parte e la élite!" class="align-right" src="../_images/60sdude.png" />
+<p>Mientras que la pureza de Haskell nos da un montón de beneficios, nos hace
+abordar algunos problemas de forma muy diferente a como lo haríamos en
+Haskell. Debido a la transparencia referencial de Haskell, un valor es
+exactamente igual a otro si ambos representan la misma cosa.</p>
+<p>Si tenemos tres árboles llenos de cincos y queremos cambiar uno de ellos a
+seis, tenemos que tener algún modo de decir qué cinco en concreto del árbol
+queremos modificar. Tenemos que conocer la posición que ocupa en el árbol. En
+los lenguajes imperativos podemos ver en que parte de la memoria se encuentra
+el cinco que queremos modificar y ya esta. Pero en Haskell, un cinco es
+exactamente igual a cualquier otro cinco, así que no podemos elegir uno
+basándonos en que posición ocupa en la memoria. Tampoco podemos <em>cambiar</em>
+nada. Cuando decimos que vamos a modificar un árbol, en realidad significa que
+vamos a tomar un árbol y devolver uno nuevo que será similar al original, pero
+algo diferente.</p>
+<p>Una cosa que podemos hacer es recordar el camino que seguimos para llegar al
+elemento que queremos modificar desde la raíz del árbol. Podríamos decir, toma
+este árbol, vez a la izquierda, ves a la derecha, vuelve a ir a la izquierda y
+modifica el elemento que se encuentre allí. Aunque esto funcionaría, puede ser
+ineficiente. Si luego queremos modificar un elemento que se encuentra al lado
+del elemento que acabamos de modificar, tenemos que recorrer de nuevo todo el
+camino empezando por la raíz.</p>
+<p>En este capítulo veremos como podemos tomar una estructura de datos cualquiera
+y centrarnos en la forma en la que modificamos y nos desplazamos por sus
+elementos de forma eficiente.</p>
+<div class="section" id="dando-un-paseo">
+<h2>Dando un paseo<a class="headerlink" href="#dando-un-paseo" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Como aprendimos en clase de ciencias naturales, existen mucho tipos de árboles
+diferentes, así que vamos a elegir una semilla y plantar el nuestro. Aquí la
+tienes:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Empty</span> <span class="o">|</span> <span class="kt">Node</span> <span class="n">a</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Así que este árbol es o bien <tt class="docutils literal"><span class="pre">Empty</span></tt> o bien es un nodo que contiene dos
+sub-árboles. Aquí tienes un ejemplo de árbol de este tipo, ¡gratis!</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">freeTree</span> <span class="ow">::</span> <span class="kt">Tree</span> <span class="kt">Char</span>
+<span class="nf">freeTree</span> <span class="ow">=</span>
+    <span class="kt">Node</span> <span class="sc">&#39;P&#39;</span>
+        <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;O&#39;</span>
+            <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;L&#39;</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;N&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;T&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;Y&#39;</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;S&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;A&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;L&#39;</span>
+            <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;W&#39;</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;C&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;R&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;A&#39;</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;A&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+                <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;C&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Y así es su representación gráfica/artística:</p>
+<img alt="Árbol." class="align-center" src="../_images/pollywantsa.png" />
+<p>¿Ves esa <tt class="docutils literal"><span class="pre">W</span></tt>? Digamos que queremos cambiarla por una <tt class="docutils literal"><span class="pre">P</span></tt> ¿Cómo lo hacemos?
+Bueno, una forma sería utilizando un ajuste de patrones sobre el árbol hasta
+que encontremos el elemento que buscamos, es decir, vamos por la derecha,
+luego por la izquierda y modificamos el elemento. Así sería:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">changeToP</span> <span class="ow">::</span> <span class="kt">Tree</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Tree</span> <span class="kt">Char</span>
+<span class="nf">changeToP</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">y</span> <span class="p">(</span><span class="kt">Node</span> <span class="kr">_</span> <span class="n">m</span> <span class="n">n</span><span class="p">)</span> <span class="n">r</span><span class="p">))</span> <span class="ow">=</span> <span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">y</span> <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;P&#39;</span> <span class="n">m</span> <span class="n">n</span><span class="p">)</span> <span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>¡Aarg! No solo es feo si no también algo confuso ¿Qué hace esto? Bueno,
+utilizamos un ajuste de patrones sobre el árbol y llamamos a su elemento raíz
+<tt class="docutils literal"><span class="pre">x</span></tt> (que en este caso será <tt class="docutils literal"><span class="pre">'P'</span></tt>) y su sub-árbol izquierdo <tt class="docutils literal"><span class="pre">l</span></tt>. En lugar
+de dar un nombre a su sub-árbol derecho, utilizamos otro patrón sobre él.
+Continuamos ese ajuste de patrones hasta que alcanzamos el sub-árbol cuya
+raíz es <tt class="docutils literal"><span class="pre">'W'</span></tt>. Una vez hemos llegado, reconstruimos el árbol, solo que en
+lugar de que ese sub-árbol contenga una <tt class="docutils literal"><span class="pre">'W'</span></tt> contendrá una <tt class="docutils literal"><span class="pre">'P'</span></tt>.</p>
+<p>¿Existe alguna forma de hacer esto mejor? Podríamos crear una función que tome
+un árbol junto a una lista de direcciones. Las direcciones será o bien <tt class="docutils literal"><span class="pre">L</span></tt>
+(izquierda) o bien <tt class="docutils literal"><span class="pre">R</span></tt> (derecha), de forma que cambiamos el elemento una vez
+hemos seguido todas las direcciones.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Direction</span> <span class="ow">=</span> <span class="kt">L</span> <span class="o">|</span> <span class="kt">R</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+<span class="kr">type</span> <span class="kt">Directions</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Direction</span><span class="p">]</span>
+
+<span class="nf">changeToP</span> <span class="ow">::</span> <span class="kt">Directions</span><span class="ow">-&gt;</span> <span class="kt">Tree</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">Tree</span> <span class="kt">Char</span>
+<span class="nf">changeToP</span> <span class="p">(</span><span class="kt">L:</span><span class="n">ds</span><span class="p">)</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Node</span> <span class="n">x</span> <span class="p">(</span><span class="n">changeToP</span> <span class="n">ds</span> <span class="n">l</span><span class="p">)</span> <span class="n">r</span>
+<span class="nf">changeToP</span> <span class="p">(</span><span class="kt">R:</span><span class="n">ds</span><span class="p">)</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="p">(</span><span class="n">changeToP</span> <span class="n">ds</span> <span class="n">r</span><span class="p">)</span>
+<span class="nf">changeToP</span> <span class="kt">[]</span> <span class="p">(</span><span class="kt">Node</span> <span class="kr">_</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Node</span> <span class="sc">&#39;P&#39;</span> <span class="n">l</span> <span class="n">r</span>
+</pre></div>
+</div>
+<p>Si el primer elemento de la lista de direcciones es <tt class="docutils literal"><span class="pre">L</span></tt>, creamos un árbol
+que igual al anterior solo que su sub-árbol izquierdo ahora contendrá el
+elemento modificado a <tt class="docutils literal"><span class="pre">P</span></tt>. Cuando llamamos recursivamente a <tt class="docutils literal"><span class="pre">changeToP</span></tt>,
+le pasamos únicamente la cola de la listas de direcciones, porque sino
+volvería a tomar la misma dirección. Hacemos lo mismo en caso de <tt class="docutils literal"><span class="pre">R</span></tt>. Si la
+lista de direcciones está vacía, significa que hemos alcanzado nuestro
+destino, así que devolvemos un árbol idéntico al que hemos recibido, solo que
+este nuevo árbol tendrá <tt class="docutils literal"><span class="pre">'P'</span></tt> como elemento raíz.</p>
+<p>Para evitar tener que mostrar el árbol entero, vamos a crear una función que
+tome una lista de direcciones y nos devuelva el elemento que se encuentra en
+esa posición.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">elemAt</span> <span class="ow">::</span> <span class="kt">Directions</span> <span class="ow">-&gt;</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
+<span class="nf">elemAt</span> <span class="p">(</span><span class="kt">L:</span><span class="n">ds</span><span class="p">)</span> <span class="p">(</span><span class="kt">Node</span> <span class="kr">_</span> <span class="n">l</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">elemAt</span> <span class="n">ds</span> <span class="n">l</span>
+<span class="nf">elemAt</span> <span class="p">(</span><span class="kt">R:</span><span class="n">ds</span><span class="p">)</span> <span class="p">(</span><span class="kt">Node</span> <span class="kr">_</span> <span class="kr">_</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="n">elemAt</span> <span class="n">ds</span> <span class="n">r</span>
+<span class="nf">elemAt</span> <span class="kt">[]</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="kr">_</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Esta función es muy parecida a <tt class="docutils literal"><span class="pre">changeToP</span></tt>, solo que en lugar de reconstruir
+el árbol paso a paso, ignora cualquier cosa excepto su destino. Vamos a
+cambiar <tt class="docutils literal"><span class="pre">'W'</span></tt> por <tt class="docutils literal"><span class="pre">'P'</span></tt> y luego comprobaremos si el árbol se ha modificado
+correctamente:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newTree = changeToP [R,L] freeTree</span>
+<span class="go">ghci&gt; elemAt [R,L] newTree</span>
+<span class="go">&#39;P&#39;</span>
+</pre></div>
+</div>
+<p>Genial, parece que funciona. En estas funciones, la lista de direcciones actúa
+como especie de objetivo, ya que señala un sub-árbol concreto del árbol
+principal. Por ejemplo, una lista de direcciones como <tt class="docutils literal"><span class="pre">[R]</span></tt> señala el
+sub-árbol izquierdo que cuelga de la raíz. Una lista de direcciones vacía
+señala el mismo árbol principal.</p>
+<p>Aunque estas técnicas parecen correctas, pueden ser más bien ineficientes,
+especialmente si queremos modificar elementos de forma repetida. Digamos que
+tenemos un árbol inmenso y una larga lista de direcciones que señala un
+elemento que se encuentra al final del árbol. Utilizamos esta lista de
+direcciones para recorrer el árbol y modificar dicho elemento. Si queremos
+modificar un elemento que se encuentra cerca del elemento que acabamos de
+modificar, tenemos que empezar otra ves desde la raíz del árbol y volver a
+recorrer de nuevo todo el camino.</p>
+<p>En la siguiente sección veremos un forma mejor de señalar un sub-árbol, una
+que nos permita señalar de forma eficiente a los sub-árbol vecinos.</p>
+</div>
+<div class="section" id="un-rastro-de-migas">
+<h2>Un rastro de migas<a class="headerlink" href="#un-rastro-de-migas" title="Enlazar permanentemente con este título">¶</a></h2>
+<img alt="fiu fiu fiuuu" class="align-right" src="../_images/bread.png" />
+<p>Vale, así que para  centrarnos o señalar un solo sub-árbol, buscamos algo
+mejor que una simple lista de direcciones que parta siempre desde la raíz
+¿Ayudaría si comenzamos desde la raíz y nos movemos a la izquierda o la
+derecha y al mismo tiempo dejáramos una especie de rastro? Es decir, si vamos
+a la izquierda, recordamos que hemos ido por la izquierda, y si vamos por la
+derecha, recordamos que hemos ido por la derecha. Podemos intentarlo.</p>
+<p>Para representar este rastro, usaremos también una lista de direcciones (es
+decir, o bien <tt class="docutils literal"><span class="pre">L</span></tt> o bien <tt class="docutils literal"><span class="pre">R</span></tt>), solo que en lugar de llamarlo
+<tt class="docutils literal"><span class="pre">Directions</span></tt> (direcciones) lo llamaremos <tt class="docutils literal"><span class="pre">Breadcrumbs</span></tt> (rastro), ya que
+iremos dejando las direcciones que hemos tomado a lo largo del camino.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">Breadcrumbs</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Direction</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Aquí tienes una función que toma un árbol y un rastro y se desplaza al
+sub-árbol izquierdo añadiendo <tt class="docutils literal"><span class="pre">L</span></tt> a la cabeza de la lista que representa el
+rastro:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goLeft</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span><span class="p">)</span>
+<span class="nf">goLeft</span> <span class="p">(</span><span class="kt">Node</span> <span class="kr">_</span> <span class="n">l</span> <span class="kr">_</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="kt">L:</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ignoramos el elemento raíz y el sub-árbol derecho y simplemente devolvemos
+el sub-árbol izquierdo junto al rastro anterior añadiéndole <tt class="docutils literal"><span class="pre">L</span></tt>. Aquí tienes
+la función que se desplaza a la derecha:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goRight</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span><span class="p">)</span>
+<span class="nf">goRight</span> <span class="p">(</span><span class="kt">Node</span> <span class="kr">_</span> <span class="kr">_</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="kt">R:</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Funciona del mismo modo. Vamos a utilizar estas funciones para tomen el
+árbol <tt class="docutils literal"><span class="pre">freeTree</span></tt> y se desplacen primero a la derecha y luego a la izquierda.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; goLeft (goRight (freeTree, []))</span>
+<span class="go">(Node &#39;W&#39; (Node &#39;C&#39; Empty Empty) (Node &#39;R&#39; Empty Empty),[L,R])</span>
+</pre></div>
+</div>
+<img alt="¡Casi, casi! ¡Pero no!" class="align-left" src="../_images/almostzipper.png" />
+<p>Vale, ahora tenemos un árbol que tiene <tt class="docutils literal"><span class="pre">'W'</span></tt> como elemento raíz, <tt class="docutils literal"><span class="pre">'C'</span></tt>
+como sub-árbol izquierdo y <tt class="docutils literal"><span class="pre">'R'</span></tt> como sub-árbol derecho. El rastro es
+<tt class="docutils literal"><span class="pre">[L,R]</span></tt> porque primero fuimos a la derecha y luego a la izquierda.</p>
+<p>Para que recorrer el árbol sea más cómodo vamos crear la función <tt class="docutils literal"><span class="pre">-:</span></tt> que
+definiremos así:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">x</span> <span class="o">-:</span> <span class="n">f</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>La cual nos permite aplicar funciones a valores escribiendo primero el valor,
+luego <tt class="docutils literal"><span class="pre">-:</span></tt> y al final la función. Así que en lugar de hacer
+<tt class="docutils literal"><span class="pre">goRight</span> <span class="pre">(freeTree,</span> <span class="pre">[])</span></tt>, podemos escribir <tt class="docutils literal"><span class="pre">(freeTree,</span> <span class="pre">[])</span> <span class="pre">-:</span> <span class="pre">goRight</span></tt>.
+Usando esta función podemos reescribir el código anterior para parezca más
+que primero vamos a la derecha y luego a la izquierda:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">freeTree</span><span class="p">,</span> <span class="kt">[]</span><span class="p">)</span> <span class="o">-:</span> <span class="n">goRight</span> <span class="o">-:</span> <span class="n">goLeft</span>
+<span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;W&#39;</span> <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;C&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">)</span> <span class="p">(</span><span class="kt">Node</span> <span class="sc">&#39;R&#39;</span> <span class="kt">Empty</span> <span class="kt">Empty</span><span class="p">),[</span><span class="kt">L</span><span class="p">,</span><span class="kt">R</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="volviendo-atras">
+<h3>Volviendo atrás<a class="headerlink" href="#volviendo-atras" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>¿Qué pasa si queremos volver por el camino que hemos tomado? Gracias al rastro
+sabemos que el árbol actual es el sub-árbol izquierdo del sub-árbol derecho
+que colgaba del árbol principal, pero nada más. No nos dice nada acerca del
+padre del sub-árbol actual para que podamos volver hacia arriba. Parece que
+aparte del las direcciones que hemos tomado, el rastro también debe contener
+toda la información que desechamos por el camino. En este caso, el sub-árbol
+padre que contiene también el sub-árbol izquierdo que no tomamos.</p>
+<p>En general, un solo rastro debe contener toda la información suficiente para
+poder reconstruir el nodo padre. De esta forma, tenemos información sobre
+todas las posibles rutas que no hemos tomado y también conocemos el camino
+que hemos tomado, pero debe contener información acerca del sub-árbol en
+el que nos encontramos actualmente, si no, estaríamos duplicando información.</p>
+<p>Vamos a modificar el tipo rastro para que también contenga la información
+necesaria para almacenar todos los posibles caminos que vamos ignorando
+mientras recorremos el árbol. En lugar de utilizar <tt class="docutils literal"><span class="pre">Direction</span></tt>, creamos un
+nuevo tipo de datos:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">Crumb</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">LeftCrumb</span> <span class="n">a</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="o">|</span> <span class="kt">RightCrumb</span> <span class="n">a</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">)</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ahora, en lugar de tener únicamente <tt class="docutils literal"><span class="pre">L</span></tt>, tenemos <tt class="docutils literal"><span class="pre">LeftCrumb</span></tt> que contiene
+también el nodo desde el cual nos hemos desplazado y el sub-árbol derecho que
+no hemos visitado. En lugar de <tt class="docutils literal"><span class="pre">R</span></tt>, ahora tenemos <tt class="docutils literal"><span class="pre">RightCrumb</span></tt> que
+contiene el nodo desde el cual nos hemos desplazado y el sub-árbol izquierdo
+que hemos ignorado.</p>
+<p>Ahora estos rastros contienen toda la información necesaria para reconstruir
+el árbol que estamos recorriendo. Así que en lugar de ser un rastro normal,
+son como una especie de discos de datos que vamos dejando por el camino, ya
+que contienen mucha más información a parte del camino tomado.</p>
+<p>Básicamente, ahora cada rastro es como un sub-árbol cojo. Cuando nos
+adentramos en un árbol, el rastro almacena toda la información del nodo que
+nos alejamos exceptuando el sub-árbol que estamos recorriendo. También tenemos
+que fijarnos en la información que vamos ignorando, por ejemplo, en caso
+de <tt class="docutils literal"><span class="pre">LeftCrumb</span></tt> sabemos que nos acabamos de desplazar por el sub-árbol
+izquierdo, así que no guardamos ninguna información de este sub-árbol.</p>
+<p>Vamos a modificar el sinónimo de tipo <tt class="docutils literal"><span class="pre">Breadcrumbs</span></tt> para refleje este
+cambio:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">[</span><span class="kt">Crumb</span> <span class="n">a</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>A continuación vamos modificar las funciones <tt class="docutils literal"><span class="pre">goLeft</span></tt> y <tt class="docutils literal"><span class="pre">goRight</span></tt> para
+que almacenen en el rastro la información de los caminos que no hemos tomado,
+en lugar de ignorar esta información como hacíamos antes. Así sería
+<tt class="docutils literal"><span class="pre">goLeft</span></tt>:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goLeft</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span>
+<span class="nf">goLeft</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="kt">LeftCrumb</span> <span class="n">x</span> <span class="n">r</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Es muy parecida a la versión anterior de <tt class="docutils literal"><span class="pre">goLeft</span></tt>, solo que en lugar de
+añadir <tt class="docutils literal"><span class="pre">L</span></tt> a la cabeza de la lista de rastros, añadimos un elemento
+<tt class="docutils literal"><span class="pre">LeftCrumb</span></tt> para representar que hemos tomado el camino izquierdo y además
+indicamos el nodo desde el que nos hemos desplazado (es decir <tt class="docutils literal"><span class="pre">x</span></tt>) y el
+camino que no hemos tomado (es decir, el sub-árbol derecho, <tt class="docutils literal"><span class="pre">r</span></tt>).</p>
+<p>Fíjate que esta función asume que el árbol en el que nos encontramos no es
+<tt class="docutils literal"><span class="pre">Empty</span></tt>. Un árbol vacío no tiene ningún sub-árbol, así que si intentamos
+movernos por un árbol vacío, obtendremos un error a la hora de ajustar los
+patrones.</p>
+<p><tt class="docutils literal"><span class="pre">goRight</span></tt> es parecido:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goRight</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span>
+<span class="nf">goRight</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="kt">RightCrumb</span> <span class="n">x</span> <span class="n">l</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Ahora somos totalmente capaces de movernos de izquierda a derecha. Lo que aún
+no podemos hacer es volver por el camino recorrido utilizando la información
+que indica los nodos padres que hemos recorrido. Aquí tienes la función
+<tt class="docutils literal"><span class="pre">goUp</span></tt>:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goUp</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">LeftCrumb</span> <span class="n">x</span> <span class="n">r</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">t</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">RightCrumb</span> <span class="n">x</span> <span class="n">l</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">t</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="Astronauta." class="align-left" src="../_images/asstronaut.png" />
+<p>No encontramos en el árbol <tt class="docutils literal"><span class="pre">t</span></tt> y tenemos que comprobar el último <tt class="docutils literal"><span class="pre">Crumb</span></tt>.
+Si es un <tt class="docutils literal"><span class="pre">LeftCrumb</span></tt>, entonces reconstruimos un nuevo árbol donde <tt class="docutils literal"><span class="pre">t</span></tt> es
+el sub-árbol izquierdo y utilizamos la información del sub-árbol derecho que
+no hemos visitado junto al elemento del nodo padre para reconstruir un nuevo
+<tt class="docutils literal"><span class="pre">Node</span></tt>. Como hemos utilizado el rastro anterior para recrear el nuevo
+nodo, por decirlo de algún modo, la lista de rastros ya no tiene que contener
+este último rastro.</p>
+<p>Fíjate que esta función genera un error en caso que ya nos encontremos en la
+cima del árbol. Luego veremos como utilizar la mónada <tt class="docutils literal"><span class="pre">Maybe</span></tt> para
+representar los posibles fallos de desplazamiento.</p>
+<p>Gracias al par formado por <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">a</span></tt> y <tt class="docutils literal"><span class="pre">Breadcrumbs</span> <span class="pre">a</span></tt>, tenemos toda la
+información necesaria para reconstruir el árbol entero y también tenemos
+señalado un nodo concreto. Este modelo nos permite también movernos fácilmente
+hacia arriba, izquierda o derecha. Todo par que contenga una parte
+seleccionada de una estructura y todo la parte que rodea a esa parte
+seleccionada se llama <em>zipper</em>, esto es así porque se parece a la acción de
+aplicar <tt class="docutils literal"><span class="pre">zip</span></tt> sobre listas normales de duplas. Un buen sinónimo de tipo
+sería:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Tree</span> <span class="n">a</span><span class="p">,</span> <span class="kt">Breadcrumbs</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Preferiría llamar al sinónimo de tipos <tt class="docutils literal"><span class="pre">Focus</span></tt> ya que de esta forma es más
+claro que estamos seleccionando una parte de la estructura, pero el termino
+<em>zipper</em> se utiliza ampliamente, así que nos quedamos con <tt class="docutils literal"><span class="pre">Zipper</span></tt>.</p>
+</div>
+<div class="section" id="manipulando-arboles-seleccionados">
+<h3>Manipulando árboles seleccionados<a class="headerlink" href="#manipulando-arboles-seleccionados" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Ahora que nos podemos mover de arriba a abajo, vamos a crear una función que
+modifique el elemento raíz del sub-árbol que seleccione un <em>zipper</em>.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">modify</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span>
+<span class="nf">modify</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Node</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+<span class="nf">modify</span> <span class="n">f</span> <span class="p">(</span><span class="kt">Empty</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Empty</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Si estamos seleccionando un nodo, modificamos su elemento raíz con la función
+<tt class="docutils literal"><span class="pre">f</span></tt>. Si estamos seleccionando un árbol vacío, dejamos éste como estaba.
+Ahora podemos empezar con un árbol, movernos a donde queramos y modificar un
+elemento, todo esto mientras mantenemos seleccionado un elemento de forma que
+nos podemos desplazar fácilmente de arriba a abajo. Un ejemplo:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus = modify (\_ -&gt; &#39;P&#39;) (goRight (goLeft (freeTree,[])))</span>
+</pre></div>
+</div>
+<p>Vamos a la izquierda, luego a la derecha y luego remplazamos el elemento raíz
+del sub-árbol en el que nos encontramos por <tt class="docutils literal"><span class="pre">'P'</span></tt>. Se lee mejor si
+utilizamos <tt class="docutils literal"><span class="pre">-:</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus = (freeTree,[]) -: goLeft -: goRight -: modify (\_ -&gt; &#39;P&#39;)</span>
+</pre></div>
+</div>
+<p>Luego podemos desplazarnos hacía arriba y remplazar el elemento por una
+misteriosa <tt class="docutils literal"><span class="pre">'X'</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus2 = modify (\_ -&gt; &#39;X&#39;) (goUp newFocus)</span>
+</pre></div>
+</div>
+<p>O con <tt class="docutils literal"><span class="pre">-:</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus2 = newFocus -: goUp -: modify (\_ -&gt; &#39;X&#39;)</span>
+</pre></div>
+</div>
+<p>Movernos hacia arriba es fácil gracias a que el rastro que vamos dejando que
+contiene los caminos que no hemos tomado, así que, es como deshacer el camino.
+Por esta razón, cuando queremos movernos hacia arriba no tenemos que volver
+a empezar desde la raíz inicial, simplemente podemos volver por el camino que
+hemos tomado.</p>
+<p>Cada nodo posee dos sub-árboles, incluso aunque los dos sub-árboles sean
+árboles vacíos. Así que si estamos seleccionando un sub-árbol vacío, una cosa
+que podemos hacer es remplazar un sub-árbol vació por un árbol que contenga
+un nodo.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">attach</span> <span class="ow">::</span> <span class="kt">Tree</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span>
+<span class="nf">attach</span> <span class="n">t</span> <span class="p">(</span><span class="kr">_</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Tomamos un árbol y un <em>zipper</em> y devolvemos un nuevo <em>zipper</em> que tendrá
+seleccionado el árbol que pasemos como parámetro. Esta función no solo nos
+permite añadir nodos a las hojas de un árbol, sino que también podemos
+remplazar sub-árboles enteros. Vamos a añadir un árbol a la parte inferior
+izquierda de <tt class="docutils literal"><span class="pre">freeTree</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let farLeft = (freeTree,[]) -: goLeft -: goLeft -: goLeft -: goLeft</span>
+<span class="go">ghci&gt; let newFocus = farLeft -: attach (Node &#39;Z&#39; Empty Empty)</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">newFocus</span></tt> ahora selecciona un nuevo árbol que ha sido añadido al árbol
+original. Si utilizáramos <tt class="docutils literal"><span class="pre">goUp</span></tt> para subir por el árbol, veríamos que sería
+igual que <tt class="docutils literal"><span class="pre">freeTree</span></tt> pero con un nodo adicional <tt class="docutils literal"><span class="pre">'Z'</span></tt> en su parte
+inferior izquierda.</p>
+</div>
+<div class="section" id="me-voy-a-la-cima-del-arbol-donde-el-aire-esta-limpio-y-fresco">
+<h3>Me voy a la cima del árbol, donde el aire está limpio y fresco<a class="headerlink" href="#me-voy-a-la-cima-del-arbol-donde-el-aire-esta-limpio-y-fresco" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Crear una función que seleccione la cima del árbol, independientemente del
+nodo seleccionado, es realmente fácil:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">topMost</span> <span class="ow">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span>
+<span class="nf">topMost</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="kt">[]</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="kt">[]</span><span class="p">)</span>
+<span class="nf">topMost</span> <span class="n">z</span> <span class="ow">=</span> <span class="n">topMost</span> <span class="p">(</span><span class="n">goUp</span> <span class="n">z</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Si nuestro rastro está vacío, significa que ya estamos en la cima del árbol,
+así que solo tenemos que devolver el mismo nodo que está seleccionado. De
+otro modo, solo tenemos que seleccionar el nodo padre del actual y volver a
+aplicar de forma recursiva <tt class="docutils literal"><span class="pre">topMost</span></tt>. Ahora podemos dar vueltas por un
+árbol, ir a la izquierda o a la derecha, aplicar <tt class="docutils literal"><span class="pre">modify</span></tt> o <tt class="docutils literal"><span class="pre">attach</span></tt> para
+realizar unas cuantas modificaciones, y luego, gracias a <tt class="docutils literal"><span class="pre">topMost</span></tt>, volver
+a selecciona la raíz principal del árbol y ver si hemos modificado
+correctamente el árbol.</p>
+</div>
+</div>
+<div class="section" id="seleccionando-elementos-de-la-listas">
+<h2>Seleccionando elementos de la listas<a class="headerlink" href="#seleccionando-elementos-de-la-listas" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Los <em>zippers</em> se pueden utilizar con casi cualquier tipo de estructura, así
+que no debería sorprendente que también se puedan utilizar con las listas.
+Después de todo, las listas son muy parecidas a los árboles. El los árboles un
+nodo puede tener un elemento (o no) y varios sub-árboles, mientras que en las
+listas un elemento puede tener una sola sub-lista. Cuando implementamos
+<a class="reference internal" href="ClasesDeTipos.html#estrucrec"><em>nuestro propio tipo de listas</em></a>, definimos el tipo así:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">List</span> <span class="n">a</span> <span class="ow">=</span> <span class="kt">Empty</span> <span class="o">|</span> <span class="kt">Cons</span> <span class="n">a</span> <span class="p">(</span><span class="kt">List</span> <span class="n">a</span><span class="p">)</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">,</span> <span class="kt">Read</span><span class="p">,</span> <span class="kt">Eq</span><span class="p">,</span> <span class="kt">Ord</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="El mejor de todos." class="align-right" src="../_images/picard.png" />
+<p>Si lo comparamos con la definición anterior de los árboles binarios podemos
+observar como las listas pueden definirse como un árbol que solo posee un
+sun-árbol.</p>
+<p>La lista <tt class="docutils literal"><span class="pre">[1,2,3]</span></tt> es igual que <tt class="docutils literal"><span class="pre">1:2:3:[]</span></tt>. Está formada por la cabeza de
+la lista, que es <tt class="docutils literal"><span class="pre">1</span></tt> y su cola, que es <tt class="docutils literal"><span class="pre">2:3:[]</span></tt>. Al mismo tiempo,
+<tt class="docutils literal"><span class="pre">2:3:[]</span></tt> está formado por su cabeza, que es <tt class="docutils literal"><span class="pre">2</span></tt>,  y por su cola, que es
+<tt class="docutils literal"><span class="pre">3:[]</span></tt>. <tt class="docutils literal"><span class="pre">3:[]</span></tt> está formado por su cabeza <tt class="docutils literal"><span class="pre">3</span></tt> y su cola que es la lista
+vacía <tt class="docutils literal"><span class="pre">[]</span></tt>.</p>
+<p>Vamos a crear un <em>zipper</em> para las listas. Para modificar el elemento
+seleccionado de una lista, podemos mover hacia adelante o hacia atrás
+(mientras que con los árboles podíamos movernos a la derecha, a la izquierda,
+y arriba). La parte que seleccionábamos con los árboles era un sub-árbol, a la
+vez que el rastro que dejábamos cuando avanzábamos. Ahora, ¿qué tendremos que
+dejar como rastro? Cuando estábamos trabajando con árboles binarios, vimos que
+el rastro tenía que albergar el elemento raíz de su nodo padre junto a todos
+los sub-árboles que recorrimos. También teníamos que recordar si habíamos ido
+por la izquierda o por la derecha. Resumiendo, teníamos que poseer toda
+la información del nodo que contenía el sub-árbol que estábamos seleccionando.</p>
+<p>Las listas son más simples que los árboles, así que no tenemos que recordar
+si hemos ido por la derecha o por la izquierda, ya que solo podemos avanzar
+en una dirección. Como solo hay un posible sub-árbol para cada nodo, tampoco
+tenemos que recordar el camino que tomamos. Parece que lo único que debemos
+recordar el elemento anterior. Si tenemos una lista como <tt class="docutils literal"><span class="pre">[3,4,5]</span></tt> y sabemos
+que el elemento anterior es <tt class="docutils literal"><span class="pre">2</span></tt>, podemos volver atrás simplemente añadiendo
+dicho elemento a la cabeza de la lista, obteniendo así <tt class="docutils literal"><span class="pre">[2,3,4,5]</span></tt>.</p>
+<p>Como cada rastro es un elemento, no necesitamos crear un nuevo tipo de datos
+como hicimos con el tipo de datos <tt class="docutils literal"><span class="pre">Crumb</span></tt> para los árboles:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">ListZipper</span> <span class="n">a</span> <span class="ow">=</span> <span class="p">([</span><span class="n">a</span><span class="p">],[</span><span class="n">a</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>La primera lista representa la lista que estamos seleccionando y la segunda
+lista es la lista de rastros. Vamos a crear las funcionen que avancen y
+retrocedan por las listas:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goForward</span> <span class="ow">::</span> <span class="kt">ListZipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">ListZipper</span> <span class="n">a</span>
+<span class="nf">goForward</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+
+<span class="nf">goBack</span> <span class="ow">::</span> <span class="kt">ListZipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">ListZipper</span> <span class="n">a</span>
+<span class="nf">goBack</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">b</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">b</span><span class="kt">:</span><span class="n">xs</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Cuando avanzamos, seleccionamos la cola de la lista actual y dejamos la cabeza
+como rastro. Cuando retrocedemos, tomamos el último rastro y lo insertamos al
+principio de la lista.</p>
+<p>Aquí tienes un ejemplo de estas funciones en acción:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let xs = [1,2,3,4]</span>
+<span class="go">ghci&gt; goForward (xs,[])</span>
+<span class="go">([2,3,4],[1])</span>
+<span class="go">ghci&gt; goForward ([2,3,4],[1])</span>
+<span class="go">([3,4],[2,1])</span>
+<span class="go">ghci&gt; goForward ([3,4],[2,1])</span>
+<span class="go">([4],[3,2,1])</span>
+<span class="go">ghci&gt; goBack ([4],[3,2,1])</span>
+<span class="go">([3,4],[2,1])</span>
+</pre></div>
+</div>
+<p>Podemos observar que el rastro de una listas no es nada más que la parte
+invertida de la lista que hemos dejado atrás. El elemento que dejamos atrás
+siempre pasa a formar parte de la cabeza de los rastros, así que es fácil
+movernos hacía atrás tomando simplemente el primer elemento de los rastros y
+añadiéndolo a la lista que tenemos seleccionada.</p>
+<p>Si estamos creando un editor de texto, podemos utilizar una lista de cadenas
+para representar las líneas de texto del fichero que estemos editando, luego
+podemos utilizar un <em>zipper</em> de forma que sepamos donde se encuentra el
+cursor. El hecho de utilizar los <em>zipper</em> también facilitaría la introducción
+de líneas de texto nuevas en cualquier parte del texto o barrar líneas
+existentes.</p>
+</div>
+<div class="section" id="un-sistema-de-fichero-simple">
+<h2>Un sistema de fichero simple<a class="headerlink" href="#un-sistema-de-fichero-simple" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Ahora que sabemos como funcionan los <em>zippers</em>, vamos utilizar un árbol para
+representar un sistema de ficheros y luego crearemos un <em>zipper</em> para ese
+sistema, lo cual nos permitirá movernos entre los directorios de la misma
+forma que hacemos nosotros mismos.</p>
+<p>Si tomamos una versión simplificada de los sistemas de ficheros jerárquicos,
+podemos observar que básicamente están formados por ficheros y directorios.
+Los ficheros son las unidades de información y poseen un nombre, mientras que
+los directorios se utilizan para organizar estos ficheros y pueden contener
+tanto ficheros como otros directorios. Así que vamos a decir que un objeto de
+sistema de ficheros es o bien un fichero, que viene acompañado de un nombre
+y unos datos, o bien un directorio, que viene acompañado de un nombre y un
+conjunto de objetos que pueden ser tanto ficheros como directorios. Aquí
+tienes el tipo de datos para este sistema junto un par de sinónimos de tipo:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">Name</span> <span class="ow">=</span> <span class="kt">String</span>
+<span class="kr">type</span> <span class="kt">Data</span> <span class="ow">=</span> <span class="kt">String</span>
+<span class="kr">data</span> <span class="kt">FSItem</span> <span class="ow">=</span> <span class="kt">File</span> <span class="kt">Name</span> <span class="kt">Data</span> <span class="o">|</span> <span class="kt">Folder</span> <span class="kt">Name</span> <span class="p">[</span><span class="kt">FSItem</span><span class="p">]</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Cada fichero viene con dos cadenas, una representa su nombre y otra sus
+contenidos. Cada directorio viene con una cadena que representa su nombre y
+un lista de objetos. Si la lista está vacía, entonces tenemos un directorio
+vacío.</p>
+<p>Aquí tienes un ejemplo:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">myDisk</span> <span class="ow">::</span> <span class="kt">FSItem</span>
+<span class="nf">myDisk</span> <span class="ow">=</span>
+    <span class="kt">Folder</span> <span class="s">&quot;root&quot;</span>
+        <span class="p">[</span> <span class="kt">File</span> <span class="s">&quot;goat_yelling_like_man.wmv&quot;</span> <span class="s">&quot;baaaaaa&quot;</span>
+        <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;pope_time.avi&quot;</span> <span class="s">&quot;god bless&quot;</span>
+        <span class="p">,</span> <span class="kt">Folder</span> <span class="s">&quot;pics&quot;</span>
+            <span class="p">[</span> <span class="kt">File</span> <span class="s">&quot;ape_throwing_up.jpg&quot;</span> <span class="s">&quot;bleargh&quot;</span>
+            <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;watermelon_smash.gif&quot;</span> <span class="s">&quot;smash!!&quot;</span>
+            <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;skull_man(scary).bmp&quot;</span> <span class="s">&quot;Yikes!&quot;</span>
+            <span class="p">]</span>
+        <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;dijon_poupon.doc&quot;</span> <span class="s">&quot;best mustard&quot;</span>
+        <span class="p">,</span> <span class="kt">Folder</span> <span class="s">&quot;programs&quot;</span>
+            <span class="p">[</span> <span class="kt">File</span> <span class="s">&quot;fartwizard.exe&quot;</span> <span class="s">&quot;10gotofart&quot;</span>
+            <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;owl_bandit.dmg&quot;</span> <span class="s">&quot;mov eax, h00t&quot;</span>
+            <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;not_a_virus.exe&quot;</span> <span class="s">&quot;really not a virus&quot;</span>
+            <span class="p">,</span> <span class="kt">Folder</span> <span class="s">&quot;source code&quot;</span>
+                <span class="p">[</span> <span class="kt">File</span> <span class="s">&quot;best_hs_prog.hs&quot;</span> <span class="s">&quot;main = print (fix error)&quot;</span>
+                <span class="p">,</span> <span class="kt">File</span> <span class="s">&quot;random.hs&quot;</span> <span class="s">&quot;main = print 4&quot;</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+</pre></div>
+</div>
+<p>En verdad es el contenido de mi disco duro en este momento.</p>
+<div class="section" id="un-zipper-para-el-sistema-de-ficheros">
+<h3>Un <em>zipper</em> para el sistema de ficheros<a class="headerlink" href="#un-zipper-para-el-sistema-de-ficheros" title="Enlazar permanentemente con este título">¶</a></h3>
+<img alt="¡Discoesponja!" class="align-right" src="../_images/spongedisk.png" />
+<p>Ahora que tenemos un sistema de ficheros, lo que necesitamos es un <em>zipper</em>
+de forma que podamos desplazarnos, crear, modificar o eliminar ficheros al
+vez que directorios. De la misma forma que con los árboles binarios y las
+listas, vamos a ir dejando un rastro que contenga todas las cosas que no hemos
+visitado. Como ya hemos dicho, cada rastro debe ser una especie de nodo, solo
+que no debe contener el sub-árbol que estamos seleccionando para no repetir
+información. También tenemos que tener en cuenta la posición en la que nos
+encontramos, de forma que podamos volver atrás.</p>
+<p>En este caso en particular, el rastro será algo parecido a un directorio, solo
+que no debe contener el directorio en el que estamos ¿Y porqué no un fichero?
+Te estarás preguntando. Bueno, porque una vez hemos seleccionado un fichero,
+no podemos avanzar en el sistema de ficheros, así que no tiene mucho sentido
+dejar algo en el rastro que diga que venimos de un fichero. Un fichero es
+algo parecido a un árbol vacío.</p>
+<p>Si nos encontramos en el directorio <tt class="docutils literal"><span class="pre">&quot;root&quot;</span></tt> y queremos seleccionar el
+fichero <tt class="docutils literal"><span class="pre">&quot;dijon_poupon.doc&quot;</span></tt>, ¿qué debería contener el rastro? Bueno,
+debería contener el nombre del directorio padre junto con todos los elementos
+anteriores al fichero que estamos seleccionando más los elementos posteriores.
+Así que lo que necesitamos es un <tt class="docutils literal"><span class="pre">Name</span></tt> y dos listas de objetos. Manteniendo
+dos listas separadas de elementos, una con los elementos anteriores y otra con
+los elementos posteriores, sabremos exactamente que seleccionar si volvemos
+atrás.</p>
+<p>Aquí tenemos el tipo rastro para nuestro sistema de ficheros:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">data</span> <span class="kt">FSCrumb</span> <span class="ow">=</span> <span class="kt">FSCrumb</span> <span class="kt">Name</span> <span class="p">[</span><span class="kt">FSItem</span><span class="p">]</span> <span class="p">[</span><span class="kt">FSItem</span><span class="p">]</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Y aquí nuestro sinónimo de tipo para <em>zipper</em>:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">type</span> <span class="kt">FSZipper</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">FSItem</span><span class="p">,</span> <span class="p">[</span><span class="kt">FSCrumb</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Volver atrás por esta jerarquía es muy fácil. Solo tenemos que tomar el último
+elemento del rastro y seleccionar un nuevo elemento a partir del objeto
+actualmente seleccionado y del rastro. Así:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">fsUp</span> <span class="ow">::</span> <span class="kt">FSZipper</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span>
+<span class="nf">fsUp</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="kt">FSCrumb</span> <span class="n">name</span> <span class="n">ls</span> <span class="n">rs</span><span class="p">)</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Folder</span> <span class="n">name</span> <span class="p">(</span><span class="n">ls</span> <span class="o">++</span> <span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">++</span> <span class="n">rs</span><span class="p">),</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Como el rastro contiene el nombre del directorio padre, así como los elementos
+anteriores al objeto seleccionado (es decir, <tt class="docutils literal"><span class="pre">ls</span></tt>) y los posteriores
+(<tt class="docutils literal"><span class="pre">rs</span></tt>), retroceder es muy sencillo.</p>
+<p>¿Y si queremos avanzar por el sistema de ficheros? Si estamos en <tt class="docutils literal"><span class="pre">&quot;root&quot;</span></tt> y
+queremos seleccionar <tt class="docutils literal"><span class="pre">&quot;dijon_poupon.doc&quot;</span></tt>, el rastro contendrá el nombre
+<tt class="docutils literal"><span class="pre">&quot;root&quot;</span></tt> junto con los elementos que preceden a <tt class="docutils literal"><span class="pre">&quot;dijon_poupon.doc&quot;</span></tt> y los
+que van después.</p>
+<p>Aquí tienes una función que, dado un nombre, selecciona el fichero o
+directorio que este contenido en el directorio actual:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="kr">import</span> <span class="nn">Data.List</span> <span class="p">(</span><span class="nf">break</span><span class="p">)</span>
+
+<span class="nf">fsTo</span> <span class="ow">::</span> <span class="kt">Name</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span>
+<span class="nf">fsTo</span> <span class="n">name</span> <span class="p">(</span><span class="kt">Folder</span> <span class="n">folderName</span> <span class="n">items</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span>
+    <span class="kr">let</span> <span class="p">(</span><span class="n">ls</span><span class="p">,</span> <span class="n">item</span><span class="kt">:</span><span class="n">rs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">break</span> <span class="p">(</span><span class="n">nameIs</span> <span class="n">name</span><span class="p">)</span> <span class="n">items</span>
+    <span class="kr">in</span>  <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="kt">FSCrumb</span> <span class="n">folderName</span> <span class="n">ls</span> <span class="n">rs</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+
+<span class="nf">nameIs</span> <span class="ow">::</span> <span class="kt">Name</span> <span class="ow">-&gt;</span> <span class="kt">FSItem</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<span class="nf">nameIs</span> <span class="n">name</span> <span class="p">(</span><span class="kt">Folder</span> <span class="n">folderName</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">name</span> <span class="o">==</span> <span class="n">folderName</span>
+<span class="nf">nameIs</span> <span class="n">name</span> <span class="p">(</span><span class="kt">File</span> <span class="n">fileName</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">name</span> <span class="o">==</span> <span class="n">fileName</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">fsTo</span></tt> toma un <tt class="docutils literal"><span class="pre">Name</span></tt> y un <tt class="docutils literal"><span class="pre">FSZipper</span></tt> y devuelve un nuevo <tt class="docutils literal"><span class="pre">FSZipper</span></tt>
+que tendrá seleccionado el fichero con el nombre dado. El dicho debe estar en
+el directorio actual. Esta función no busca el fichero sobre todos los
+directorios, solo con el directorio actual.</p>
+<img alt="Cool." class="align-left" src="../_images/cool.png" />
+<p>Primero utilizamos <tt class="docutils literal"><span class="pre">break</span></tt> par dividir la lista de elementos en un lista
+con los elementos anteriores al fichero que estamos buscando y en una lista
+con los que van después. Si recuerdas, <tt class="docutils literal"><span class="pre">break</span></tt> toma un predicado y una lista
+y devuelve una dupla que contiene dos listas. La primera lista en la dupla
+contiene los elementos en los que el predicado no se cumplió. Luego, una vez
+encuentra un elemento que cumple el predicado, introduce ese elemento y el
+resto de la lista en la segunda componente de la dupla. Hemos creado un
+función auxiliar llamada <tt class="docutils literal"><span class="pre">nameIs</span></tt> que toma un nombre y un objeto del sistema
+de ficheros y devuelve <tt class="xref docutils literal"><span class="pre">True</span></tt> si coinciden los nombres.</p>
+<p>Ahora, <tt class="docutils literal"><span class="pre">ls</span></tt> es una lista que contiene los elementos que preceden al objetos
+que estamos buscando, <tt class="docutils literal"><span class="pre">item</span></tt> es dicho objeto y <tt class="docutils literal"><span class="pre">rs</span></tt> es la lista de
+objetos que viene después del objeto en cuestión. Con todo esto, solo tenemos
+que devolver el objeto que obtuvimos de <tt class="docutils literal"><span class="pre">break</span></tt> y crear un rastro con toda
+la información requerida.</p>
+<p>Fíjate que si el nombre que estamos buscando no está en el directorio actual,
+el patrón <tt class="docutils literal"><span class="pre">item:rs</span></tt> no se ajustará y por lo tanto obtendremos un error.
+También, si el elemento seleccionado no es directorio, es decir, es un
+fichero, también obtendremos un error y el programa terminará.</p>
+<p>Ahora ya podemos movernos por el sistema de ficheros. Vamos a partir de la
+raíz y recorrer el sistema hasta el fichero <tt class="docutils literal"><span class="pre">&quot;skull_man(scary).bmp&quot;</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus = (myDisk,[]) -: fsTo &quot;pics&quot; -: fsTo &quot;skull_man(scary).bmp&quot;</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">newFocus</span></tt> es ahora un <em>zipper</em> que selecciona el fichero
+<tt class="docutils literal"><span class="pre">&quot;skull_man(scary).bmp&quot;</span></tt>. Vamos a obtener el primer componente del <em>zipper</em>
+(el objeto seleccionado) y comprobar si es verdad:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; fst newFocus</span>
+<span class="go">File &quot;skull_man(scary).bmp&quot; &quot;Yikes!&quot;</span>
+</pre></div>
+</div>
+<p>Vamos a volver atrás y seleccionar su fichero vecino &#8220;watermelon_smash.gif&#8221;:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus2 = newFocus -: fsUp -: fsTo &quot;watermelon_smash.gif&quot;</span>
+<span class="go">ghci&gt; fst newFocus2</span>
+<span class="go">File &quot;watermelon_smash.gif&quot; &quot;smash!!&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="manipulando-el-sistema-de-ficheros">
+<h3>Manipulando el sistema de ficheros<a class="headerlink" href="#manipulando-el-sistema-de-ficheros" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Ahora que ya podemos navegar por el sistema de ficheros, manipular los
+elementos es muy fácil. Aquí tienes un función que renombra el fichero o
+directorio actual:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">fsRename</span> <span class="ow">::</span> <span class="kt">Name</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span>
+<span class="nf">fsRename</span> <span class="n">newName</span> <span class="p">(</span><span class="kt">Folder</span> <span class="n">name</span> <span class="n">items</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Folder</span> <span class="n">newName</span> <span class="n">items</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+<span class="nf">fsRename</span> <span class="n">newName</span> <span class="p">(</span><span class="kt">File</span> <span class="n">name</span> <span class="n">dat</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">File</span> <span class="n">newName</span> <span class="n">dat</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Podemos renombrar el directorio <tt class="docutils literal"><span class="pre">&quot;pics&quot;</span></tt> a <tt class="docutils literal"><span class="pre">&quot;cspi&quot;</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus = (myDisk,[]) -: fsTo &quot;pics&quot; -: fsRename &quot;cspi&quot; -: fsUp</span>
+</pre></div>
+</div>
+<p>Nos hemos metido en el directorio <tt class="docutils literal"><span class="pre">&quot;pics&quot;</span></tt>, lo hemos renombrado, y luego
+hemos vuelto.</p>
+<p>¿Qué tal una función que crea un nuevo elemento en el directorio actual?</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">fsNewFile</span> <span class="ow">::</span> <span class="kt">FSItem</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span> <span class="ow">-&gt;</span> <span class="kt">FSZipper</span>
+<span class="nf">fsNewFile</span> <span class="n">item</span> <span class="p">(</span><span class="kt">Folder</span> <span class="n">folderName</span> <span class="n">items</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span>
+    <span class="p">(</span><span class="kt">Folder</span> <span class="n">folderName</span> <span class="p">(</span><span class="n">item</span><span class="kt">:</span><span class="n">items</span><span class="p">),</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Facilísimo. Ten en cuenta que esta función fallara si intentamos añadir un
+elemento a algo que no sea un directorio.</p>
+<p>Vamos a añadir un fichero a nuestro directorio <tt class="docutils literal"><span class="pre">&quot;pics&quot;</span></tt> y luego volver
+atrás:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let newFocus = (myDisk,[]) -: fsTo &quot;pics&quot; -: fsNewFile (File &quot;heh.jpg&quot; &quot;lol&quot;) -: fsUp</span>
+</pre></div>
+</div>
+<p>Lo realmente interesante de este método es que cuando modificamos el sistema
+de ficheros, en realidad no modifica ese mismo sistema, si no que devuelve uno
+totalmente nuevo. De este modo, podremos acceder al sistema de ficheros
+antiguo (<tt class="docutils literal"><span class="pre">myDisk</span></tt> en este caso) y también al nuevo (el primer componente de
+<tt class="docutils literal"><span class="pre">newFocus</span></tt>). Así que gracias a los <em>zippers</em>, obtenemos automáticamente
+copias de diferentes versiones, de forma que siempre podremos referenciar a
+versiones antiguas aunque lo hayamos modificado. Esto no es una propiedad
+única de los <em>zippers</em>, si no de todas las estructuras de datos de Haskell ya
+que son inmutables. Sin embargo con los <em>zippers</em>, ganamos la habilidad de
+recorrer y almacenar eficientemente estas estructuras de datos.</p>
+</div>
+</div>
+<div class="section" id="vigila-tus-pasos">
+<h2>Vigila tus pasos<a class="headerlink" href="#vigila-tus-pasos" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Hasta ahora, cuando recorríamos estructuras de datos, ya sean árboles
+binarios, listas o sistemas de ficheros, no nos preocupábamos de sí tomábamos
+un paso en falso y nos salíamos de la estructura. Por ejemplo, la función
+<tt class="docutils literal"><span class="pre">goLeft</span></tt> toma un <em>zipper</em> de un árbol binario y mueve el selector al árbol
+izquierdo:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goLeft</span> <span class="ow">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span>
+<span class="nf">goLeft</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="kt">LeftCrumb</span> <span class="n">x</span> <span class="n">r</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="Cayéndote de un árbol. Última imágen :'(" class="align-right" src="../_images/bigtree.png" />
+<p>Pero, ¿y si el árbol en el que nos encontramos está vacío? Es decir, no es un
+<tt class="docutils literal"><span class="pre">Node</span></tt> si no un <tt class="docutils literal"><span class="pre">Empty</span></tt>. En este caso, obtendremos un error de ejecución
+ya que el ajuste de patrones fallará ya que no hay ningún patrón que se ajuste
+a árboles vacíos, lo cuales no contienen ningún sub-árbol. Hasta ahora,
+simplemente hemos asumido que nunca íbamos a intentar seleccionar el sub-árbol
+izquierdo de un árbol vacío ya que dicho sub-árbol no existe. De todos modos,
+ir al sub-árbol izquierdo de un árbol vacío no tiene mucho sentido, y hasta
+ahora no nos hemos preocupado de ello.</p>
+<p>O, ¿qué pasaría si estamos en la raíz de un árbol y no tenemos ningún rastro
+e intentamos continuar hacía arriba? Ocurriría lo mismo. Parece que cuando
+utilizamos los <em>zipper</em>, cada paso que demos puede ser el último (reproducir
+música siniestra aquí). En otras palabras, cada movimiento puede ser un
+éxito, pero también fallo. Sí, es la ultima vez que te lo pregunto, y se que
+lo estás deseando, ¿a qué te recuerda esto? Por supuesto, ¡mónadas! en
+concreto la mónada <tt class="docutils literal"><span class="pre">Maybe</span></tt> que se encarga de contextos con posibles fallos.</p>
+<p>Vamos a utilizar la mónada <tt class="docutils literal"><span class="pre">Maybe</span></tt> para añadir el contexto de un posible
+fallo a nuestro pasos. Vamos a tomar las funciones que ya funcionan con
+el <em>zipper</em> de árboles binarios y vamos a convertirlas en funciones monádicas.
+Primero, vamos a añadir el contexto de un posible fallo a <tt class="docutils literal"><span class="pre">goLeft</span></tt> y
+<tt class="docutils literal"><span class="pre">goRight</span></tt>. Hasta ahora, el fallo de una función se reflejaba en su
+resultado y no va ser distinto aquí.</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goLeft</span> <span class="ow">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="n">a</span><span class="p">)</span>
+<span class="nf">goLeft</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="kt">LeftCrumb</span> <span class="n">x</span> <span class="n">r</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+<span class="nf">goLeft</span> <span class="p">(</span><span class="kt">Empty</span><span class="p">,</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+
+<span class="nf">goRight</span> <span class="ow">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="n">a</span><span class="p">)</span>
+<span class="nf">goRight</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="kt">RightCrumb</span> <span class="n">x</span> <span class="n">l</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span>
+<span class="nf">goRight</span> <span class="p">(</span><span class="kt">Empty</span><span class="p">,</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+</pre></div>
+</div>
+<p>¡Genial! Ahora si intentamos dar un paso a la izquierda por un árbol vacío
+obtendremos un <tt class="docutils literal"><span class="pre">Nothing</span></tt>.</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; goLeft (Empty, [])</span>
+<span class="go">Nothing</span>
+<span class="go">ghci&gt; goLeft (Node &#39;A&#39; Empty Empty, [])</span>
+<span class="go">Just (Empty,[LeftCrumb &#39;A&#39; Empty])</span>
+</pre></div>
+</div>
+<p>Parece que funciona ¿Y si vamos hacia arriba? Aquí el problema está en
+si queremos ir hacía arriba y no hay ningún rastro más, ya que esta situación
+indica que nos encontramos en la cima del árbol. Esta es la función <tt class="docutils literal"><span class="pre">goUp</span></tt>
+que lanza un error si nos salimos de los límites:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goUp</span> <span class="ow">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Zipper</span> <span class="n">a</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">LeftCrumb</span> <span class="n">x</span> <span class="n">r</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">t</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">RightCrumb</span> <span class="n">x</span> <span class="n">l</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">t</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Y esta la versión modificada:</p>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">goUp</span> <span class="ow">::</span> <span class="kt">Zipper</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">Maybe</span> <span class="p">(</span><span class="kt">Zipper</span> <span class="n">a</span><span class="p">)</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">LeftCrumb</span> <span class="n">x</span> <span class="n">r</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">t</span> <span class="n">r</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kt">RightCrumb</span> <span class="n">x</span> <span class="n">l</span><span class="kt">:</span><span class="n">bs</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Just</span> <span class="p">(</span><span class="kt">Node</span> <span class="n">x</span> <span class="n">l</span> <span class="n">t</span><span class="p">,</span> <span class="n">bs</span><span class="p">)</span>
+<span class="nf">goUp</span> <span class="p">(</span><span class="kr">_</span><span class="p">,</span> <span class="kt">[]</span><span class="p">)</span> <span class="ow">=</span> <span class="kt">Nothing</span>
+</pre></div>
+</div>
+<p>Si tenemos un rastro no hay ningún problema y podemos devolver un nuevo
+nodo seleccionado. Si embargo, si no hay ningún rastro devolvemos un fallo.</p>
+<p>Antes estas funciones tomaban <em>zippers</em> y devolvían <em>zippers</em>, por lo tanto
+podíamos encadenarlas así:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">gchi&gt; let newFocus = (freeTree,[]) -: goLeft -: goRight</span>
+</pre></div>
+</div>
+<p>Ahora, en lugar de devolver un <tt class="docutils literal"><span class="pre">Zipper</span> <span class="pre">a</span></tt>, devuelven <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">(Zipper</span> <span class="pre">a)</span></tt>,
+así que no podemos encadenar las funciones de este modo. Tuvimos un problema
+similar cuando estábamos con nuestro
+<a class="reference internal" href="Monadas.html#pierre"><em>buen amigo el funambulista</em></a>, en el capítulo de las mónadas. Él
+también tomaba un paso detrás de otro, y cada uno de ellos podía resultar en
+un fallo porque siempre podían aterrizar un grupo de pájaros en lado y
+desequilibrar la barra.</p>
+<p>Ahora el problema lo tenemos nosotros, que somos los que estamos recorriendo
+el árbol. Por suerte, aprendimos mucho de Pierre y de lo que hizo: cambiar
+la aplicación normal de funciones por la monádica, utilizando <tt class="docutils literal"><span class="pre">&gt;&gt;=</span></tt>, que
+toma un valor en un contexto (en nuestro caso, <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">(Zipper</span> <span class="pre">a)</span></tt>, que
+representa el contexto de un posible fallo) y se lo pasa a un función de forma
+que se mantenga el significado del contexto. Así que al igual que nuestro
+amigo, solo tenemos que intercambiar <tt class="docutils literal"><span class="pre">-:</span></tt> por <tt class="docutils literal"><span class="pre">&gt;&gt;=</span></tt>. Mira:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let coolTree = Node 1 Empty (Node 3 Empty Empty)</span>
+<span class="go">ghci&gt; return (coolTree,[]) &gt;&gt;= goRight</span>
+<span class="go">Just (Node 3 Empty Empty,[RightCrumb 1 Empty])</span>
+<span class="go">ghci&gt; return (coolTree,[]) &gt;&gt;= goRight &gt;&gt;= goRight</span>
+<span class="go">Just (Empty,[RightCrumb 3 Empty,RightCrumb 1 Empty])</span>
+<span class="go">ghci&gt; return (coolTree,[]) &gt;&gt;= goRight &gt;&gt;= goRight &gt;&gt;= goRight</span>
+<span class="go">Nothing</span>
+</pre></div>
+</div>
+<p>Hemos utilizado <tt class="docutils literal"><span class="pre">return</span></tt> para introducir un <em>zipper</em> en un valor <tt class="docutils literal"><span class="pre">Just</span></tt>
+y luego hemos utilizado <tt class="docutils literal"><span class="pre">&gt;&gt;=</span></tt> para pasar ese valor a la función <tt class="docutils literal"><span class="pre">goRight</span></tt>.
+Primero, creamos un árbol que tiene en su rama izquierda un sub-árbol vacío y
+en su rama derecha dos sub-árbol vacíos. Cuando intentamos ir por la rama
+derecha, el movimiento tiene éxito porque la operación tiene sentido. Volver
+a ir a la derecha también está permitido, acabamos seleccionando un árbol
+vacío. Pero si damos un paso más por tercera vez no tendrá sentido, porque no
+podemos visitar la rama derecha o izquierda de un sub-árbol vacío, por la
+tanto obtenemos <tt class="docutils literal"><span class="pre">Nothing</span></tt>.</p>
+<p>Ahora ya tenemos equipadas nuestras funciones con una red de seguridad que nos
+salvará si nos caemos. Momento metafórico.</p>
+<p>El sistema de fichero también posee un montón de casos donde podría fallar,
+como intentar seleccionar un fichero o un directorio que no existe. Como
+último ejercicio, si quieres claro, puedes intentar añadir a estas funciones
+el contexto de un posibles fallos utilizando la mónada <tt class="docutils literal"><span class="pre">Maybe</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="MasMonadas.html" title="Unas cuantas mónadas más"
+             >anterior</a></li>
+        <li><a href="../index.html">Índice</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>        
+    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Módulos" href="Modulos.html" />
@@ -58,7 +58,7 @@ cosas como son en lugar de definir los pasos de cambio de algún estado o algún
 bucle, las funciones de orden superior son indispensables. Son realmente una
 forma muy potente de resolver problemas y de pensar acerca de los programas.</p>
 <div class="section" id="funciones-currificadas">
-<h2>Funciones currificadas<a class="headerlink" href="#funciones-currificadas" title="Enlazar permanentemente con este título">¶</a></h2>
+<span id="curry"></span><h2>Funciones currificadas<a class="headerlink" href="#funciones-currificadas" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>Oficialmente cada función de Haskell solo puede tomar un parámetro. Así que
 ¿Como es posible que hayamos definido y usado varias funciones que toman mas
 de un parámetro? Bueno ¡Es un buen truco! Todas las funciones que hemos usado
@@ -849,7 +849,7 @@ esta forma, podemos, por ejemplo, mapear una lista de funciones:</p>
 </div>
 </div>
 <div class="section" id="composicion-de-funciones">
-<h2>Composición de funciones<a class="headerlink" href="#composicion-de-funciones" title="Enlazar permanentemente con este título">¶</a></h2>
+<span id="compfunc"></span><h2>Composición de funciones<a class="headerlink" href="#composicion-de-funciones" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>En matemáticas la composición de funciones está definida como:
 <img class="math" src="../_images/math/f7ea22ef62e9e9ed85c0b5d85a22d7a02f994aa8.png" alt="(f\circ{}g)x=f(g(x))"/>, que significa que al componer dos funciones se
 crea una nueva que, cuando se llama con un parámetro, digamos <em>x</em>, es

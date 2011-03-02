@@ -22,7 +22,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>
+    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Entrada y salida" href="EntradaSalida.html" />
@@ -241,7 +241,7 @@ crear figuras usando los constructores <tt class="docutils literal"><span class=
 mismo que escribir <tt class="docutils literal"><span class="pre">Shape</span> <span class="pre">(Rectangle,</span> <span class="pre">Circle)</span></tt>.</p>
 <p>También podríamos optar por no exportar ningún constructor de datos para
 <tt class="docutils literal"><span class="pre">Shape</span></tt> simplemente escribiendo <tt class="docutils literal"><span class="pre">Shape</span></tt> en dicha sentencia. De esta forma,
-aquel que importe nuestro módulo solo podrá crear figuras utilizando las
+quien importe nuestro módulo solo podrá crear figuras utilizando las
 funciones auxiliares <tt class="docutils literal"><span class="pre">baseCircle</span></tt> y <tt class="docutils literal"><span class="pre">baseRect</span></tt>. <tt class="docutils literal"><span class="pre">Data.Map</span></tt> utiliza este
 método. No puedes crear un diccionario utilizando <tt class="docutils literal"><span class="pre">Map.Map</span> <span class="pre">[(1,2),(3,4)]</span></tt> ya
 que no se exporta el constructor de datos. Sin embargo, podemos crear un
@@ -1027,7 +1027,7 @@ pero entonces no sabríamos el motivo por el cual no podemos obtener el código.
 Ahora, tenemos información acerca del fallo en nuestro tipo del resultado.</p>
 </div>
 <div class="section" id="estructuras-de-datos-recursivas">
-<h2>Estructuras de datos recursivas<a class="headerlink" href="#estructuras-de-datos-recursivas" title="Enlazar permanentemente con este título">¶</a></h2>
+<span id="estrucrec"></span><h2>Estructuras de datos recursivas<a class="headerlink" href="#estructuras-de-datos-recursivas" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="Hombre cool" class="align-left" src="../_images/thefonz.png" />
 <p>Como ya hemos visto, un costructor de un tipo de dato algebraico puede tener
 (o no tener) varios campos y cada uno de estos debe ser un tipo concreto.
@@ -1550,7 +1550,7 @@ contenidos de <tt class="docutils literal"><span class="pre">Maybe</span></tt>. 
 <tt class="docutils literal"><span class="pre">Just</span></tt> y falso si es <tt class="docutils literal"><span class="pre">Nothing</span></tt>. Seguimos teniendo que escribir
 <tt class="docutils literal"><span class="pre">(Maybe</span> <span class="pre">a)</span></tt> en lugar de solo <tt class="docutils literal"><span class="pre">Maybe</span></tt> ya que, si lo piensas un poco, una
 función <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">-&gt;</span> <span class="pre">Bool</span></tt> no puede existir (ya que <tt class="docutils literal"><span class="pre">Maybe</span></tt> no es un tipo
-concreto), mientras que <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">Bool</span></tt> es correcto. Aún así, sigue siendo
+concreto), mientras que <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">Bool</span></tt> es correcto. Aun así, sigue siendo
 genial ya que ahora, cualquier tipo <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">algo</span></tt> es parte de la clase`
 <tt class="docutils literal"><span class="pre">YesNo</span></tt> y no importa lo que sea <tt class="docutils literal"><span class="pre">algo</span></tt>.</p>
 <p>Antes definimos un tipo <tt class="docutils literal"><span class="pre">Tree</span> <span class="pre">a</span></tt> para representar la búsqueda binaria.

@@ -45,7 +45,7 @@ p {
 }
 
 a {
-   color: #3F8055;
+   color: #11BCC2;
    text-decoration:none;
 }
 
@@ -101,6 +101,10 @@ em {
 	color: white;
 	white-space: nowrap;
 	padding: 1px 3px 1px 3px;
+}
+
+.js-data > .pre {
+    color: #819500;
 }
 
 .highlight {
