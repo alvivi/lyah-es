@@ -1,7 +1,5 @@
 
-lyahcms_ = 'http://lyahcms.appspot.com'
-lyahcms = 'http://localhost:8080'
-
+lyahcms = 'http://lyahcms.appspot.com'
 
 
 jQuery.prototype.cssShadow = function (s) {
