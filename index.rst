@@ -41,4 +41,4 @@
    content/Zippers
 
 
-Toda esta obra está licenciada bajo la `licencia Creative Commons Reconocimiento-NoComercial-CompartirIgual 3.0 <http://creativecommons.org/licenses/by-nc-sa/3.0/es/>`_ porque no encontré un licencia con un nombre más largo.
+Toda esta guía está licenciada bajo la `licencia Creative Commons Reconocimiento-NoComercial-CompartirIgual 3.0 <http://creativecommons.org/licenses/by-nc-sa/3.0/es/>`_ porque no encontré un licencia con un nombre más largo.
