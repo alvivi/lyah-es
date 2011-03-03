@@ -5,12 +5,17 @@ body {
     background: #0072bc url(mainbg.png) repeat-x;
     color: #DBEBFF;
     font-size:14px;
-    line-height:25px;
+    line-height:22px;
     font-family:Arial, sans-serif;
 }
 
 a {
-    color: #DBEBFF;
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 a#main {
@@ -33,8 +38,9 @@ a#main {
     list-style-type: none;
 }
 
-a#maina {
-    font-size:40px;  
+#maina {
+    font-size: 40px;
+    padding-bottom: 20px;
 }
 
 .intro {
@@ -44,7 +50,7 @@ a#maina {
 }
 
 .go {
-
+    padding-left: 70px;
     float: left;
     text-align: right;
 }
