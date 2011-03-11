@@ -139,6 +139,7 @@ html_static_path = ['lyahtheme/static']
 # template names.
 html_additional_pages = {
     'index': 'cover.html',
+    '404': '404.html'
 }
 
 # If false, no module index is generated.
