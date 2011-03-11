@@ -291,15 +291,15 @@ el tipo de ``fmap`` una vez más. Su tipo es
 ``fmap :: (a -> b) -> f a -> f b``. Nos hemos olvidado de la restricción de
 clase ``(Functor f) =>``, pero lo hemos hecho por brevedad ya porque estamos
 hablando de funtores y sabemos que significa ``f``. La primera vez que
-hablamos sobre las :ref:`Funciones <currificadas>`, dijimos que en realidad
-todas las funciones de Haskell toman un solo parámetro. Una función con tipo
-``a -> b -> c`` en realidad toma un solo parámetro ``a`` y luego devuelve una
-función ``b -> c``, que a su vez toma otro parámetro y devuelve ``c``. Es como
-si llamáramos a la función con demasiados pocos parámetros (es decir, la
-aplicamos parcialmente), obtenemos una función que toma tantos parámetros como
-nos hayamos dejado (si pensamos de nuevo que las funciones toman varios
-parámetros). Así que ``a -> b -> c``  puede escribirse como ``a -> (b -> c)``
-para hacer visible la currificación.
+hablamos sobre las :ref:`Funciones currificadas <curry>`, dijimos que en
+realidad todas las funciones de Haskell toman un solo parámetro. Una función
+con tipo ``a -> b -> c`` en realidad toma un solo parámetro ``a`` y luego
+devuelve una función ``b -> c``, que a su vez toma otro parámetro y devuelve
+``c``. Es como si llamáramos a la función con demasiados pocos parámetros (es
+decir, la aplicamos parcialmente), obtenemos una función que toma tantos
+parámetros como nos hayamos dejado (si pensamos de nuevo que las funciones
+toman varios parámetros). Así que ``a -> b -> c`` puede escribirse como
+``a -> (b -> c)`` para hacer visible la currificación.
 
 Del mismo modo, si escribimos ``fmap :: (a -> b) -> (f a -> f b)``, podemos
 ver a ``fmap`` no como una función que toma una función y un funtor y devuelve

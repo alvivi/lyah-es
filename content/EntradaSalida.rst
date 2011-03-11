@@ -2284,7 +2284,7 @@ forma que caben dentro de un mismo bloque (``Chunk``). El ``Empty`` es como
 la convierte en una lista de bytes.
 
 :cpp:member:`fromChunks` toma una lista de cadenas de bytes estrictas y la convierte
-en una cadena de bytes perezosa.  :cpp:member:`toChunks` toma una cadena de bytes
+en una cadena de bytes perezosa. :cpp:member:`toChunks` toma una cadena de bytes
 perezosa y la convierte en una estricta.
 
 .. code-block:: console

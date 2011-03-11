@@ -37,7 +37,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'main'
 
 # General information about the project.
 project = u'¡Aprende Haskell por el bien de todos!'
@@ -137,7 +137,9 @@ html_static_path = ['lyahtheme/static']
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
-#html_additional_pages = {}
+html_additional_pages = {
+    'index': 'cover.html',
+}
 
 # If false, no module index is generated.
 #html_domain_indices = True

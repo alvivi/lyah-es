@@ -1,0 +1,56 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    background: #0072bc url(mainbg.png) repeat-x;
+    color: #DBEBFF;
+    font-size:14px;
+    line-height:22px;
+    font-family:Arial, sans-serif;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a#main {
+    width: 800px;
+    height: 600px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    text-indent: -9999px;
+    background-image: url(mainintro.png);
+    cursor: pointer;
+}
+
+.wrapper {
+    width: 800px;
+    margin: 0px auto;
+}
+
+.wrapper ul {
+    list-style-type: none;
+}
+
+#maina {
+    font-size: 40px;
+    padding-bottom: 20px;
+}
+
+.intro {
+    width: 550px;
+    float: left;
+    text-align: left;
+}
+
+.go {
+    padding-left: 70px;
+    float: left;
+    text-align: right;
+}

@@ -7,7 +7,7 @@
    TODO: Revisar los trozos de código en GHC 7.
    TODO: Utilizar los colores cada vez que se explique una función, clase,
          instancia, tipo o ley nueva.
-   TODO: Currarse un parser para GHCi
+   TODO: Crear un parser para GHCi
    TODO: Cambiar todas las "librería" por "biblioteca"
    TODO: ¿Cambiar todos los zip / unión, por cierre? Habrá que buscar en el
          original por "zip" ya que ha traducido como unión, etc.
@@ -19,8 +19,14 @@
          quiere decir valor monoidal.
    TODO: Tipos de datos ó Tipos de dato
    TODO: Sintaxis sugar = alternativa sintáctica
-   TODO: Zippers, cambiar selañadas por seleccionadas.
+   TODO: Zippers, cambiar señalada por seleccionadas.
    TODO: sino/si no
+   TODO: Listas por comprensión -> Listas intensionales
+   TODO: [1..2] -> Listas aritméticas
+   TODO: Tipos ^ Tipado -> Tipificado
+   TODO: Bounded -> Acotados
+   TODO: Evaluación impaciente y perezosa. 
+   
    
 .. toctree::
    :maxdepth: 2
