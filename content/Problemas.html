@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Funtores, funtores aplicativos y monoides" href="Funtores.html" />
-    <link rel="prev" title="Entrada y salida" href="EntradaSalida.html" /> 
+    <link rel="prev" title="Entrada y salida" href="EntradaSalida.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="EntradaSalida.html" title="Entrada y salida"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -317,14 +318,14 @@ no nos importa a que parte de Londres lleguemos, mientras lleguemos a Londres.</
 <p>De la misma forma que solucionamos el problema de la calculadora RPN, este
 problema lo resolveremos en tres pasos:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>Olvida Haskell por un instante y piensa como solucionarías el problema a
 mano.</li>
 <li>Piensa como vamos a representar la información en Haskell.</li>
 <li>Encuentra un modo de operar sobre esta información en Haskell que produzca
 una solución.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>En el problema de la calculadora, primero nos dimos cuenta de que cuando
 calculábamos una expresión a mano, manteníamos una especie de pile en nuestra
 cabeza y recorríamos la expresión elemento a elemento. Decidimos utilizar una
@@ -684,10 +685,20 @@ desbordamiento de pila, intenta usar <tt class="docutils literal"><span class="p
         <li class="right" >
           <a href="EntradaSalida.html" title="Entrada y salida"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

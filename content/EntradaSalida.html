@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Resolviendo problemas de forma funcional" href="Problemas.html" />
-    <link rel="prev" title="Creando nuestros propios tipos y clases de tipos" href="ClasesDeTipos.html" /> 
+    <link rel="prev" title="Creando nuestros propios tipos y clases de tipos" href="ClasesDeTipos.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="ClasesDeTipos.html" title="Creando nuestros propios tipos y clases de tipos"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -425,7 +426,7 @@ también tiene un <tt class="docutils literal"><span class="pre">do</span></tt>.
 <p>Antes de que veamos como tratar con ficheros, vamos a echar un vistazo a
 algunas funciones que son útiles a la hora de trabajar con <tt class="docutils literal"><span class="pre">IO</span></tt>.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">putStr</span></tt> es muy parecido a <tt class="docutils literal"><span class="pre">putStrLn</span></tt> en el sentido de que toma una
 cadena y devuelve una acción que imprimirá esa cadena por la terminal, solo
 que <tt class="docutils literal"><span class="pre">putStr</span></tt> no salta a una nueva línea después de imprimir la cadena tal
@@ -700,7 +701,7 @@ notación <tt class="docutils literal"><span class="pre">do</span></tt>. Del mis
 por <tt class="docutils literal"><span class="pre">forM</span> <span class="pre">colors</span> <span class="pre">putStrLn</span></tt>.</p>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>En esta sección hemos aprendido las bases de la entrada y salida. También
 hemos visto que son las acciones <tt class="docutils literal"><span class="pre">IO</span></tt>, como nos permiten realizar acciones
 de entrada y salida y cuando son realmente ejecutadas. Las acciones <tt class="docutils literal"><span class="pre">IO</span></tt> son
@@ -1138,7 +1139,7 @@ que lee una línea de su fichero.</p>
 <p>Cargar ficheros y luego tratar sus conteidos como cadenas es algo tan común
 que tenemos estas tres pequeñas funciones que hacen nuestra vida más fácil:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">readFile</span></tt> tiene la declaración de tipo <tt class="docutils literal"><span class="pre">readFile</span> <span class="pre">::</span> <span class="pre">FilePath</span> <span class="pre">-&gt;</span> <span class="pre">IO</span>
 <span class="pre">String</span></tt>. Recueda, <tt class="docutils literal"><span class="pre">FilePath</span></tt> es solo un sinónimo de <tt class="docutils literal"><span class="pre">String</span></tt>.
 <tt class="docutils literal"><span class="pre">readFile</span></tt> toma la ruta de un fichero y devuelve un acción de E/S que
@@ -1210,7 +1211,7 @@ una línea por la entrada estándar y la añada a nuestra lista de tareas.</p>
 nos devuelve el carácter de fin de línea al final.</p>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Oh, una cosa más. Hemos hablado de como al hacer <tt class="docutils literal"><span class="pre">contents</span> <span class="pre">&lt;-</span> <span class="pre">hGetContents</span>
 <span class="pre">handle</span></tt> no se provoca que el fichero enetero sea leído de golpe y guardado en
 memoria. Es una acción de E/S perezosa, así que al hacer esto:</p>
@@ -1451,12 +1452,12 @@ haga dependerá de los parámetros de la línea de comandos. También vamos a
 permitir que puede trabajar con ficheros diferentes y no solo <tt class="docutils literal"><span class="pre">todo.txt</span></tt>.</p>
 <p>Llamaremos al programa <tt class="docutils literal"><span class="pre">todo</span></tt> y será capaz de hacer tres cosas:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>Ver las tareas</li>
 <li>Añadir una tarea</li>
 <li>Eliminar una tarea</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>No nos vamos a preocupar sobre posibles errores en la entrada ahora mismo.</p>
 <p>Nuestro programa estará creado de forma que si queremos añadir la tarea
 <tt class="docutils literal"><span class="pre">Find</span> <span class="pre">the</span> <span class="pre">magic</span> <span class="pre">sword</span> <span class="pre">of</span> <span class="pre">power</span></tt> en el fichero <tt class="docutils literal"><span class="pre">todo.txt</span></tt>, tendremos que
@@ -2115,7 +2116,7 @@ forma que caben dentro de un mismo bloque (<tt class="docutils literal"><span cl
 <p><tt class="xref cpp cpp-member docutils literal"><span class="pre">unpack</span></tt> es la versión inversa de de <tt class="docutils literal"><span class="pre">pack</span></tt>. Toma una cadena de bytes y
 la convierte en una lista de bytes.</p>
 <p><tt class="xref cpp cpp-member docutils literal"><span class="pre">fromChunks</span></tt> toma una lista de cadenas de bytes estrictas y la convierte
-en una cadena de bytes perezosa.  <tt class="xref cpp cpp-member docutils literal"><span class="pre">toChunks</span></tt> toma una cadena de bytes
+en una cadena de bytes perezosa. <tt class="xref cpp cpp-member docutils literal"><span class="pre">toChunks</span></tt> toma una cadena de bytes
 perezosa y la convierte en una estricta.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; B.fromChunks [S.pack [40,41,42], S.pack [43,44,45], S.pack [46,47,48]]</span>
 <span class="go">Chunk &quot;()*&quot; (Chunk &quot;+,-&quot; (Chunk &quot;./0&quot; Empty))</span>
@@ -2427,7 +2428,7 @@ junto las guardas, ya que, si una guarda no se evalua a <tt class="xref docutils
 evaluando la siguiente guarda. Los predicados que trabajan con <tt class="docutils literal"><span class="pre">IOError</span></tt>
 son:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isAlreadyExistsError</span></tt></li>
 <li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isDoesNotExistError</span></tt></li>
 <li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isAlreadyInUseError</span></tt></li>
@@ -2437,7 +2438,7 @@ son:</p>
 <li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isPermissionError</span></tt></li>
 <li><tt class="xref cpp cpp-member docutils literal"><span class="pre">isUserError</span></tt></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>La moyoría de éstas se explican por si mismas. <tt class="docutils literal"><span class="pre">isUserError</span></tt> se evalua a
 <tt class="xref docutils literal"><span class="pre">True</span></tt> cuando utilizamos la función <tt class="xref cpp cpp-member docutils literal"><span class="pre">userError</span></tt> para crear la
 excepción, lo cual se utiliza para crear excepciones en nuestro código y
@@ -2540,10 +2541,20 @@ que son acciones de E/S normales solo que su resultado será del tipo
         <li class="right" >
           <a href="ClasesDeTipos.html" title="Creando nuestros propios tipos y clases de tipos"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

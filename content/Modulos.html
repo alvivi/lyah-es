@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Creando nuestros propios tipos y clases de tipos" href="ClasesDeTipos.html" />
-    <link rel="prev" title="Funciones de orden superior" href="OrdenSuperior.html" /> 
+    <link rel="prev" title="Funciones de orden superior" href="OrdenSuperior.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="OrdenSuperior.html" title="Funciones de orden superior"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -160,7 +161,7 @@ ningún nombre de <tt class="docutils literal"><span class="pre">Prelude</span><
 <tt class="docutils literal"><span class="pre">Data.List</span></tt>. Vamos a dar un vistazo a algunas funciones que aún no hemos
 conocido.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="docutils literal"><span class="pre">intersperse</span></tt> toma un elemento y una lista pone ese elemento entre cada
 par de elementos de la lista. Una demostración:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">intersperse</span> <span class="sc">&#39;.&#39;</span> <span class="s">&quot;MONKEY&quot;</span>
@@ -643,7 +644,7 @@ resultado seguirá estando ordenado.</p>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Lo que <tt class="docutils literal"><span class="pre">length</span></tt>, <tt class="docutils literal"><span class="pre">take</span></tt>, <tt class="docutils literal"><span class="pre">drop</span></tt>, <tt class="docutils literal"><span class="pre">splitAt</span></tt>, <tt class="docutils literal"><span class="pre">!!</span></tt> y <tt class="docutils literal"><span class="pre">replicate</span></tt>
 tienen en común es que toman un <tt class="docutils literal"><span class="pre">Int</span></tt> como parámetro (o lo devulen),
 incluso aunque estas funciones podrían ser más genéricas y útiles si
@@ -737,7 +738,7 @@ cadenas ya que al fin y al cabo son listas de caracteres.</p>
 funciones que toman un carácter y nos dicen si una suposición acerca de él
 es verdadera o falsa. Aquí los tienes:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="docutils literal"><span class="pre">isControl</span></tt> comprueba si un carácter es de control o no.</li>
 <li><tt class="docutils literal"><span class="pre">isSpace</span></tt> comprueba si un carácter es uno de los caracteres de espacio
 en blanco. Eso incluye espacios, tabuladores, saltos de línea, etc.</li>
@@ -768,7 +769,7 @@ ascii.</li>
 <li><tt class="docutils literal"><span class="pre">isAsciiLower</span></tt> comprueba si un carácter está en minúsculas y además es
 ascii.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Todas estas funciones tienen el tipo <tt class="docutils literal"><span class="pre">Char</span> <span class="pre">-&gt;</span> <span class="pre">Bool</span></tt>. La mayoría de las veces
 las usaras para filtrar cadenas o algo parecido. Por ejemplo, digamos que
 vamos a hacer un programa que toma un nombre de usuario y dicho nombre solo
@@ -823,7 +824,7 @@ poco con esta función.</p>
 cosas como <tt class="docutils literal"><span class="pre">generalCategory</span> <span class="pre">c</span> <span class="pre">==</span> <span class="pre">Space</span></tt>.</p>
 <p>Para terminar, aquí tienes unas cuantas funciones que convierten caracteres:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="docutils literal"><span class="pre">toUpper</span></tt> convierte un carácter a mayúsculas. Lo espacios, números y todo
 lo demás permanece igual.</p>
 </li>
@@ -904,7 +905,7 @@ poner los caracteres desplazados en su lugar.</p>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 </div>
 <div class="section" id="data-map">
 <h2>Data.Map<a class="headerlink" href="#data-map" title="Enlazar permanentemente con este título">¶</a></h2>
@@ -997,7 +998,7 @@ asociación.</p>
 <p>Vamos a continuar y ver que tiene <tt class="docutils literal"><span class="pre">Data.Map</span></tt> para nosotros. Aquí tienes un
 resumen básico de las funciones.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first">La función <tt class="docutils literal"><span class="pre">fromList</span></tt> tomo una lista de asociación (en forma de lista) y
 devuelve un diccionario con las mismas asociaciones.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="kt">Map</span><span class="o">.</span><span class="n">fromList</span> <span class="p">[(</span><span class="s">&quot;betty&quot;</span><span class="p">,</span><span class="s">&quot;555-2938&quot;</span><span class="p">),(</span><span class="s">&quot;bonnie&quot;</span><span class="p">,</span><span class="s">&quot;452-2928&quot;</span><span class="p">),(</span><span class="s">&quot;lucille&quot;</span><span class="p">,</span><span class="s">&quot;205-2928&quot;</span><span class="p">)]</span>
@@ -1099,9 +1100,9 @@ si dicha clave está contenida en el diccionario.</p>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">toList</span></tt> es la inversa de <tt class="docutils literal"><span class="pre">fromList</span></tt>.</p>
 <blockquote>
-<p>ghci&gt; Map.toList . Map.insert 9 2 $ Map.singleton 4 3
+<div><p>ghci&gt; Map.toList . Map.insert 9 2 $ Map.singleton 4 3
 [(4,3),(9,2)]</p>
-</blockquote>
+</div></blockquote>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">keys</span></tt> y <tt class="docutils literal"><span class="pre">elems</span></tt> devuelven una lista con todas la claves o todo los
 valores respectivamente. <tt class="docutils literal"><span class="pre">keys</span></tt> es equivalente a <tt class="docutils literal"><span class="pre">map</span> <span class="pre">fst</span> <span class="pre">.</span> <span class="pre">Map.toList</span></tt>
@@ -1175,7 +1176,7 @@ determinar que hacer.</p>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Estas son solo algunas de la funciones que contiene <tt class="docutils literal"><span class="pre">Data.Map</span></tt>. Puedes ver
 un lista completa de las funciones que contiene en su
 <a class="reference external" href="http://www.haskell.org/ghc/docs/latest/html/libraries/containers/Data-Map.html#v%3Aassocs">documentación</a>.</p>
@@ -1479,10 +1480,20 @@ misma funcionalidad.</p>
         <li class="right" >
           <a href="OrdenSuperior.html" title="Funciones de orden superior"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

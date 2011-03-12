@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Unas cuantas mónadas más" href="MasMonadas.html" />
-    <link rel="prev" title="Funtores, funtores aplicativos y monoides" href="Funtores.html" /> 
+    <link rel="prev" title="Funtores, funtores aplicativos y monoides" href="Funtores.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="Funtores.html" title="Funtores, funtores aplicativos y monoides"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -1231,10 +1232,10 @@ por defecto utilizando <tt class="docutils literal"><span class="pre">return</sp
 utilizando <tt class="docutils literal"><span class="pre">&gt;&gt;=</span></tt>, el resultado debe ser igual que aplicar la función
 directamente a ese valor. Informalmente:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="xref js js-data docutils literal"><span class="pre">return</span> <span class="pre">x</span> <span class="pre">&gt;&gt;=</span> <span class="pre">f</span></tt> es exactamente lo mismo que <tt class="xref js js-data docutils literal"><span class="pre">f</span> <span class="pre">x</span></tt>.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Si vemos los valores monádicos como valores con un cierto contexto y
 <tt class="docutils literal"><span class="pre">return</span></tt> toma un valor y lo introduce en el contexto mínimo por defecto que
 puede albergar ese valor, tiene sentido que, como ese contexto en realidad es
@@ -1272,10 +1273,10 @@ como parámetro. Así que también cumple esta ley.</p>
 para pasarselo a <tt class="docutils literal"><span class="pre">return</span></tt>, el resultado debe ser el valor monádico original.
 Formalemente:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="xref js js-data docutils literal"><span class="pre">m</span> <span class="pre">&gt;&gt;=</span> <span class="pre">return</span></tt> es igual que <tt class="xref js js-data docutils literal"><span class="pre">m</span></tt>.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Esta ley puede parecer un poco menos obvia que la primera, pero vamos a echar
 un vistazo para ver porque se debe cumplir. Pasamos valores monádicos a las
 funciones utilizando <tt class="docutils literal"><span class="pre">&gt;&gt;=</span></tt>. Estas funciones toman valores normales y
@@ -1311,10 +1312,10 @@ valor monádico que produciera hicera mucha más cosas.</p>
 aplicaciones funciones monádicas con <tt class="docutils literal"><span class="pre">&gt;&gt;=</span></tt>, no importa el orden en el que
 estén anidadas. Escrito formalmente:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="xref js js-data docutils literal"><span class="pre">(m</span> <span class="pre">&gt;&gt;=</span> <span class="pre">f)</span> <span class="pre">&gt;&gt;=</span> <span class="pre">g</span></tt> es igual a <tt class="xref js js-data docutils literal"><span class="pre">&gt;&gt;=</span> <span class="pre">(x</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">x</span> <span class="pre">&gt;&gt;=</span> <span class="pre">g)</span></tt>.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Mmm... ¿Qué esta pasando aquí? Tenemos un valor monádico, <tt class="docutils literal"><span class="pre">m</span></tt> y dos
 funciones monádica <tt class="docutils literal"><span class="pre">f</span></tt> y <tt class="docutils literal"><span class="pre">g</span></tt>. Hacemos <tt class="docutils literal"><span class="pre">(m</span> <span class="pre">&gt;&gt;=</span> <span class="pre">f)</span> <span class="pre">&gt;&gt;=</span> <span class="pre">g</span></tt>, es decir,
 pasamos <tt class="docutils literal"><span class="pre">m</span></tt> a <tt class="docutils literal"><span class="pre">f</span></tt>, lo cual devuelve un valor monádico. Luego pasamos ese
@@ -1414,10 +1415,20 @@ crear nuestras propias mónadas.</p>
         <li class="right" >
           <a href="Funtores.html" title="Funtores, funtores aplicativos y monoides"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

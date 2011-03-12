@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Tipos y clases de tipos" href="Tipos.html" />
-    <link rel="prev" title="Introducción" href="Introduccion.html" /> 
+    <link rel="prev" title="Introducción" href="Introduccion.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="Introduccion.html" title="Introducción"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -409,7 +410,7 @@ son comparados los segundos elementos y así sucesivamente.</p>
 <p>¿Qué mas podemos hacer con las listas? Aquí tienes algunas funciones básicas que
 pueden operar con las listas.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">head</span></tt> toma una lista y devuelve su cabeza. La cabeza de una lista es
 básicamente el primer elemento.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; head [5,4,3,2,1]</span>
@@ -437,7 +438,7 @@ cabeza de la lista.</p>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Si pensamos en las listas como en un monstruo, serian algo como:</p>
 <img alt="Monstruo" class="align-center" src="../_images/listmonster.png" />
 <p>¿Pero que pasa si intentamos obtener la cabeza de una lista vacía?</p>
@@ -452,7 +453,7 @@ en tiempo de compilación así que siempre es una buena práctica tomar
 precauciones antes de decir a Haskell que te devuelva algunos elementos de una
 lista vacía.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">length</span></tt> toma una lista y obviamente devuelve su tamaño.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; length [5,4,3,2,1]</span>
 <span class="go">5</span>
@@ -536,7 +537,7 @@ porque es más fácil de leer.</p>
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Estas fueron unas cuantas pocas funciones básicas que operan con las listas.
 Veremos más funciones de listas más adelante.</p>
 </div>
@@ -599,7 +600,7 @@ es lo que quieres obtener de la lista infinita. En este caso ve que solo queremo
 primeros 24 elementos y los evalúa con mucho gusto.</p>
 <p>Ahora, un par de funciones que generan listas infinitas:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">cycle</span></tt> toma una lista y crea un ciclo de listas iguales infinito. Si
 intentáramos mostrar el resultado, nunca terminaría así que hay que cortarlo
 en alguna parte.</p>
@@ -620,7 +621,7 @@ en alguna parte.</p>
 de elementos de antemano. <tt class="docutils literal"><span class="pre">replicate</span> <span class="pre">3</span> <span class="pre">10</span></tt> devuelve <tt class="docutils literal"><span class="pre">[10,10,10]</span></tt>.</p>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 </div>
 <div class="section" id="soy-una-lista-por-comprension">
 <span id="comprension"></span><h2>Soy una lista por comprensión<a class="headerlink" href="#soy-una-lista-por-comprension" title="Enlazar permanentemente con este título">¶</a></h2>
@@ -808,7 +809,7 @@ comparados. Únicamente no podemos comparar dos tuplas de diferentes tamaños
 mientras que si podemos comparar dos listas de diferentes tamaños. Dos funciones
 útiles para operar con tuplas son:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-member docutils literal"><span class="pre">fst</span></tt> toma una dupla y devuelve su primer componente.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; fst (8,11)</span>
 <span class="go">8</span>
@@ -826,7 +827,7 @@ mientras que si podemos comparar dos listas de diferentes tamaños. Dos funcione
 </div>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Nota</p>
 <p class="last">Estas funciones operan solo sobre duplas. No funcionaran sobre triplas,
@@ -906,10 +907,20 @@ hasta obtener las soluciones correctas.</p>
         <li class="right" >
           <a href="Introduccion.html" title="Introducción"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

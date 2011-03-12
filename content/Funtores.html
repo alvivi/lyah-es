@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Un puñado de mónadas" href="Monadas.html" />
-    <link rel="prev" title="Resolviendo problemas de forma funcional" href="Problemas.html" /> 
+    <link rel="prev" title="Resolviendo problemas de forma funcional" href="Problemas.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="Problemas.html" title="Resolviendo problemas de forma funcional"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -74,7 +75,7 @@ un vistazo a los monoides.</p>
 <div class="section" id="de-vuelta-con-los-funtores">
 <h2>De vuelta con los funtores<a class="headerlink" href="#de-vuelta-con-los-funtores" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="La ranas ni siquiera necesitan dinero." class="align-right" src="../_images/frogtor.png" />
-<p>Ya hablamos de los funtores en su pequeña <em class="xref std std-ref">sección</em>. Si
+<p>Ya hablamos de los funtores en su pequeña <a class="reference internal" href="ClasesDeTipos.html#funtores"><em>sección</em></a>. Si
 todavía no la has leído, probablemente deberías darle un vistazo ahora mismo,
 o quizá luego cuando tengas más tiempo. O simplemente puedes hacer como si ya
 la hubieses leído.</p>
@@ -303,15 +304,15 @@ el tipo de <tt class="docutils literal"><span class="pre">fmap</span></tt> una v
 <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">b</span></tt>. Nos hemos olvidado de la restricción de
 clase <tt class="docutils literal"><span class="pre">(Functor</span> <span class="pre">f)</span> <span class="pre">=&gt;</span></tt>, pero lo hemos hecho por brevedad ya porque estamos
 hablando de funtores y sabemos que significa <tt class="docutils literal"><span class="pre">f</span></tt>. La primera vez que
-hablamos sobre las <em class="xref std std-ref">Funciones</em>, dijimos que en realidad
-todas las funciones de Haskell toman un solo parámetro. Una función con tipo
-<tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt> en realidad toma un solo parámetro <tt class="docutils literal"><span class="pre">a</span></tt> y luego devuelve una
-función <tt class="docutils literal"><span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt>, que a su vez toma otro parámetro y devuelve <tt class="docutils literal"><span class="pre">c</span></tt>. Es como
-si llamáramos a la función con demasiados pocos parámetros (es decir, la
-aplicamos parcialmente), obtenemos una función que toma tantos parámetros como
-nos hayamos dejado (si pensamos de nuevo que las funciones toman varios
-parámetros). Así que <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt>  puede escribirse como <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(b</span> <span class="pre">-&gt;</span> <span class="pre">c)</span></tt>
-para hacer visible la currificación.</p>
+hablamos sobre las <a class="reference internal" href="OrdenSuperior.html#curry"><em>Funciones currificadas</em></a>, dijimos que en
+realidad todas las funciones de Haskell toman un solo parámetro. Una función
+con tipo <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt> en realidad toma un solo parámetro <tt class="docutils literal"><span class="pre">a</span></tt> y luego
+devuelve una función <tt class="docutils literal"><span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt>, que a su vez toma otro parámetro y devuelve
+<tt class="docutils literal"><span class="pre">c</span></tt>. Es como si llamáramos a la función con demasiados pocos parámetros (es
+decir, la aplicamos parcialmente), obtenemos una función que toma tantos
+parámetros como nos hayamos dejado (si pensamos de nuevo que las funciones
+toman varios parámetros). Así que <tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span> <span class="pre">-&gt;</span> <span class="pre">c</span></tt> puede escribirse como
+<tt class="docutils literal"><span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">(b</span> <span class="pre">-&gt;</span> <span class="pre">c)</span></tt> para hacer visible la currificación.</p>
 <p>Del mismo modo, si escribimos <tt class="docutils literal"><span class="pre">fmap</span> <span class="pre">::</span> <span class="pre">(a</span> <span class="pre">-&gt;</span> <span class="pre">b)</span> <span class="pre">-&gt;</span> <span class="pre">(f</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">f</span> <span class="pre">b)</span></tt>, podemos
 ver a <tt class="docutils literal"><span class="pre">fmap</span></tt> no como una función que toma una función y un funtor y devuelve
 otro funtor, sino como una función que toma una función y devuelve otra
@@ -1264,7 +1265,7 @@ base <tt class="docutils literal"><span class="pre">sequenceA</span> <span class
 no consigues imaginarte como funciona <tt class="docutils literal"><span class="pre">sequenceA</span></tt> con las listas puede que
 te resulte de ayuda.</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>Empezamos con <tt class="docutils literal"><span class="pre">sequenceA</span> <span class="pre">[[1,2],[3,4]]</span></tt>.</li>
 <li>Lo cual se evalúa a <tt class="docutils literal"><span class="pre">(:)</span> <span class="pre">&lt;$&gt;</span> <span class="pre">[1,2]</span> <span class="pre">&lt;*&gt;</span> <span class="pre">sequenceA</span> <span class="pre">[[3,4]]</span></tt>.</li>
 <li>Si evaluamos el <tt class="docutils literal"><span class="pre">sequenceA</span></tt> interior una vez más, obtenemos
@@ -1281,7 +1282,7 @@ y <tt class="docutils literal"><span class="pre">2</span></tt>) con cada posible
 <tt class="docutils literal"><span class="pre">[4]</span></tt>), de forma que nos quedamos con <tt class="docutils literal"><span class="pre">[1:[3],</span> <span class="pre">1:[4],</span> <span class="pre">2:[3],</span> <span class="pre">2:[4]]</span></tt>,
 que es igual a <tt class="docutils literal"><span class="pre">[[1,3],[1,4],[2,3],[2,4]</span></tt>.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Si hacemos <tt class="docutils literal"><span class="pre">(+)</span> <span class="pre">&lt;$&gt;</span> <span class="pre">[1,2]</span> <span class="pre">&lt;*&gt;</span> <span class="pre">[4,5,6]</span></tt> estamos creando una computación
 no determinista <tt class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></tt> donde <tt class="docutils literal"><span class="pre">x</span></tt> toma cualquier valor de <tt class="docutils literal"><span class="pre">[1,2]</span></tt> e
 <tt class="docutils literal"><span class="pre">y</span></tt> toma cualquier valor de <tt class="docutils literal"><span class="pre">[4,5,6]</span></tt>. Representamos la solución con una
@@ -1314,13 +1315,13 @@ serie de leyes. La mas importante de todas es la que ya hemos mencionado,
 esta ley en algunos de los funtores de los que hemos hablado. Las otras leyes
 son:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="xref js js-data docutils literal"><span class="pre">pure</span> <span class="pre">id</span> <span class="pre">&lt;*&gt;</span> <span class="pre">v</span> <span class="pre">=</span> <span class="pre">v</span></tt></li>
 <li><tt class="xref js js-data docutils literal"><span class="pre">pure</span> <span class="pre">(.)</span> <span class="pre">&lt;*&gt;</span> <span class="pre">u</span> <span class="pre">&lt;*&gt;</span> <span class="pre">v</span> <span class="pre">&lt;*&gt;</span> <span class="pre">w</span> <span class="pre">=</span> <span class="pre">u</span> <span class="pre">&lt;*&gt;</span> <span class="pre">(v</span> <span class="pre">&lt;*&gt;</span> <span class="pre">w)</span></tt></li>
 <li><tt class="xref js js-data docutils literal"><span class="pre">pure</span> <span class="pre">f</span> <span class="pre">&lt;*&gt;</span> <span class="pre">pure</span> <span class="pre">x</span> <span class="pre">=</span> <span class="pre">pure</span> <span class="pre">(f</span> <span class="pre">x)</span></tt></li>
 <li><tt class="xref js js-data docutils literal"><span class="pre">u</span> <span class="pre">&lt;*&gt;</span> <span class="pre">pure</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">pure</span> <span class="pre">($</span> <span class="pre">y)</span> <span class="pre">&lt;*&gt;</span> <span class="pre">u</span></tt></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>No vamos a verlas en detalle ahora mismo ya que nos tomaría unas cuantas
 página y probablemente sea algo aburrido, pero, si te sientes con ganas,
 puedes echarles una vistazo más de cerca y comprobar si algunas de las
@@ -1702,13 +1703,13 @@ este caso el valor es la lista vacía, <tt class="docutils literal"><span class=
 <p>Parece que tanto <tt class="docutils literal"><span class="pre">*</span></tt> junto a <tt class="docutils literal"><span class="pre">1</span></tt> como <tt class="docutils literal"><span class="pre">++</span></tt> junto a <tt class="docutils literal"><span class="pre">[]</span></tt> comparten
 ciertas propiedades:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li>La función toma dos parámetros.</li>
 <li>Los parámetros y el valor de retorno comparten el mismo tipo.</li>
 <li>Existe un valor que hará que el resultado de la función binaria solo
 dependa del otro parámetro.</li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Existe también otra propiedad que ambos comparte pero que quizá no sea tan
 obvia: cuando tenemos tres o mas valores y queremos utilizar la función
 binaria para reducirlos a un solo valor, el orden en el que apliquemos la
@@ -1785,12 +1786,12 @@ cuando utilizamos la clase <tt class="docutils literal"><span class="pre">Monoid
 comporten como monoides De otro modo, ¿qué sentido tendría todo eso? Por esta
 razón, cuando creamos instancias debemos asegurarnos de cumplir estas leyes:</p>
 <blockquote>
-<ul class="simple">
+<div><ul class="simple">
 <li><tt class="xref js js-data docutils literal"><span class="pre">mempty</span> <span class="pre">`mappend`</span> <span class="pre">x</span> <span class="pre">=</span> <span class="pre">x</span></tt></li>
 <li><tt class="xref js js-data docutils literal"><span class="pre">x</span> <span class="pre">`mappend`</span> <span class="pre">mempty</span> <span class="pre">=</span> <span class="pre">x</span></tt></li>
 <li><tt class="xref js js-data docutils literal"><span class="pre">(x</span> <span class="pre">`mappend`</span> <span class="pre">y)</span> <span class="pre">`mappend`</span> <span class="pre">z</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">`mappend`</span> <span class="pre">(y</span> <span class="pre">`mappend`</span> <span class="pre">z)</span></tt></li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Las primeras dos leyes establecen que <tt class="docutils literal"><span class="pre">mempty</span></tt> debe actuar como identidad
 respecto a <tt class="docutils literal"><span class="pre">mappend</span></tt> y la tercera dice que <tt class="docutils literal"><span class="pre">mappend</span></tt> debe ser asociativa,
 es decir, que el orden en el que utilicemos <tt class="docutils literal"><span class="pre">mappend</span></tt> para reducir varios
@@ -2391,10 +2392,20 @@ funciona para cualquier tipo miembro de la clase <tt class="docutils literal"><s
         <li class="right" >
           <a href="Problemas.html" title="Resolviendo problemas de forma funcional"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

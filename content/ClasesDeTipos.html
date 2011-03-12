@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="Entrada y salida" href="EntradaSalida.html" />
-    <link rel="prev" title="Módulos" href="Modulos.html" /> 
+    <link rel="prev" title="Módulos" href="Modulos.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="Modulos.html" title="Módulos"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -173,9 +174,9 @@ tipo <tt class="docutils literal"><span class="pre">Float</span></tt>. De esta f
 sucede para el rectángulo. Tenemos que modificar nuestra función <tt class="docutils literal"><span class="pre">surface</span></tt>
 para que refleje estos cambios.</p>
 <blockquote>
-surface :: Shape -&gt; Float
+<div>surface :: Shape -&gt; Float
 surface (Circle _ r) = pi * r ^ 2
-surface (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1)</blockquote>
+surface (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1)</div></blockquote>
 <p>Lo único que hemos cambiado han sido los patrones. Hemos descartado
 completamente el punto en el patrón del círculo. Por otra parte, en  el patrón
 del rectángulo, simplemente hemos usado un ajuste de patrones anidado para
@@ -704,12 +705,12 @@ implementado de esta forma:</p>
 <p>Como el valor <tt class="xref docutils literal"><span class="pre">False</span></tt> está definido primero y el valor <tt class="xref docutils literal"><span class="pre">True</span></tt> está
 definido después, podemos considerar que <tt class="xref docutils literal"><span class="pre">True</span></tt> es mayor que <tt class="xref docutils literal"><span class="pre">False</span></tt>.</p>
 <blockquote>
-ghci&gt; True <cite>compare</cite> False
+<div>ghci&gt; True <cite>compare</cite> False
 GT
 ghci&gt; True &gt; False
 True
 ghci&gt; True &lt; False
-False</blockquote>
+False</div></blockquote>
 <p>En el tipo <tt class="docutils literal"><span class="pre">Maybe</span> <span class="pre">a</span></tt>, el constructor de datos <tt class="docutils literal"><span class="pre">Nothing</span></tt> esta definido
 antes que el constructor <tt class="docutils literal"><span class="pre">Just</span></tt>, así que un valor <tt class="docutils literal"><span class="pre">Nothing</span></tt> es siempre más
 pequeño que cualquier valor <tt class="docutils literal"><span class="pre">Just</span> <span class="pre">algo</span></tt>, incluso si ese algo es menos un
@@ -2012,10 +2013,20 @@ posibilidades de entender correctamente el sistema de tipos de Haskell.</p>
         <li class="right" >
           <a href="Modulos.html" title="Módulos"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>

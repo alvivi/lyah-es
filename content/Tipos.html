@@ -22,11 +22,12 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/translations.js"></script>
-    <script type="text/javascript" src="../_static/cms.js"></script>    
     <link rel="shortcut icon" href="../_static/favicon.ico"/>
     <link rel="top" title="¡Aprende Haskell por el bien de todos! v0 documentation" href="../index.html" />
     <link rel="next" title="La sintaxis de las funciones" href="Funciones.html" />
-    <link rel="prev" title="Empezando" href="Empezando.html" /> 
+    <link rel="prev" title="Empezando" href="Empezando.html" />
+    <script type="text/javascript" src="../_static/cms.js"></script> 
+
   </head>
   <body>
     <div class="related">
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="Empezando.html" title="Empezando"
              accesskey="P">anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -129,7 +130,7 @@ Las funciones también son expresiones así que no hay ningún problema en usar
 <tt class="docutils literal"><span class="pre">:t</span></tt> con ellas.</p>
 <p>Aquí tienes una descripción de los tipos más comunes.</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-type docutils literal"><span class="pre">Int</span></tt> representa enteros. Se utiliza para representar número enteros, por
 lo que <tt class="docutils literal"><span class="pre">7</span></tt> puede ser un <tt class="docutils literal"><span class="pre">Int</span></tt> pero <tt class="docutils literal"><span class="pre">7.2</span></tt> no puede. <tt class="docutils literal"><span class="pre">Int</span></tt> está
 acotado, lo que significa que tiene un valor máximo y un valor mínimo.
@@ -175,7 +176,7 @@ embargo, <tt class="docutils literal"><span class="pre">Int</span></tt> es más 
 lista de caracteres es una cadena.</p>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Las tuplas también son tipos pero dependen de su longitud y del tipo de sus
 componentes, así que teóricamente existe una infinidad de tipos de tuplas y
 eso son demasiados tipos como para cubrirlos en esta guía. La tupla vacía
@@ -254,7 +255,7 @@ de la clase <tt class="docutils literal"><span class="pre">Eq</span></tt>.</p>
 indicado dentro de la lista.</p>
 <p>Algunas clases de tipos básicas son:</p>
 <blockquote>
-<ul>
+<div><ul>
 <li><p class="first"><tt class="xref cpp cpp-class docutils literal"><span class="pre">Eq</span></tt> es utilizada por los tipos que soportan comparaciones por igualdad. Los
 miembros de esta clase implementan las funciones <tt class="docutils literal"><span class="pre">==</span></tt> o <tt class="docutils literal"><span class="pre">/=</span></tt> en algún lugar
 dentro de la definición. Todos los tipos que mencionamos anteriormente forman
@@ -446,7 +447,7 @@ números enteros. <tt class="docutils literal"><span class="pre">Int</span></tt>
 y <tt class="docutils literal"><span class="pre">Double</span></tt>.</p>
 </li>
 </ul>
-</blockquote>
+</div></blockquote>
 <p>Una función muy útil para trabajar con números es <tt class="xref cpp cpp-member docutils literal"><span class="pre">fromIntegral</span></tt>. Tiene el
 tipo <tt class="docutils literal"><span class="pre">fromIntegral</span> <span class="pre">::</span> <span class="pre">(Num</span> <span class="pre">b,</span> <span class="pre">Integral</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">a</span> <span class="pre">-&gt;</span> <span class="pre">b</span></tt>. A partir de esta
 declaración podemos decir que toma un número entero y lo convierte en un número
@@ -478,10 +479,20 @@ restricciones de clase deben ir separadas por comas y entre paréntesis.</p>
         <li class="right" >
           <a href="Empezando.html" title="Empezando"
              >anterior</a> |</li>
-        <li><a href="../index.html">Índice</a> &raquo;</li> 
+        <li><a href="../main.html">Índice</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
-    </div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21994994-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
   </body>
 </html>
