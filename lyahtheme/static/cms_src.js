@@ -1,5 +1,5 @@
 
-lyahcms = 'http://lyahcms.appspot.com'
+lyahcms = 'http://lyahcms.appspot.com';
 
 
 jQuery.prototype.cssShadow = function (s) {
@@ -28,7 +28,7 @@ var CommentsSystem = function () {
 
 
 CommentsSystem.prototype.group = function () {
-    return /^.*\/(.*)\.html$/i.exec(location.pathname)[1];
+    return (/^.*\/(.*)\.html$/i).exec(location.pathname)[1];
 } ();
 
 CommentsSystem.prototype.select = function (para) {
@@ -162,9 +162,9 @@ CommentsBox.prototype.onSubmit = function () {
 };
 
 CommentsBox.prototype.setupStyle = function() {
-    this.wrapper.find('.comment').css('background-color', '#E8E8E8')
+    this.wrapper.find('.comment').css('background-color', '#ffe1fa')
                                  .cssBorderRadius('10px')
-                                 .cssShadow('0 0 3px 3px #E8E8E8')
+                                 .cssShadow('0 0 3px 3px #ffe1fa')
                                  .css('margin-top', '2ex');
     this.wrapper.find('h5').css('color', '#555')      
                            .css('margin-bottom', '0');
@@ -177,7 +177,11 @@ CommentsBox.prototype.setupStyle = function() {
                             .css('font-family', 'Consolas, "Courier New", monospace')
                             .css('color', '#5A5A5A')
                             .css('line-height', '2ex')
-                            .css('padding', '2ex 0 0 6ex');
+                            .css('padding', '2ex 0 0 6ex')
+                            .css('white-space', 'pre-wrap')
+                            .css('white-space', '-moz-pre-wrap')
+                            .css('white-space', '-pre-wrap')
+                            .css('white-space', '-o-pre-wrap');
 };
 
 CommentsBox.prototype.show = function () {
@@ -239,7 +243,7 @@ Form.prototype.setup = function ()
                        .css('padding', '0')
                        .css('margin', '0');
     this.form.find('label').css('padding-left', '1ex');
-    submit.css('margin-top', '1ex')
+    submit.css('margin-top', '1ex');
     submit.click(function (e) {
         e.preventDefault();
         if(!self.isSubmited) {
@@ -259,6 +263,7 @@ Form.prototype.show = function ()
 
 
 var Paragraph = function (cs, thread, contents) {
+    var self = this;
     this.contents = $(contents);
     this.cs = cs;
     this.isHover = false;
@@ -268,13 +273,20 @@ var Paragraph = function (cs, thread, contents) {
     
     this.attach();
     this.setDefaultStyle();
+    
+    cs.withCommentCount(thread, function (c) {
+        if (c !== 0) {
+            self.contents.append('<div class="ccount"><p>' + c + '</p></div>');
+            self.setCountStyle();
+        }
+    });
 };
 
 
 Paragraph.prototype.attach = function () {
     var self = this;
-    
     this.contents.wrap('<div class="par-wrapper">');
+
     this.contents = this.contents.parent();
     
     this.contents.hover( function () { self.onHoverIn();  }
@@ -290,7 +302,7 @@ Paragraph.prototype.isSelected = function() {
 Paragraph.prototype.onHoverIn = function () {
     if(!this.isSelected()) {    
         this.isHover = true;
-        this.setBackground('#f5d96e');
+        this.setBackground('#ffe1fa');
         this.toggle.show();
     }
 };
@@ -304,7 +316,7 @@ Paragraph.prototype.onHoverOut = function () {
 };
 
 Paragraph.prototype.onSelect = function () {
-    this.setBackground('#dfdfdf');
+    this.setBackground('#fff1fd');
     this.toggle.hide();
     this.csBox.show();
 };
@@ -324,8 +336,17 @@ Paragraph.prototype.setDefaultStyle = function () {
                   .cssBorderRadius('10px');
 };
 
-
-
+Paragraph.prototype.setCountStyle = function () {
+    $(this.contents.find('.ccount')[0]).css('height', '42px')
+                                       .css('width', '43px')
+                                       .css('background-image', 'url("../_static/count.png")')
+                                       .css('position', 'absolute')
+                                       .css('top', '0')
+                                       .css('left', '-40px');
+    $(this.contents.find('.ccount p')[0]).css('font-size', '10px')
+                                         .css('margin', '11px 0 0 7px')
+                                         .css('width', '25px');
+};
 
 
 
@@ -409,6 +430,6 @@ Toggle.prototype.hide = function () {
 
 
 
-$(window).load(function () {
+$(function () {
     CommentsSystem.prototype.instance = new CommentsSystem();
 });

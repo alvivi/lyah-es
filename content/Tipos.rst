@@ -53,7 +53,7 @@ Podemos ver que ejecutando el comando ``:t`` sobre una expresión se muestra esa
 misma expresión seguida de ``::`` y de su tipo. ``::`` se puede leer como *tiene
 el tipo*. Los tipos explícitos siempre se escriben con su primera letra en
 mayúsculas. ``'a'``, como hemos visto, tiene el tipo ``Char``. El nombre de este
-tipo viene de "Character" (Carácter en inglés). ``True`` tiene el tipo ``Bool``.
+tipo viene de "Character" (carácter en inglés). ``True`` tiene el tipo ``Bool``.
 Tiene sentido. Pero, ¿Qué es esto? Examinando el tipo de ``"HELLO!"`` obtenemos
 ``[Char]``. Los corchetes definen una lista. Así que leemos esto como una *lista
 de caracteres*. Al contrario que las listas, cada tamaño de tuplas tiene su

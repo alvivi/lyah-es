@@ -1381,7 +1381,7 @@ Toma la ruta de un directorio temporal y una plantilla para nombres para un
 fichero y abre un fichero temporal. Hemos utilizado ``"."`` para el directorio
 temporal porque ``"."`` representa el directorio actual en cualquier S.O.
 Utilizamos ``"temp"`` como plantilla para el nombre del fichero, de forma que
-que el fichero temporal tendra como nombre *temp* más algunos carácteres
+que el fichero temporal tendra como nombre *temp* más algunos caracteres
 aleatorios. Devuelve una acción de E/S que crea un fichero temporal y el
 resultado de esa acción es una dupla que contiene: el nombre del fichero
 temporal y el manipulador asociado a ese fichero. Podríamo haber abierto

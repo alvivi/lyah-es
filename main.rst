@@ -25,7 +25,8 @@
    TODO: [1..2] -> Listas aritméticas
    TODO: Tipos ^ Tipado -> Tipificado
    TODO: Bounded -> Acotados
-   TODO: Evaluación impaciente y perezosa. 
+   TODO: Evaluación impaciente y perezosa.
+   TODO: línea 564, 566. suma -> sumatorio, producto...
    
    
 .. toctree::

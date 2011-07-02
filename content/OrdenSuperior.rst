@@ -438,7 +438,7 @@ escrito esto usando listas por comprensión. ::
     ghci> sum (takeWhile (<10000) [n^2 | n <- [1..], odd (n^2)])  
     166650  
 
-Es una cuestión de gustos. De nuevo, la característica evaluación perezosa de
+Es una cuestión de gustos. De nuevo, la carácterística evaluación perezosa de
 Haskell es lo que hace esto posible. Podemos mapear y filtrar una lista infinita
 ya que en realidad ni la mapeará ni la filtrará hasta el final, retrasará dichas
 acciones. Solo cuando forzamos a Haskell a que nos muestre la suma realiza la

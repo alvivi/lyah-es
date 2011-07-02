@@ -685,7 +685,7 @@ Data.Char
 
 .. image:: /images/legochar.png
    :align: right
-   :alt: ¡Caracteres lego! 
+   :alt: ¡caracteres lego! 
 
 El módulo ``Data.Char`` contiene lo que su nombre sugiere. Exporta funciones
 que tratan con caracteres. También es útil cuando mapeamos o filtramos 
