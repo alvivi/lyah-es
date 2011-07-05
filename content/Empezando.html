@@ -57,7 +57,7 @@ introducciones y te la has saltado, quizás debas leer la última sección de la
 introducción porque explica lo que necesitas para seguir esta guía y como
 vamos a trabajar. Lo primero que vamos a hacer es ejecutar GHC en modo
 interactivo y utilizar algunas funciones para ir acostumbrándonos un poco.
-Abre una terminal y escribe <tt class="docutils literal"><span class="pre">ghci</span></tt>. Serás recibido con un saludo como este:</p>
+Abre una terminal y escribe <tt class="docutils literal"><span class="pre">ghci</span></tt>. Serás recibido con un saludo como éste:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">GHCi, version 7.0.4: http://www.haskell.org/ghc/  :? for help</span>
 <span class="go">Loading package ghc-prim ... linking ... done.</span>
 <span class="go">Loading package integer-gmp ... linking ... done.</span>
@@ -198,8 +198,8 @@ que número está haciendo la división y cual está siendo dividido. De manera
 que nosotros la llamamos como una función infija haciendo <tt class="docutils literal"><span class="pre">92</span> <span class="pre">`div`</span> <span class="pre">10</span></tt>,
 quedando de esta forma más claro.</p>
 <p>La gente que ya conoce algún lenguaje imperativo tiende a aferrarse a la idea
-de que los paréntesis indican aplicación de funciones. Por ejemplo, en C, usas
-los paréntesis para llamar a las funciones como <tt class="docutils literal"><span class="pre">foo()</span></tt>, <tt class="docutils literal"><span class="pre">bar(1)</span></tt>, o
+de que los paréntesis indican una aplicación de funciones. Por ejemplo, en C,
+usas los paréntesis para llamar a las funciones como <tt class="docutils literal"><span class="pre">foo()</span></tt>, <tt class="docutils literal"><span class="pre">bar(1)</span></tt>, o
 <tt class="docutils literal"><span class="pre">baz(3,</span> <span class="pre">&quot;jaja&quot;)</span></tt>. Como hemos dicho, los espacios son usados para la
 aplicación de funciones en Haskell. Así que estas funciones en Haskell serían
 <tt class="docutils literal"><span class="pre">foo</span></tt>, <tt class="docutils literal"><span class="pre">bar</span> <span class="pre">1</span></tt> y <tt class="docutils literal"><span class="pre">baz</span> <span class="pre">3</span> <span class="pre">&quot;jaja&quot;</span></tt>. Si ves algo como <tt class="docutils literal"><span class="pre">bar</span> <span class="pre">(bar</span> <span class="pre">3)</span></tt> no
@@ -260,11 +260,11 @@ como:</p>
 </div>
 <p>Esto es un simple ejemplo de un patrón normal que verás por todo Haskell.
 Crear funciones pequeñas que son obviamente correctas y luego combinarlas en
-funciones más complejas. De esta forma también evitarás repetirte ¿Qué pasa si
-algunos matemáticos descubren que 2 es en realidad 3 y tienes que cambiar tu
-programa? Puedes simplemente redefinir <tt class="docutils literal"><span class="pre">doubleMe</span></tt> para que sea <tt class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">x</span></tt>
-y como <tt class="docutils literal"><span class="pre">doubleUs</span></tt> llama a <tt class="docutils literal"><span class="pre">doubleMe</span></tt> automáticamente funcionara en este
-extraño mundo en el que 2 es 3.</p>
+funciones más complejas. De esta forma también evitarás repetirte. ¿Qué pasa
+si algunos matemáticos descubren que 2 es en realidad 3 y tienes que cambiar
+tu programa? Puedes simplemente redefinir <tt class="docutils literal"><span class="pre">doubleMe</span></tt> para que sea
+<tt class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">x</span></tt> y como <tt class="docutils literal"><span class="pre">doubleUs</span></tt> llama a <tt class="docutils literal"><span class="pre">doubleMe</span></tt> automáticamente
+funcionara en este extraño mundo en el que 2 es 3.</p>
 <p>Las funciones en Haskell no tienen que estar en ningún orden en particular,
 así que no importa si defines antes <tt class="docutils literal"><span class="pre">doubleMe</span></tt> y luego <tt class="docutils literal"><span class="pre">doubleUs</span></tt> o si lo
 haces al revés.</p>
@@ -563,7 +563,7 @@ funciones que operan con listas más adelante.</p>
 <img alt="Cowboy" class="align-right" src="../_images/cowboy.png" />
 <p>¿Qué pasa si queremos una lista con todos los números entre el 1 y el 20? Sí,
 podríamos simplemente escribirlos todos pero obviamente esto no es una
-solución para los buscan buenos lenguajes de programación. En su lugar,
+solución para los que buscan buenos lenguajes de programación. En su lugar,
 usaremos rangos. Los rangos son una manera de crear listas que contengan una
 secuencia aritmética de elementos enumerables. Los números pueden ser
 enumerados. Uno, dos, tres, cuatro, etc. Los caracteres también pueden ser
@@ -572,8 +572,8 @@ Z. Los nombres no son enumerables. ¿Qué viene después de &#8220;Juan&#8221;? 
 <p>Para crear una lista que contenga todos los números naturales desde el 1 hasta
 el 20 simplemente escribimos <tt class="docutils literal"><span class="pre">[1..20]</span></tt>. Es equivalente a escribir
 <tt class="docutils literal"><span class="pre">[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]</span></tt> y no hay ninguna
-diferencia entre escribir uno u otro salvo que escribir una secuencia
-enumerables larga manualmente es estúpido.</p>
+diferencia entre escribir uno u otro salvo que escribir manualmente una
+larga secuencia de enumerables es bastante estúpido.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; [1..20]</span>
 <span class="go">[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]</span>
 <span class="go">ghci&gt; [&#39;a&#39;..&#39;z&#39;]</span>
@@ -583,7 +583,7 @@ enumerables larga manualmente es estúpido.</p>
 </pre></div>
 </div>
 <p>También podemos especificar el número de pasos entre elementos de un rango ¿Y
-si queremos todos los números pares desde el 1 hasta el 20?, ¿o cada tercer
+si queremos todos los números pares desde el 1 hasta el 20? ¿o cada tercer
 número?</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; [2,4..20]</span>
 <span class="go">[2,4,6,8,10,12,14,16,18,20]</span>
@@ -670,9 +670,9 @@ calculamos su doble. Su resultado es:</p>
 </pre></div>
 </div>
 <p>Como podemos ver, obtenemos el resultado deseado. Ahora vamos a añadir una
-condición (o un predicado) a esta comprensión. Los predicados van después de
-la parte donde enlazamos las variables, separado por una coma. Digamos que
-solo queremos los elementos que su doble sea mayor o igual a doce:</p>
+condición (o un predicado) a esta lista intensional. Los predicados van
+después de la parte donde enlazamos las variables, separado por una coma.
+Digamos que solo queremos los elementos que su doble sea mayor o igual a doce:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; [x*2 | x &lt;- [1..10], x*2 &gt;= 12]</span>
 <span class="go">[12,14,16,18,20]</span>
 </pre></div>
@@ -781,7 +781,7 @@ almacenar varios valores en un solo valor. Sin embargo, hay unas cuantas
 diferencias fundamentales. Una lista de números es una lista de números. Ese
 es su tipo y no importa si tiene un sólo elemento o una cantidad infinita de
 ellos. Las tuplas sin embargo, son utilizadas cuando sabes exactamente cuantos
-valores tienen que se combinados y su tipo depende de cuantos componentes
+valores tienen que ser combinados y su tipo depende de cuantos componentes
 tengan y del tipo de estos componentes. Las tuplas se denotan con paréntesis y
 sus valores se separan con comas.</p>
 <p>Otra diferencia clave es que no tienen que ser homogéneas. Al contrario que
@@ -795,7 +795,7 @@ con este método es que también podríamos hacer cosas como
 <tt class="docutils literal"><span class="pre">[[1,2],[8,11,5],[4,5]]</span></tt> ya que Haskell no tiene problemas con ello, sigue
 siendo una lista de listas de números pero no tiene ningún sentido. Pero una
 tupla de tamaño 2 (también llamada dupla) tiene su propio tipo, lo que
-significa que no puedes tener varios duplas y una tripla (una tupla de tamaño
+significa que no puedes tener varias duplas y una tripla (una tupla de tamaño
 3) en una lista, así que vamos a usar éstas. En lugar de usar corchetes
 rodeando los vectores utilizamos paréntesis: <tt class="docutils literal"><span class="pre">[(1,2),(8,11),(4,5)]</span></tt>. ¿Qué
 pasaría si intentamos crear una forma como <tt class="docutils literal"><span class="pre">[(1,2),(8,11,5),(4,5)]</span></tt>? Bueno,
@@ -911,7 +911,7 @@ que solo queremos aquellos que su perímetro es 24.</p>
 </pre></div>
 </div>
 <p>¡Y ahí está nuestra respuesta! Este método de resolución de problemas es muy
-común en programación funcional. Empiezas tomando un conjunto de soluciones
+común en la programación funcional. Empiezas tomando un conjunto de soluciones
 y vas aplicando transformaciones para ir obteniendo soluciones, filtrándolas
 una y otra vez hasta obtener las soluciones correctas.</p>
 </div>
