@@ -13,7 +13,7 @@ introducciones y te la has saltado, quizás debas leer la última sección de la
 introducción porque explica lo que necesitas para seguir esta guía y como
 vamos a trabajar. Lo primero que vamos a hacer es ejecutar GHC en modo
 interactivo y utilizar algunas funciones para ir acostumbrándonos un poco.
-Abre una terminal y escribe ``ghci``. Serás recibido con un saludo como este:
+Abre una terminal y escribe ``ghci``. Serás recibido con un saludo como éste:
 
 .. code-block:: console
 
@@ -181,8 +181,8 @@ que nosotros la llamamos como una función infija haciendo ``92 `div` 10``,
 quedando de esta forma más claro.
 
 La gente que ya conoce algún lenguaje imperativo tiende a aferrarse a la idea
-de que los paréntesis indican aplicación de funciones. Por ejemplo, en C, usas
-los paréntesis para llamar a las funciones como ``foo()``, ``bar(1)``, o
+de que los paréntesis indican una aplicación de funciones. Por ejemplo, en C,
+usas los paréntesis para llamar a las funciones como ``foo()``, ``bar(1)``, o
 ``baz(3, "jaja")``. Como hemos dicho, los espacios son usados para la
 aplicación de funciones en Haskell. Así que estas funciones en Haskell serían
 ``foo``, ``bar 1`` y ``baz 3 "jaja"``. Si ves algo como ``bar (bar 3)`` no
@@ -249,11 +249,11 @@ como: ::
 
 Esto es un simple ejemplo de un patrón normal que verás por todo Haskell.
 Crear funciones pequeñas que son obviamente correctas y luego combinarlas en
-funciones más complejas. De esta forma también evitarás repetirte ¿Qué pasa si
-algunos matemáticos descubren que 2 es en realidad 3 y tienes que cambiar tu
-programa? Puedes simplemente redefinir ``doubleMe`` para que sea ``x + x + x``
-y como ``doubleUs`` llama a ``doubleMe`` automáticamente funcionara en este
-extraño mundo en el que 2 es 3.
+funciones más complejas. De esta forma también evitarás repetirte. ¿Qué pasa
+si algunos matemáticos descubren que 2 es en realidad 3 y tienes que cambiar
+tu programa? Puedes simplemente redefinir ``doubleMe`` para que sea
+``x + x + x`` y como ``doubleUs`` llama a ``doubleMe`` automáticamente
+funcionara en este extraño mundo en el que 2 es 3.
 
 Las funciones en Haskell no tienen que estar en ningún orden en particular,
 así que no importa si defines antes ``doubleMe`` y luego ``doubleUs`` o si lo
@@ -598,7 +598,7 @@ Texas rangos
 
 ¿Qué pasa si queremos una lista con todos los números entre el 1 y el 20? Sí,
 podríamos simplemente escribirlos todos pero obviamente esto no es una
-solución para los buscan buenos lenguajes de programación. En su lugar,
+solución para los que buscan buenos lenguajes de programación. En su lugar,
 usaremos rangos. Los rangos son una manera de crear listas que contengan una
 secuencia aritmética de elementos enumerables. Los números pueden ser
 enumerados. Uno, dos, tres, cuatro, etc. Los caracteres también pueden ser
@@ -608,8 +608,8 @@ Z. Los nombres no son enumerables. ¿Qué viene después de "Juan"? Ni idea.
 Para crear una lista que contenga todos los números naturales desde el 1 hasta
 el 20 simplemente escribimos ``[1..20]``. Es equivalente a escribir
 ``[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]`` y no hay ninguna
-diferencia entre escribir uno u otro salvo que escribir una secuencia
-enumerables larga manualmente es estúpido.
+diferencia entre escribir uno u otro salvo que escribir manualmente una
+larga secuencia de enumerables es bastante estúpido.
 
 .. code-block:: console
 
@@ -621,7 +621,7 @@ enumerables larga manualmente es estúpido.
     "KLMNOPQRSTUVWXYZ"
 
 También podemos especificar el número de pasos entre elementos de un rango ¿Y
-si queremos todos los números pares desde el 1 hasta el 20?, ¿o cada tercer
+si queremos todos los números pares desde el 1 hasta el 20? ¿o cada tercer
 número?
 
 .. code-block:: console
@@ -724,9 +724,9 @@ calculamos su doble. Su resultado es:
     [2,4,6,8,10,12,14,16,18,20]
 
 Como podemos ver, obtenemos el resultado deseado. Ahora vamos a añadir una
-condición (o un predicado) a esta comprensión. Los predicados van después de
-la parte donde enlazamos las variables, separado por una coma. Digamos que
-solo queremos los elementos que su doble sea mayor o igual a doce:
+condición (o un predicado) a esta lista intensional. Los predicados van
+después de la parte donde enlazamos las variables, separado por una coma.
+Digamos que solo queremos los elementos que su doble sea mayor o igual a doce:
 
 .. code-block:: console
 
@@ -859,7 +859,7 @@ almacenar varios valores en un solo valor. Sin embargo, hay unas cuantas
 diferencias fundamentales. Una lista de números es una lista de números. Ese
 es su tipo y no importa si tiene un sólo elemento o una cantidad infinita de
 ellos. Las tuplas sin embargo, son utilizadas cuando sabes exactamente cuantos
-valores tienen que se combinados y su tipo depende de cuantos componentes
+valores tienen que ser combinados y su tipo depende de cuantos componentes
 tengan y del tipo de estos componentes. Las tuplas se denotan con paréntesis y
 sus valores se separan con comas.
 
@@ -875,7 +875,7 @@ con este método es que también podríamos hacer cosas como
 ``[[1,2],[8,11,5],[4,5]]`` ya que Haskell no tiene problemas con ello, sigue
 siendo una lista de listas de números pero no tiene ningún sentido. Pero una
 tupla de tamaño 2 (también llamada dupla) tiene su propio tipo, lo que
-significa que no puedes tener varios duplas y una tripla (una tupla de tamaño
+significa que no puedes tener varias duplas y una tripla (una tupla de tamaño
 3) en una lista, así que vamos a usar éstas. En lugar de usar corchetes
 rodeando los vectores utilizamos paréntesis: ``[(1,2),(8,11),(4,5)]``. ¿Qué
 pasaría si intentamos crear una forma como ``[(1,2),(8,11,5),(4,5)]``? Bueno,
@@ -1011,6 +1011,6 @@ que solo queremos aquellos que su perímetro es 24.
     [(6,8,10)]
 
 ¡Y ahí está nuestra respuesta! Este método de resolución de problemas es muy
-común en programación funcional. Empiezas tomando un conjunto de soluciones
+común en la programación funcional. Empiezas tomando un conjunto de soluciones
 y vas aplicando transformaciones para ir obteniendo soluciones, filtrándolas
 una y otra vez hasta obtener las soluciones correctas.

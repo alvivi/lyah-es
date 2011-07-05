@@ -3,16 +3,14 @@ lyahcms = 'http://lyahcms.appspot.com';
 
 
 jQuery.prototype.cssShadow = function (s) {
-    this.css('-moz-box-shadow', s)
-        .css('-webkit-box-shadow', s)
-        .css('box-shadow', s);
-    return this; 
+    this.css('-moz-box-shadow', s).css('-webkit-box-shadow', s);
+    this.css('box-shadow', s);
+    return this;
 };
 
 jQuery.prototype.cssBorderRadius = function (s) {
-    this.css('-moz-border-radius', s)
-        .css('border-radius', s);
-    return this; 
+    this.css('-moz-border-radius', s).css('border-radius', s);
+    return this;
 };
 
 
@@ -22,7 +20,12 @@ var CommentsSystem = function () {
     this.ccounts = {};
     this.isCCInitialized = false;
     this.selectedPara = null;
-    
+    try {
+        this.hashed = parseInt((/comment([0-9]+)/g).exec(window.location.hash)[1], 10);
+    }
+    catch (_) {
+        this.hashed = -1;
+    }
     this.setup();
 };
 
@@ -47,7 +50,7 @@ CommentsSystem.prototype.unselect = function () {
 CommentsSystem.prototype.setup = function () {
     var self = this;
     $('img').css('position', 'relative').css('z-index', '69');
-    
+
     $('.body p').not('.admonition-title').each(function (i) {
         new Paragraph(self, i, this);
     });
@@ -62,7 +65,7 @@ CommentsSystem.prototype.postComment = function (thread, c, cb)
               , 'url'    : c.url
               , 'text'   : c.text
               };
-              
+
     $.getJSON(lyahcms + '/post?callback=?', out, function(data) {
         if (data.success)
             self.updateCommentsCount();
@@ -81,7 +84,7 @@ CommentsSystem.prototype.updateCommentsCount = function (cb) {
             if (cb) cb();
         });
 };
-    
+
 CommentsSystem.prototype.withCommentCount = function (thread, cb) {
     var self = this;
     if (!this.isCCInitialized) {
@@ -90,7 +93,7 @@ CommentsSystem.prototype.withCommentCount = function (thread, cb) {
             cb(self.ccounts[thread] || 0);
         });
     }
-    else 
+    else
         cb(this.ccounts[thread] || 0);
 };
 
@@ -121,7 +124,7 @@ Comment.prototype.attach = function (wrapper) {
     var title = this.url ? '<a href="' + this.url + '">' + this.author + '</a>'
                          : this.author;
     var str = '<div class="comment"><h5>' + title + '</h5><h6>' + this.date
-            + '</h6><pre>' + this.text + '</pre></div>';    
+            + '</h6><pre>' + this.text + '</pre></div>';
     wrapper.append(str);
 };
 
@@ -133,10 +136,10 @@ var CommentsBox = function (cs, p) {
     this.para = p;
     this.wrapper = null;
     this.form = new Form(cs, this);
-    
+
     this.attach();
 };
-                
+
 CommentsBox.prototype.attach = function () {
     this.para.contents.append('<div class="comments"></div>');
     this.wrapper = this.para.contents.find('.comments');
@@ -166,7 +169,7 @@ CommentsBox.prototype.setupStyle = function() {
                                  .cssBorderRadius('10px')
                                  .cssShadow('0 0 3px 3px #ffe1fa')
                                  .css('margin-top', '2ex');
-    this.wrapper.find('h5').css('color', '#555')      
+    this.wrapper.find('h5').css('color', '#555')
                            .css('margin-bottom', '0');
     this.wrapper.find('a').css('color', '#555');
     this.wrapper.find('h6').css('font-size', 'x-small')
@@ -188,16 +191,16 @@ CommentsBox.prototype.show = function () {
     var self = this;
     this.loadComments(function () {
         self.form.show();
-        self.wrapper.slideDown('fast');        
+        self.wrapper.slideDown('fast');
     });
 };
 
 CommentsBox.prototype.hide = function () {
     var self = this;
     this.wrapper.slideUp('fast', function () {
-        self.form.hide();        
+        self.form.hide();
         self.wrapper.empty();
-    });    
+    });
 };
 
 
@@ -219,7 +222,7 @@ Form.prototype.getComment = function ()
                        , url    : encodeURI(this.form.find('#author_url').val())
                        , text   : escape(this.form.find('#cmttext').val())
                        });
-};    
+};
 
 Form.prototype.hide = function ()
 {
@@ -228,7 +231,7 @@ Form.prototype.hide = function ()
 };
 
 Form.prototype.setup = function ()
-{   
+{
     var self = this;
     var submit = this.form.find('#submit');
     this.isSubmited = false;
@@ -238,7 +241,7 @@ Form.prototype.setup = function ()
     this.form.find('h4').css('color', '#555')
                         .css('text-indent', '0');
     this.form.find('p').css('text-indent', '0')
-                       .css('font-size', 'small')    
+                       .css('font-size', 'small')
                        .css('color', '#555')
                        .css('padding', '0')
                        .css('margin', '0');
@@ -270,16 +273,20 @@ var Paragraph = function (cs, thread, contents) {
     this.thread = thread;
     this.toggle = new Toggle(cs, this);
     this.csBox = new CommentsBox(cs, this);
-    
+
     this.attach();
     this.setDefaultStyle();
-    
+
     cs.withCommentCount(thread, function (c) {
         if (c !== 0) {
             self.contents.append('<div class="ccount"><p>' + c + '</p></div>');
             self.setCountStyle();
         }
     });
+
+    if (this.cs.hashed == thread)
+        window.pageYOffset = this.contents.offset().top;
+
 };
 
 
@@ -288,7 +295,7 @@ Paragraph.prototype.attach = function () {
     this.contents.wrap('<div class="par-wrapper">');
 
     this.contents = this.contents.parent();
-    
+
     this.contents.hover( function () { self.onHoverIn();  }
                        , function () { self.onHoverOut(); }
                        );
@@ -300,7 +307,7 @@ Paragraph.prototype.isSelected = function() {
 };
 
 Paragraph.prototype.onHoverIn = function () {
-    if(!this.isSelected()) {    
+    if(!this.isSelected()) {
         this.isHover = true;
         this.setBackground('#ffe1fa');
         this.toggle.show();
@@ -391,7 +398,7 @@ Toggle.prototype.setup = function () {
 Toggle.prototype.setupStyle = function () {
     var x = this.para.contents.width()  / 2 - this.link.width() / 2;
     var y = this.para.contents.height() / 2 - this.wrapper.height();
-        
+
     this.wrapper.css('position', 'absolute')
                 .css('display', 'none')
                 .css('background-color', 'rgba(230,230,230,0.9)')
@@ -403,7 +410,7 @@ Toggle.prototype.setupStyle = function () {
                 .cssShadow('0 0 2px 2px rgba(60,60,60,0.25)')
                 .cssBorderRadius('10px')
                 .css('top', y + 'px')
-                .css('left', x + 'px'); 
+                .css('left', x + 'px');
     this.link.css('color', '#222')
              .css('text-decoration', 'none')
              .css('text-shadow','0px 1px 1px rgba(255,255,255,1)');

@@ -11,8 +11,8 @@ Zippers
 
 Mientras que la pureza de Haskell nos da un montón de beneficios, nos hace
 abordar algunos problemas de forma muy diferente a como lo haríamos en
-Haskell. Debido a la transparencia referencial de Haskell, un valor es
-exactamente igual a otro si ambos representan la misma cosa.
+otros lenguajes impuros. Debido a la transparencia referencial de Haskell,
+un valor es exactamente igual a otro si ambos representan lo mismo.
 
 Si tenemos tres árboles llenos de cincos y queremos cambiar uno de ellos a
 seis, tenemos que tener algún modo de decir qué cinco en concreto del árbol

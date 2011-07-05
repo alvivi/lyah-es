@@ -2467,7 +2467,7 @@ importarlo cualificado: ::
     import qualified Foldable as F
 
 Para evitar sobre-esforzar nuestros queridos dedos, hemos elegido importarlo
-con el nombre ``F``. ¿Y bien?, ¿cuáles son las funciones que define esta clase
+con el nombre ``F``. ¿Y bien? ¿cuáles son las funciones que define esta clase
 de tipos? Bueno, básicamente son ``foldr``, ``foldl``, ``foldr1`` y
 ``foldl1``. ¿Cómo? Ya conocemos estas funciones así que, ¿qué tienen
 diferente? Vamos a comparar los tipos de ``foldr`` de ``Prelude`` y de
