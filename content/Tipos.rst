@@ -128,7 +128,7 @@ Aquí tienes una descripción de los tipos más comunes:
        ghci> circumference 4.0
        25.132742
 
- * :cpp:type:`Double` es un número real en coma flotante de... ¡Doble 
+ * :cpp:type:`Double` es un número real en coma flotante de... ¡Doble
    precisión!. ::
 
        circumference' :: Double -> Double
@@ -256,7 +256,7 @@ Algunas clases de tipos básicas son:
    ``/=`` en algún lugar de su definición. Todos los tipos que mencionamos
    anteriormente forman parte de la clase ``Eq`` exceptuando las funciones,
    así que podemos realizar comparaciones de igualdad sobre ellos.
-   
+
    .. code-block:: console
 
        ghci> 5 == 5
@@ -271,7 +271,7 @@ Algunas clases de tipos básicas son:
        True
 
  * :cpp:class:`Ord` es para tipos que poseen algún orden.
- 
+
    .. code-block:: console
 
        ghci> :t (>)
@@ -287,7 +287,7 @@ Algunas clases de tipos básicas son:
 
    Para ser miembro de ``Ord``, primero un tipo debe ser socio del prestigioso
    y exclusivo club ``Eq``.
-   
+
    .. code-block:: console
 
        ghci> "Abrakadabra" < "Zebra"
@@ -304,7 +304,7 @@ Algunas clases de tipos básicas son:
    ``Show``. la función más utilizada que trabaja con esta clase de tipos es
    la función :cpp:member:`show`. Toma un valor de un tipo que pertenezca a
    la clase ``Show`` y lo representa como una cadena de texto.
-   
+
    .. code-block:: console
 
        ghci> show 3
@@ -317,7 +317,7 @@ Algunas clases de tipos básicas son:
  * :cpp:class:`Read` es como la clase de tipos opuesta a ``Show``. La función
    :cpp:member:`read` toma una cadena y devuelve un valor del tipo que es
    miembro de ``Read``.
-   
+
    .. code-block:: console
 
        ghci> read "True" || False
@@ -331,8 +331,8 @@ Algunas clases de tipos básicas son:
 
    Hasta aquí todo bien. Una vez más, todo los tipos que hemos visto excepto
    las funciones forman parte de esta clase de tipos. Pero, ¿Qué pasa si
-   simplemente usamos ``read "4"``? 
-   
+   simplemente usamos ``read "4"``?
+
    .. code-block:: console
 
        ghci> read "4"
@@ -349,7 +349,7 @@ Algunas clases de tipos básicas son:
    booleano. Pero ahora, lo único que sabe es que queremos un tipo de la clase
    ``Read``, pero no cual. Vamos a echar un vistazo a la declaración de tipo
    de la función ``read``.
-   
+
    .. code-block:: console
 
        ghci> :t read
@@ -361,7 +361,7 @@ Algunas clases de tipos básicas son:
    anotación de tipo son una forma de decir explícitamente el tipo que debe
    tener una expresión. Lo hacemos añadiendo ``::`` al final de la expresión y
    luego especificando el tipo. Observa:
-   
+
    .. code-block:: console
 
        ghci> read "5" :: Int
@@ -391,7 +391,7 @@ Algunas clases de tipos básicas son:
    que podemos usar las funciones ``succ`` y ``pred``. Los tipos de esta clase
    son: ``()``, ``Bool``, ``Char``, ``Ordering``, ``Int``, ``Integer``,
    ``Float`` y ``Double``.
-   
+
    .. code-block:: console
 
        ghci> ['a'..'e']
@@ -405,7 +405,7 @@ Algunas clases de tipos básicas son:
 
  * Los miembros de :cpp:class:`Bounded` poseen límites inferiores y
    superiores, es decir están acotados.
- 
+
    .. code-block:: console
 
        ghci> minBound :: Int
@@ -422,7 +422,7 @@ Algunas clases de tipos básicas son:
 
    Todas las tuplas son también ``Bounded`` si sus componentes los son
    también.
-   
+
    .. code-block:: console
 
        ghci> maxBound :: (Bool, Int, Char)
@@ -431,7 +431,7 @@ Algunas clases de tipos básicas son:
  * :cpp:class:`Num` es la clase de tipos numéricos. Sus miembros tienen la
    propiedad de poder comportarse como números. Vamos a examinar el tipo de
    un número.
-   
+
    .. code-block:: console
 
        ghci> :t 20
@@ -439,7 +439,7 @@ Algunas clases de tipos básicas son:
 
    Parece que todos los números son también constantes polimórficas. Pueden
    actuar como si fueran cualquier tipo de la clase ``Num``.
-   
+
    .. code-block:: console
 
        ghci> 20 :: Int
@@ -453,7 +453,7 @@ Algunas clases de tipos básicas son:
 
    Estos son los tipo estándar de la clase ``Num``. Si examinamos el tipo de
    ``*`` veremos que puede aceptar cualquier tipo de número.
-   
+
    .. code-block:: console
 
        ghci> :t (*)

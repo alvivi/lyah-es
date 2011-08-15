@@ -388,7 +388,7 @@ que se convierte en una lista de un solo elemento.
         No instance for (Num [a0])
           arising from the literal `3'
           [...]
-          
+
     ghci> [1,2] ++ [3]
     [1,2,3]
 
