@@ -86,12 +86,11 @@ también puede leerse como: <tt class="docutils literal"><span class="pre">max</
 una función que toma un <tt class="docutils literal"><span class="pre">a</span></tt> y devuelve un <tt class="docutils literal"><span class="pre">a</span></tt>. Ese es el porqué el tipo
 devuelto y los parámetros de la función están separados solamente por flechas.</p>
 <p>¿Y cómo nos beneficia esto? En pocas palabras, si llamamos a una función con
-demasiados pocos parámetros obtenemos una función <strong>parcialmente aplicada</strong>,
-es decir una función que toma tantos parámetros como le falte. Utilizar la
-aplicación parcial de funciones (o llamar a las funciones con menos
-parámetros) es una forma sencilla de crear funciones al vuelo de forma que
-podamos pasarlas como parámetros a otras funciones o dotarlas con algunos
-datos.</p>
+parámetros de menos obtenemos una función <strong>parcialmente aplicada</strong>, es decir
+una función que toma tantos parámetros como le falte. Utilizar la aplicación
+parcial de funciones (o llamar a las funciones con menos parámetros) es una
+forma sencilla de crear funciones al vuelo de forma que podamos pasarlas como
+parámetros a otras funciones o dotarlas con algunos datos.</p>
 <p>Échale un vistazo a esta función ofensivamente simple.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">multThree</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">multThree</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
@@ -237,11 +236,12 @@ parámetro y luego pasarla.</p>
 función que está en la librería estándar. Se llama <tt class="docutils literal"><span class="pre">zipWith</span></tt>. Toma una
 función y dos listas y las une aplicando la función entre los correspondientes
 parámetros. Aquí tienes como la implementaríamos:</p>
-<blockquote>
-<div>zipWith&#8217; :: (a -&gt; b -&gt; c) -&gt; [a] -&gt; [b] -&gt; [c]
-zipWith&#8217; _ [] _ = []
-zipWith&#8217; _ _ [] = []
-zipWith&#8217; f (x:xs) (y:ys) = f x y : zipWith&#8217; f xs ys</div></blockquote>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">zipWith&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">b</span> <span class="ow">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>
+<span class="nf">zipWith&#39;</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">zipWith&#39;</span> <span class="kr">_</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">zipWith&#39;</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="kt">:</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span> <span class="n">y</span> <span class="kt">:</span> <span class="n">zipWith&#39;</span> <span class="n">f</span> <span class="n">xs</span> <span class="n">ys</span>
+</pre></div>
+</div>
 <p>Mira la declaración de tipo. El primer elemento es una función que toma dos
 cosas y produce una tercera. No tienen que ser del mismo tipo, aunque pueden
 serlo. El segundo y el tercer parámetro son listas. La primera tiene que ser
@@ -658,15 +658,15 @@ de nuevo (mmm... creo que ya lo hice). Vamos a implementarla.</p>
 </pre></div>
 </div>
 <p>Bueno, bueno, bueno... ¿Qué estamos haciendo aquí? El valor de inicio y el
-acumulador son ambos del tipo booleano. Cuando hablamos de pliegues tanto e tipo
-del acumulador y el tipo del resultado final son el mismo. Empezamos con el
-valor inicial <tt class="xref docutils literal"><span class="pre">False</span></tt>. Tiene sentido ya que asumimos que el elemento no está
-en la lista. También porque si llamamos a un pliegue con una lista vacía el
-resultado será simplemente el valor inicial. Luego comprobamos si el elemento
-actual es el que estamos buscando. Si lo es, ponemos el acumulador a <tt class="xref docutils literal"><span class="pre">True</span></tt>.
-Si no lo es, dejamos el acumulador como estaba. Si ya estaba a <tt class="xref docutils literal"><span class="pre">False</span></tt>,
-permanece en ese estado ya que el elemento actual no es el que buscamos. Si era
-<tt class="xref docutils literal"><span class="pre">True</span></tt>, se queda como estaba también.</p>
+acumulador son ambos del tipo booleano. Cuando hablamos de pliegues tanto el
+tipo del acumulador como el tipo del resultado final son el mismo. Empezamos
+con el valor inicial <tt class="xref docutils literal"><span class="pre">False</span></tt>. Tiene sentido ya que asumimos que el elemento
+no está en la lista. También porque si llamamos a un pliegue con una lista
+vacía el resultado será simplemente el valor inicial. Luego comprobamos si el
+elemento actual es el que estamos buscando. Si lo es, ponemos el acumulador a
+<tt class="xref docutils literal"><span class="pre">True</span></tt>. Si no lo es, dejamos el acumulador como estaba. Si ya estaba a
+<tt class="xref docutils literal"><span class="pre">False</span></tt>, permanece en ese estado ya que el elemento actual no es el que
+buscamos. Si era <tt class="xref docutils literal"><span class="pre">True</span></tt>, se queda como estaba también.</p>
 <p>Ahora los pliegues por la derecha funcionan igual que los pliegues por la
 izquierda, solo que el acumulador consume elemento por la derecha. La función
 binaria de los pliegues por la izquierda como primer parámetro el acumulador

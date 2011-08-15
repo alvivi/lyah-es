@@ -52,45 +52,45 @@
 <div class="section" id="ajuste-de-patrones">
 <h2>Ajuste de patrones<a class="headerlink" href="#ajuste-de-patrones" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="Patrones" class="align-right" src="../_images/pattern.png" />
-<p>En este capítulo cubriremos algunas de las construcciones sintácticas de Haskell
-más interesantes, empezando con el <strong>ajuste de patrones</strong> (&#8220;<em>pattern
-matching</em>&#8221; en inglés). Un ajuste de patrones
-consiste en una especificación de pautas que deben ser seguidas por los datos,
-los cuales pueden ser deconstruidos permitiéndonos acceder a sus componentes.</p>
-<p>Podemos separar los cuerpos que definen una función a la hora de declarar una
-función como tal. Esto suele llevarnos a un código mucho más elegante, limpio y
-fácil de leer. Podemos usar el ajuste de patrones con cualquier tipo de dato:
-números, caracteres, listas, tuplas, etc. Vamos a crear una función muy trivial
-que compruebe si el número que le damos es un siete o no.</p>
+<p>En este capítulo cubriremos algunas de las construcciones sintácticas de
+Haskell más interesantes, empezando con el <strong>ajuste de patrones</strong> (&#8220;<em>pattern
+matching</em>&#8221; en inglés). Un ajuste de patrones consiste en una especificación de
+pautas que deben ser seguidas por los datos, los cuales pueden ser
+deconstruidos permitiéndonos acceder a sus componentes.</p>
+<p>Podemos separar el cuerpo que define el comportamiento de una función en
+varias partes, de forma que el código quede mucho más elegante, limpio y fácil
+de leer. Podemos usar el ajuste de patrones con cualquier tipo de dato:
+números, caracteres, listas, tuplas, etc. Vamos a crear una función muy
+trivial que compruebe si el número que le pasamos es un siete o no.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">lucky</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Integral</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
-<span class="nf">lucky</span> <span class="mi">7</span> <span class="ow">=</span> <span class="s">&quot;LUCKY NUMBER SEVEN!&quot;</span>
-<span class="nf">lucky</span> <span class="n">x</span> <span class="ow">=</span> <span class="s">&quot;Sorry, you&#39;re out of luck, pal!&quot;</span>
+<span class="nf">lucky</span> <span class="mi">7</span> <span class="ow">=</span> <span class="s">&quot;¡El siete de la suerte!&quot;</span>
+<span class="nf">lucky</span> <span class="n">x</span> <span class="ow">=</span> <span class="s">&quot;Lo siento, ¡no es tu día de suerte!&quot;</span>
 </pre></div>
 </div>
 <p>Cuando llamamos a <tt class="docutils literal"><span class="pre">lucky</span></tt>, los patrones son verificados de arriba a abajo y
 cuando un patrón concuerda con el valor asociado, se utiliza el cuerpo de la
-función asociado. En este caso, la única forma de que un número concuerde con el
-primer patrón es que dicho número sea 7. Si no lo es, se evaluara el siguiente
-patrón, el cual coincide con cualquier valor y lo liga a <tt class="docutils literal"><span class="pre">x</span></tt>. Esta función
-podría estar implementada usando una sentencia <tt class="docutils literal"><span class="pre">if</span></tt>. Pero ¿Qué pasaría si
-quisiéramos una función que nombrara los número del 1 al 5, o
-<tt class="docutils literal"><span class="pre">&quot;Not</span> <span class="pre">between</span> <span class="pre">1</span> <span class="pre">and</span> <span class="pre">5&quot;</span></tt> para cualquier otro número? Si no tuviéramos el
-ajuste de patrones deberíamos crear un enrevesado árbol <tt class="docutils literal"><span class="pre">if</span> <span class="pre">then</span> <span class="pre">else</span></tt>.
-Sin embargo con él:</p>
+función asociado. En este caso, la única forma de que un número concuerde con
+el primer patrón es que dicho número sea 7. Si no lo es, se evaluara el
+siguiente patrón, el cual coincide con cualquier valor y lo liga a <tt class="docutils literal"><span class="pre">x</span></tt>.
+También se podría haber implementado utilizando una sentencia <tt class="docutils literal"><span class="pre">if</span></tt>. Pero,
+¿qué pasaría si quisiéramos una función que nombrara los número del 1 al 5, o
+<tt class="docutils literal"><span class="pre">&quot;No</span> <span class="pre">entre</span> <span class="pre">uno</span> <span class="pre">1</span> <span class="pre">y</span> <span class="pre">5&quot;</span></tt> para cualquier otro número? Si no tuviéramos el
+ajuste de patrones deberíamos crear un enrevesado árbol <tt class="docutils literal"><span class="pre">if</span> <span class="pre">then</span> <span class="pre">else</span></tt>. Sin
+embargo con él:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">sayMe</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Integral</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
-<span class="nf">sayMe</span> <span class="mi">1</span> <span class="ow">=</span> <span class="s">&quot;One!&quot;</span>
-<span class="nf">sayMe</span> <span class="mi">2</span> <span class="ow">=</span> <span class="s">&quot;Two!&quot;</span>
-<span class="nf">sayMe</span> <span class="mi">3</span> <span class="ow">=</span> <span class="s">&quot;Three!&quot;</span>
-<span class="nf">sayMe</span> <span class="mi">4</span> <span class="ow">=</span> <span class="s">&quot;Four!&quot;</span>
-<span class="nf">sayMe</span> <span class="mi">5</span> <span class="ow">=</span> <span class="s">&quot;Five!&quot;</span>
-<span class="nf">sayMe</span> <span class="n">x</span> <span class="ow">=</span> <span class="s">&quot;Not between 1 and 5&quot;</span>
+<span class="nf">sayMe</span> <span class="mi">1</span> <span class="ow">=</span> <span class="s">&quot;¡Uno!&quot;</span>
+<span class="nf">sayMe</span> <span class="mi">2</span> <span class="ow">=</span> <span class="s">&quot;¡Dos!&quot;</span>
+<span class="nf">sayMe</span> <span class="mi">3</span> <span class="ow">=</span> <span class="s">&quot;¡Tres!&quot;</span>
+<span class="nf">sayMe</span> <span class="mi">4</span> <span class="ow">=</span> <span class="s">&quot;¡Cuatro!&quot;</span>
+<span class="nf">sayMe</span> <span class="mi">5</span> <span class="ow">=</span> <span class="s">&quot;¡Cinco!&quot;</span>
+<span class="nf">sayMe</span> <span class="n">x</span> <span class="ow">=</span> <span class="s">&quot;No entre uno 1 y 5&quot;</span>
 </pre></div>
 </div>
 <p>Ten en cuenta que si movemos el último patrón (el más general) al inicio,
-siempre obtendríamos <tt class="docutils literal"><span class="pre">&quot;Not</span> <span class="pre">between</span> <span class="pre">1</span> <span class="pre">and</span> <span class="pre">5&quot;</span></tt> como respuesta, ya que el primer
-patrón encajaría con cualquier número y no habría ninguna posibilidad de que
-se comprobaran los demás patrones.</p>
-<p>¿Recuerdas la función factorial que implementamos anteriormente? Definimos el
+siempre obtendríamos <tt class="docutils literal"><span class="pre">&quot;No</span> <span class="pre">entre</span> <span class="pre">uno</span> <span class="pre">1</span> <span class="pre">y</span> <span class="pre">5&quot;</span></tt> como respuesta, ya que el primer
+patrón encajaría con cualquier número y no habría posibilidad de que se
+comprobaran los demás patrones.</p>
+<p>¿Recuerdas la función factorial que creamos anteriormente? Definimos el
 factorial de un número <tt class="docutils literal"><span class="pre">n</span></tt> como <tt class="docutils literal"><span class="pre">product</span> <span class="pre">[1..n]</span></tt>. También podemos
 implementar una función factorial recursiva, de forma parecida a como lo
 haríamos en matemáticas. Empezamos diciendo que el factorial de 0 es 1. Luego
@@ -101,20 +101,20 @@ entero multiplicado por el factorial de su predecesor.</p>
 <span class="nf">factorial</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Esta es la primera vez que definimos una función recursiva. La recursión es
-importante en Haskell, hablaremos de ello más adelante. Pero en pocas palabras
+<p>Esta es la primera vez que definimos una función recursiva. La recursividad es
+muy importante en Haskell, pero hablaremos de ello más adelante. Resumiendo,
 esto es lo que pasa cuando intentamos obtener el factorial de, digamos 3.
 Primero intenta calcular <tt class="docutils literal"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">factorial</span> <span class="pre">2</span></tt>. El factorial de 2 es
 <tt class="docutils literal"><span class="pre">2</span> <span class="pre">*</span> <span class="pre">factorial</span> <span class="pre">1</span></tt>, así que ahora tenemos <tt class="docutils literal"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">factorial</span> <span class="pre">1)</span></tt>.
 <tt class="docutils literal"><span class="pre">factorial</span> <span class="pre">1</span></tt> es <tt class="docutils literal"><span class="pre">1</span> <span class="pre">*</span> <span class="pre">factorial</span> <span class="pre">0</span></tt>, lo que nos lleva a
 <tt class="docutils literal"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">(1</span> <span class="pre">*</span> <span class="pre">factorial</span> <span class="pre">0))</span></tt>. Ahora viene el truco, hemos definido el
 factorial de 0 para que sea simplemente 1, y como se encuentra con ese patrón
-antes de con otro más general, obtenemos 1. Así que el resultado equivale a
+antes que el otro más general obtenemos 1. Así que el resultado equivale a
 <tt class="docutils literal"><span class="pre">3</span> <span class="pre">*</span> <span class="pre">(2</span> <span class="pre">*</span> <span class="pre">(1</span> <span class="pre">*</span> <span class="pre">1))</span></tt>. Si hubiésemos escrito el segundo patrón al inicio,
-hubiese aceptado todos los números, incluyendo el 0 y nuestro cálculo nunca
-terminaría. Este es el motivo por el que el orden es importante a la hora de
-definir los patrones y siempre es mejor definir los patrones más específicos los
-primeros dejando los más generales al final.</p>
+hubiese aceptado todos los números incluyendo el 0 y el cálculo nunca
+terminaría. Por este motivo el orden es importante a la hora de definir los
+patrones y siempre es mejor definir los patrones más específicos al principio
+dejando los más generales al final.</p>
 <p>Los patrones también pueden fallar. Si definimos una función como esta:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">charName</span> <span class="ow">::</span> <span class="kt">Char</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">charName</span> <span class="sc">&#39;a&#39;</span> <span class="ow">=</span> <span class="s">&quot;Albert&quot;</span>
@@ -131,14 +131,14 @@ primeros dejando los más generales al final.</p>
 <span class="go">&quot;*** Exception: tut.hs:(53,0)-(55,21): Non-exhaustive patterns in function charName</span>
 </pre></div>
 </div>
-<p>Se queja de que tenemos un ajuste de patrones no exhaustivo y ciertamente así
+<p>Se queja porque tenemos un ajuste de patrones no exhaustivo y ciertamente así
 es. Cuando utilizamos patrones siempre tenemos que incluir uno general para
 asegurarnos que nuestro programa no fallará.</p>
-<p>El ajuste de patrones también pueden ser usado con las tuplas. ¿Cómo crearíamos
-una función que tomara dos vectores 2D (representados con duplas) y devolviera la
-suma de ambos? Para sumar dos vectores sumamos primero sus componentes <tt class="docutils literal"><span class="pre">x</span></tt> y
-sus componentes <tt class="docutils literal"><span class="pre">y</span></tt> de forma separada. Así es como lo haríamos si no
-existiese el ajuste de patrones:</p>
+<p>El ajuste de patrones también pueden ser usado con tuplas. ¿Cómo crearíamos
+una función que tomara dos vectores 2D (representados con duplas) y que
+devolviera la suma de ambos? Para sumar dos vectores sumamos primero sus
+componentes <tt class="docutils literal"><span class="pre">x</span></tt> y sus componentes <tt class="docutils literal"><span class="pre">y</span></tt> de forma separada. Así es como lo
+haríamos si no existiese el ajuste de patrones:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">addVectors</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 <span class="nf">addVectors</span> <span class="n">a</span> <span class="n">b</span> <span class="ow">=</span> <span class="p">(</span><span class="n">fst</span> <span class="n">a</span> <span class="o">+</span> <span class="n">fst</span> <span class="n">b</span><span class="p">,</span> <span class="n">snd</span> <span class="n">a</span> <span class="o">+</span> <span class="n">snd</span> <span class="n">b</span><span class="p">)</span>
 </pre></div>
@@ -150,12 +150,12 @@ función para que utilice un ajuste de patrones.</p>
 </pre></div>
 </div>
 <p>¡Ahí lo tienes! Mucho mejor. Ten en cuenta que es un patrón general, es decir,
-se verificará para cualquier dupla. El tipo de <tt class="docutils literal"><span class="pre">addVectors</span></tt> es en ambos casos
-el mismo <tt class="docutils literal"><span class="pre">addVectors</span> <span class="pre">::</span> <span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">(a,</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">(a,</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">(a,</span> <span class="pre">a)</span></tt>, por lo que
-está garantizado que tendremos dos duplas como parámetros.</p>
-<p><tt class="docutils literal"><span class="pre">fst</span></tt> y <tt class="docutils literal"><span class="pre">snd</span></tt> extraen componentes de los pares. Pero ¿Qué pasa con las
-triplas? Bien, como no tenemos funciones que hagan lo mismo con las tripla asi
-que vamos a crearlas nosotros.</p>
+se verificará para cualquier dupla. El tipo de <tt class="docutils literal"><span class="pre">addVectors</span></tt> es en ambos
+casos el mismo: <tt class="docutils literal"><span class="pre">addVectors</span> <span class="pre">::</span> <span class="pre">(Num</span> <span class="pre">a)</span> <span class="pre">=&gt;</span> <span class="pre">(a,</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">(a,</span> <span class="pre">a)</span> <span class="pre">-&gt;</span> <span class="pre">(a,</span> <span class="pre">a)</span></tt>, por
+lo que está garantizado que tendremos dos duplas como parámetros.</p>
+<p><tt class="docutils literal"><span class="pre">fst</span></tt> y <tt class="docutils literal"><span class="pre">snd</span></tt> extraen componentes de las duplas. Pero, ¿qué pasa con las
+triplas? Bien, como no tenemos funciones que hagan lo mismo con las triplas
+vamos a crearlas nosotros mismos.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">first</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">first</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="kr">_</span><span class="p">,</span> <span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span>
 
@@ -166,11 +166,10 @@ que vamos a crearlas nosotros.</p>
 <span class="nf">third</span> <span class="p">(</span><span class="kr">_</span><span class="p">,</span> <span class="kr">_</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="ow">=</span> <span class="n">z</span>
 </pre></div>
 </div>
-<p>El <tt class="docutils literal"><span class="pre">_</span></tt> significa lo mismo que en listas por comprensión. Significa que
-realmente no nos importa lo que es esa componente, así que escribimos solo
-<tt class="docutils literal"><span class="pre">_</span></tt>.</p>
-<p>Esto me recuerda que también puedes usar el ajuste de patrones en las listas por
-comprensión. Fíjate:</p>
+<p><tt class="docutils literal"><span class="pre">_</span></tt> tiene el mismo significado que con las listas intensionales. Denota que
+en realidad no nos importa ese valor, ya que no lo vamos a utilizar.</p>
+<p>También podemos utilizar ajuste de patrones con las listas intensionales.
+Fíjate:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let xs = [(1,3), (4,3), (2,4), (5,3), (5,6), (3,1)]</span>
 <span class="go">ghci&gt; [a+b | (a,b) &lt;- xs]</span>
 <span class="go">[4,7,6,8,11,4]</span>
@@ -179,24 +178,25 @@ comprensión. Fíjate:</p>
 <p>En caso de que se produzca un fallo en el patrón, simplemente pasará al
 siguiente elemento.</p>
 <p>Las listas también pueden ser usadas en un ajuste de patrones. Puedes comparar
-contra la lista vacía <tt class="docutils literal"><span class="pre">[]</span></tt> o contra cualquier patrón que involucre a <tt class="docutils literal"><span class="pre">:</span></tt> y la lista
-vacía. Como <tt class="docutils literal"><span class="pre">[1,2,3]</span></tt> es solo otra forma de expresar <tt class="docutils literal"><span class="pre">1:2:3:[]</span></tt>, también
-puedes usar el patrón anterior. Un patrón como <tt class="docutils literal"><span class="pre">x:xs</span></tt> ligará la cabeza de la
-lista con <tt class="docutils literal"><span class="pre">x</span></tt> y el resto con <tt class="docutils literal"><span class="pre">xs</span></tt>, incluso cuando la lista tenga solo un
-elemento, en cuyo caso <tt class="docutils literal"><span class="pre">xs</span></tt> acabará siendo la lista vacía.</p>
+contra la lista vacía <tt class="docutils literal"><span class="pre">[]</span></tt> o contra cualquier patrón que involucre a <tt class="docutils literal"><span class="pre">:</span></tt>
+y la lista vacía. Como <tt class="docutils literal"><span class="pre">[1,2,3]</span></tt>, que solo es otra forma de expresar
+<tt class="docutils literal"><span class="pre">1:2:3:[]</span></tt> (podemos utilizar ambas alternativas). Un patrón como <tt class="docutils literal"><span class="pre">x:xs</span></tt>
+ligará la cabeza de la lista con <tt class="docutils literal"><span class="pre">x</span></tt> y el resto con <tt class="docutils literal"><span class="pre">xs</span></tt>, incluso cuando
+la lista tenga solo un elemento, en cuyo caso <tt class="docutils literal"><span class="pre">xs</span></tt> acabará siendo la lista
+vacía.</p>
 <div class="admonition note">
 <p class="first admonition-title">Nota</p>
 <p class="last">El patrón <tt class="docutils literal"><span class="pre">x:xs</span></tt> es muy utilizado, especialmente con las funciones
 recursivas. Los patrones que contengan un <tt class="docutils literal"><span class="pre">:</span></tt> solo aceptarán listas con
-más de un elemento.</p>
+algún elemento.</p>
 </div>
-<p>Si quieres ligar, digamos, los tres primeros elementos de una lista a variables
-y el resto a otra variable puedes usar algo como <tt class="docutils literal"><span class="pre">x:y:z:zs</span></tt>. Sin embargo esto
-solo aceptará listas que tengan al menos 3 elementos.</p>
+<p>Si quisiéramos ligar, digamos, los tres primeros elementos de una lista a
+variables y el resto a otra variable podemos usar algo como <tt class="docutils literal"><span class="pre">x:y:z:zs</span></tt>. Sin
+embargo esto solo aceptará listas que tengan al menos 3 elementos.</p>
 <p>Ahora que ya sabemos usar patrones con las listas vamos a implementar nuestra
 propia función <tt class="docutils literal"><span class="pre">head</span></tt>.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">head&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-<span class="nf">head&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;Can&#39;t call head on an empty list, dummy!&quot;</span>
+<span class="nf">head&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;¡Hey, no puedes utilizar head con una lista vacía!&quot;</span>
 <span class="nf">head&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span>
 </pre></div>
 </div>
@@ -209,152 +209,157 @@ propia función <tt class="docutils literal"><span class="pre">head</span></tt>.
 </div>
 <p>¡Bien! Fíjate que si queremos ligar varias variables (incluso aunque alguna de
 ellas sea <tt class="docutils literal"><span class="pre">_</span></tt> y realmente no la queremos ligar) debemos rodearlas con
-paréntesis. Fíjate también con la función <tt class="docutils literal"><span class="pre">error</span></tt> que hemos utilizamos. Ésta toma
-una cadena y genera un error en tiempo de ejecución, usado esa cadena como
-información acerca del tipo de error que ocurrió. Provoca que el programa
-termine, lo cual no es bueno usar a menudo. De todas formas, llamar a <tt class="docutils literal"><span class="pre">head</span></tt>
-con una lista vacía no tiene sentido.</p>
+paréntesis. Fíjate también en la función <tt class="docutils literal"><span class="pre">error</span></tt> que acabamos de utilizar.
+Ésta toma una cadena y genera un error en tiempo de ejecución usado la cadena
+que le pasemos como información acerca del error que ocurrió. Provoca que el
+programa termine, lo cual no es bueno usar muy a menudo. De todas formas,
+llamar a <tt class="docutils literal"><span class="pre">head</span></tt> con una lista vacía no tiene mucho sentido.</p>
 <p>Vamos a crear una función que nos diga algunos de los primeros elementos que
 contiene una lista.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">tell</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Show</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
-<span class="nf">tell</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="s">&quot;The list is empty&quot;</span>
-<span class="nf">tell</span> <span class="p">(</span><span class="n">x</span><span class="kt">:[]</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&quot;The list has one element: &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span>
-<span class="nf">tell</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">y</span><span class="kt">:[]</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&quot;The list has two elements: &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span> <span class="o">++</span> <span class="s">&quot; and &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">y</span>
-<span class="nf">tell</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">y</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&quot;This list is long. The first two elements are: &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span> <span class="o">++</span> <span class="s">&quot; and &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">y</span>
+<span class="nf">tell</span> <span class="kt">[]</span>       <span class="ow">=</span> <span class="s">&quot;La lista está vacía&quot;</span>
+<span class="nf">tell</span> <span class="p">(</span><span class="n">x</span><span class="kt">:[]</span><span class="p">)</span>   <span class="ow">=</span> <span class="s">&quot;La lista tiene un elemento: &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span>
+<span class="nf">tell</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">y</span><span class="kt">:[]</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&quot;La lista tiene dos elementos: &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span> <span class="o">++</span> <span class="s">&quot; y &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">y</span>
+<span class="nf">tell</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">y</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span>  <span class="ow">=</span> <span class="s">&quot;La lista es larga. Los primeros dos elementos son: &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span> <span class="o">++</span> <span class="s">&quot; y &quot;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">y</span>
 </pre></div>
 </div>
-<p>Esta función es segura ya que tiene en cuenta la posibilidad de una lista vacía,
-una lista con un elemento, una lista con dos elementos y una lista con más de
-dos elementos. Date cuenta que podríamos escribir <tt class="docutils literal"><span class="pre">(x:[])</span></tt> y <tt class="docutils literal"><span class="pre">(x:y:[])</span></tt> como
-<tt class="docutils literal"><span class="pre">[x]</span></tt> y <tt class="docutils literal"><span class="pre">[x,y]</span></tt> sin usar paréntesis. Pero no podemos escribir <tt class="docutils literal"><span class="pre">(x:y:_)</span></tt>
-usando corchetes ya que acepta listas con más de dos elementos.</p>
-<p>Ya implementamos la función <tt class="docutils literal"><span class="pre">length</span></tt> usando listas de comprensión. Ahora vamos
-a implementarla con un poco de recursión.</p>
+<p>Esta función es segura ya que tiene en cuenta la posibilidad de una lista
+vacía, una lista con un elemento, una lista con dos elementos y una lista con
+más de dos elementos. Date cuenta que podríamos escribir <tt class="docutils literal"><span class="pre">(x:[])</span></tt> y
+<tt class="docutils literal"><span class="pre">(x:y:[])</span></tt> como <tt class="docutils literal"><span class="pre">[x]</span></tt> y <tt class="docutils literal"><span class="pre">[x,y]</span></tt> sin usar paréntesis. Pero no podemos
+escribir <tt class="docutils literal"><span class="pre">(x:y:_)</span></tt> usando corchetes ya que acepta listas con más de dos
+elementos.</p>
+<p>Ya implementamos la función <tt class="docutils literal"><span class="pre">length</span></tt> usando listas intensionales. Ahora
+vamos a implementarla con una pizca de recursión.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">length&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">b</span>
 <span class="nf">length&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="mi">0</span>
 <span class="nf">length&#39;</span> <span class="p">(</span><span class="kr">_</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">length&#39;</span> <span class="n">xs</span>
 </pre></div>
 </div>
-<p>Esto es similar a la función factorial que escribimos antes. Primero definimos
-el resultado de una entrada conocida, la lista vacía. Esto también es conocido
-como el caso base. Luego en el segundo patrón dividimos la lista, su cabeza y
-el resto. Decimos que la longitud es 1 más el tamaño del resto de la lista.
+<p>Es similar a la función factorial que escribimos antes. Primero definimos el
+resultado de una entrada conocida, la lista vacía. Esto también es conocido
+como el caso base. Luego en el segundo patrón dividimos la lista en su cabeza
+y el resto. Decimos que la longitud es 1 más el tamaño del resto de la lista.
 Usamos <tt class="docutils literal"><span class="pre">_</span></tt> para la cabeza de la lista ya que realmente no nos interesa su
 contenido. Fíjate que también hemos tenido en cuenta todos los posibles casos
-de listas. El primer patrón acepta la lista vacía, y el segundo todas las demás.</p>
-<p>Vamos a ver que pasa si llamamos a <tt class="docutils literal"><span class="pre">length'</span></tt> con <tt class="docutils literal"><span class="pre">&quot;ham&quot;</span></tt>. Primero se
+de listas. El primer patrón acepta la lista vacía, y el segundo todas las
+demás.</p>
+<p>Vamos a ver que pasa si llamamos a <tt class="docutils literal"><span class="pre">length'</span></tt> con <tt class="docutils literal"><span class="pre">&quot;ojo&quot;</span></tt>. Primero se
 comprobaría si es una lista vacía, como no lo es continuaríamos al siguiente
-patrón. Éste es aceptado y nos dice que la longitud es <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;am&quot;</span></tt>, ya
-que hemos divido la cadena en cabeza y cola, y nos hemos desecho de la cabeza.
-Vale. La <tt class="docutils literal"><span class="pre">length'</span></tt> de <tt class="docutils literal"><span class="pre">&quot;am&quot;</span></tt> es, de forma similar, <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;m&quot;</span></tt>. Así
-que ahora mismo tenemos <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;m&quot;)</span></tt>. <tt class="docutils literal"><span class="pre">length'</span> <span class="pre">&quot;m&quot;</span></tt> es
-<tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;&quot;</span></tt> (También lo podríamos escribir como <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">[]</span></tt>). Y
+patrón. Éste es aceptado y nos dice que la longitud es <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;jo&quot;</span></tt>,
+ya que hemos divido la cadena en cabeza y cola, decapitando la lista. Vale.
+El tamaño de <tt class="docutils literal"><span class="pre">&quot;jo&quot;</span></tt> es, de forma similar, <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;o&quot;</span></tt>. Así
+que ahora mismo tenemos <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;o&quot;)</span></tt>. <tt class="docutils literal"><span class="pre">length'</span> <span class="pre">&quot;o&quot;</span></tt> es
+<tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">&quot;&quot;</span></tt> (también lo podríamos escribir como <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">length'</span> <span class="pre">[]</span></tt>). Y
 como tenemos definido <tt class="docutils literal"><span class="pre">length'</span> <span class="pre">[]</span></tt> a 0, al final tenemos
 <tt class="docutils literal"><span class="pre">1</span> <span class="pre">+</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">(1</span> <span class="pre">+</span> <span class="pre">0))</span></tt>.</p>
-<p>Ahora implementemos <tt class="docutils literal"><span class="pre">sum</span></tt>. Sabemos que la suma de una lista vacía es 0, lo
-cual escribimos como un patrón. También sabemos que la suma de una lista es la
+<p>Ahora implementaremos <tt class="docutils literal"><span class="pre">sum</span></tt>. Sabemos que la suma de una lista vacía es 0, lo
+cual escribimos con un patrón. También sabemos que la suma de una lista es la
 cabeza más la suma del resto de la cola, y si lo escribimos obtenemos:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">sum&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">sum&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="mi">0</span>
 <span class="nf">sum&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sum&#39;</span> <span class="n">xs</span>
 </pre></div>
 </div>
-<p>También existe una cosa llamada <em>patrones como</em> (o patrones <em>as</em>, en inglés).
-Son útiles para descomponer algo usando un patrón, de forma que se ligue con los
-nombres que queramos, y además mantengamos una referencia a ese algo como un
-todo. Realizamos esto poniendo un nombre y un <tt class="docutils literal"><span class="pre">&#64;</span></tt> delante del patrón. Por
-ejemplo, el patrón <tt class="docutils literal"><span class="pre">xs&#64;(x:y:ys)</span></tt>. Este patrón se ajustará exactamente a lo
-mismo que lo haría <tt class="docutils literal"><span class="pre">x:y:ys</span></tt> pero podríamos acceder fácilmente a la lista
-completa usando <tt class="docutils literal"><span class="pre">xs</span></tt> en lugar de tener que repetirnos escribiendo <tt class="docutils literal"><span class="pre">x:y:ys</span></tt>
-en el cuerpo de la función. Un ejemplo rápido:</p>
+<p>También existen los llamados <em>patrones como</em>, o <em>patrones as</em> (del inglés,
+<em>as patterns</em>). Son útiles para descomponer algo usando un patrón, de forma
+que se ligue con las variables que queramos y además podamos mantener una
+referencia a ese algo como un todo. Para ello ponemos un <tt class="docutils literal"><span class="pre">&#64;</span></tt> delante del
+patrón. La mejor forma de entenderlo es con un ejemplo: <tt class="docutils literal"><span class="pre">xs&#64;(x:y:ys)</span></tt>. Este
+patrón se ajustará exactamente a lo mismo que lo haría <tt class="docutils literal"><span class="pre">x:y:ys</span></tt> pero
+además podríamos acceder fácilmente a la lista completa usando <tt class="docutils literal"><span class="pre">xs</span></tt> en lugar
+de tener que repetirnos escribiendo <tt class="docutils literal"><span class="pre">x:y:ys</span></tt> en el cuerpo de la función.
+Un ejemplo rápido:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">capital</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
-<span class="nf">capital</span> <span class="s">&quot;&quot;</span> <span class="ow">=</span> <span class="s">&quot;Empty string, whoops!&quot;</span>
-<span class="nf">capital</span> <span class="n">all</span><span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&quot;The first letter of &quot;</span> <span class="o">++</span> <span class="n">all</span> <span class="o">++</span> <span class="s">&quot; is &quot;</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+<span class="nf">capital</span> <span class="s">&quot;&quot;</span> <span class="ow">=</span> <span class="s">&quot;¡Una cadena vacía!&quot;</span>
+<span class="nf">capital</span> <span class="n">all</span><span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&quot;La primera letra de &quot;</span> <span class="o">++</span> <span class="n">all</span> <span class="o">++</span> <span class="s">&quot; es &quot;</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; capital &quot;Dracula&quot;</span>
-<span class="go">&quot;The first letter of Dracula is D&quot;</span>
+<span class="go">&quot;La primera letra de Dracula es D&quot;</span>
 </pre></div>
 </div>
 <p>Normalmente usamos los <em>patrones como</em> para evitar repetirnos cuando estamos
 ajustando un patrón más grande y tenemos que usarlo entero otra vez en algún
 lugar del cuerpo de la función.</p>
-<p>Una cosa más, no puedes usar <tt class="docutils literal"><span class="pre">++</span></tt> en los ajustes de patrones. Si has intentado
-usar un patrón <tt class="docutils literal"><span class="pre">(xs</span> <span class="pre">++</span> <span class="pre">ys)</span></tt> ¿Qué habría en la primera y en la segunda lista?
-No tiene mucho sentido. Tendría más sentido ajustar patrones como
-<tt class="docutils literal"><span class="pre">(xs</span> <span class="pre">++</span> <span class="pre">[x,y,z])</span></tt> o simplemente <tt class="docutils literal"><span class="pre">(xs</span> <span class="pre">++</span> <span class="pre">[x])</span></tt> pero dada la naturaleza de las
-listas no podemos hacer esto.</p>
+<p>Una cosa más, no podemos usar <tt class="docutils literal"><span class="pre">++</span></tt> en los ajustes de patrones. Si intentamos
+usar un patrón <tt class="docutils literal"><span class="pre">(xs</span> <span class="pre">++</span> <span class="pre">ys)</span></tt>, ¿qué habría en la primera lista y qué en la
+segunda? No tiene mucho sentido. Tendría más sentido ajustar patrones como
+<tt class="docutils literal"><span class="pre">(xs</span> <span class="pre">++</span> <span class="pre">[x,y,z])</span></tt> o simplemente <tt class="docutils literal"><span class="pre">(xs</span> <span class="pre">++</span> <span class="pre">[x])</span></tt> pero dada la naturaleza de
+las listas no podemos hacer esto.</p>
 </div>
 <div class="section" id="guardas-guardas">
 <span id="guardas"></span><h2>¡Guardas, Guardas!<a class="headerlink" href="#guardas-guardas" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="Guardas" class="align-left" src="../_images/guards.png" />
 <p>Mientras que los patrones son una forma de asegurarnos que un valor tiene una
 determinada forma y deconstruirlo, las guardas son una forma de comprobar si
-alguna propiedad de una valor (o varios de ellos) es cierta o falsa. Eso suena
-muy parecido a una sentencia <tt class="docutils literal"><span class="pre">if</span></tt> y de hecho es muy similar. La cuestión es que las
-guardas son mucho más legibles cuando tienes varias condiciones y encajan muy
-bien con los patrones.</p>
-<p>En lugar de explicar su sintaxis, simplemente empecemos y creamos una función
-que utilice guardas. Vamos a crear una función simple que te regañará de forma
+alguna propiedad de una valor (o varios de ellos) es cierta o falsa. Suena muy
+parecido a una sentencia <tt class="docutils literal"><span class="pre">if</span></tt> y de hecho es muy similar. La cuestión es que
+las guardas son mucho más legibles cuando tienes varias condiciones y encajan
+muy bien con los patrones.</p>
+<p>En lugar de explicar su sintaxis, simplemente vamos a crear una función
+que utilice guardas. Crearemos una función simple que te regañará de forma
 diferente en función de tu
 <a class="reference external" href="http://es.wikipedia.org/wiki/%C3%8Dndice_de_masa_corporal">IMC</a>
 (índice de masa corporal). Tu IMC es igual a tu altura dividida por tu peso al
-cuadrado. Si tu IMC es menor que 18,5 tienes infrapeso. Si estas en algún lugar entre
-18,5 y 25 eres del montón. Si tienes entre 25 y 30 tienes sobrepeso y si tienes
-más de 30 eres obeso. Así que aquí tienes la función (No estamos calculando
-nada ahora, simplemente obtiene un IMC y te lo muestra)</p>
+cuadrado. Si tu IMC es menor que 18,5 tienes infrapeso. Si estas en algún
+lugar entre 18,5 y 25 eres del montón. Si tienes entre 25 y 30 tienes
+sobrepeso y si tienes más de 30 eres obeso. Así que aquí tienes la función
+(no estamos calculando nada ahora, simplemente obtiene un IMC y te regaña)</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">bmiTell</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">bmiTell</span> <span class="n">bmi</span>
-    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¡Eres un emo!&quot;</span>
-    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal. Ptsss, espero que seas feo.&quot;</span>
+    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¿Eres emo?&quot;</span>
+    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal... Espero que seas feo.&quot;</span>
     <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">30.0</span> <span class="ow">=</span> <span class="s">&quot;¡Estás gordo! Pierde algo de peso gordito.&quot;</span>
     <span class="o">|</span> <span class="n">otherwise</span>   <span class="ow">=</span> <span class="s">&quot;¡Enhorabuena, eres una ballena!&quot;</span>
 </pre></div>
 </div>
 <p>Las guardas se indican con barras verticales que siguen al nombre de la
-función y sus parámetros. Normalmente tienen una sangría y están alineadas. Una
-guarda es básicamente una expresión booleana. Si se evalúa a <tt class="xref docutils literal"><span class="pre">True</span></tt>, entonces
-el cuerpo de la función correspondiente es utilizado. Si se evalúa a <tt class="xref docutils literal"><span class="pre">False</span></tt>,
-se comprueba la siguiente guarda y así sucesivamente. Si llamamos a esta
-función con <tt class="docutils literal"><span class="pre">24.3</span></tt>, primero comprobará si es menor o igual que <tt class="docutils literal"><span class="pre">18.5</span></tt>. Como
-no lo es, seguirá a la siguiente guarda. Se comprueba la segunda guarda y como
-24,3 es menor que 25, la se devuelve la segunda cadena.</p>
+función y sus parámetros. Normalmente tienen una sangría y están alineadas.
+Una guarda es básicamente una expresión booleana. Si se evalúa a <tt class="xref docutils literal"><span class="pre">True</span></tt>,
+entonces el cuerpo de la función correspondiente es utilizado. Si se evalúa a
+<tt class="xref docutils literal"><span class="pre">False</span></tt>, se comprueba la siguiente guarda y así sucesivamente. Si llamamos a
+esta función con <tt class="docutils literal"><span class="pre">24.3</span></tt>, primero comprobará si es menor o igual que
+<tt class="docutils literal"><span class="pre">18.5</span></tt>. Como no lo es, seguirá a la siguiente guarda. Se comprueba la
+segunda guarda y como 24,3 es menor que 25, se devuelve la segunda cadena.</p>
 <p>Recuerda a un gran árbol <tt class="docutils literal"><span class="pre">if</span> <span class="pre">then</span> <span class="pre">else</span></tt> de los lenguajes
-imperativos, solo que mucho mejor y más claro. Generalmente los arboles <tt class="docutils literal"><span class="pre">if</span>
-<span class="pre">else</span></tt> muy grandes están mal vistos, pero hay ocasiones en que un problema se
-define de forma discreta y no hay forma de solucionarlo. Las guardas son una
-buena alternativa para esto.</p>
+imperativos, solo que mucho más claro. Generalmente los arboles <tt class="docutils literal"><span class="pre">if</span> <span class="pre">else</span></tt>
+muy grandes están mal vistos, pero hay ocasiones en que un problema se define
+de forma discreta y no hay forma de solucionarlo. Las guardas son una buena
+alternativa para esto.</p>
 <p>Muchas veces la última guarda es <tt class="docutils literal"><span class="pre">otherwise</span></tt>. <tt class="docutils literal"><span class="pre">otherwise</span></tt> está definido
 simplemente como <tt class="docutils literal"><span class="pre">otherwise</span> <span class="pre">=</span> <span class="pre">True</span></tt> y acepta todo. Es muy similar al ajuste
-de patrones, solo se aceptan si la entrada satisface un patrón pero las guardas
-comprueban condiciones booleanas. Si todas las guardas de una función se evalúan
-a <tt class="xref docutils literal"><span class="pre">False</span></tt> (y no hemos dado otra guarda <tt class="docutils literal"><span class="pre">otherwise</span></tt>), la evaluación falla y
-continuará hacia el siguiente <strong>patrón</strong>. Por esta razón los
-patrones y las guardas encajen tan bien juntas. Si no existe ningún patrón ni
-ninguna guarda aceptable se lanzará un error.</p>
-<p>Por supuesto podemos usar guardas con con funciones que tomen tantos parámetros
-como quieran. En lugar de dejar que el usuario tenga que calcular su propio IMC
-por su cuenta antes de llamar a la función, vamos a modificar la función para
-que tome la altura y el peso y lo calcule por nosotros.</p>
+de patrones, solo se aceptan si la entrada satisface un patrón, pero las
+guardas comprueban condiciones booleanas. Si todas las guardas de una función
+se evalúan a <tt class="xref docutils literal"><span class="pre">False</span></tt> (y no hemos dado otra guarda <tt class="docutils literal"><span class="pre">otherwise</span></tt>), la
+evaluación falla y continuará hacia el siguiente <strong>patrón</strong>. Por esta razón
+los patrones y las guardas encajan tan bien juntas. Si no existe ningún patrón
+ni ninguna guarda aceptable se lanzará un error.</p>
+<p>Por supuesto podemos usar guardas con funciones que tomen tantos
+parámetros como se quieran. En lugar de dejar que el usuario tenga que
+calcular su propio IMC por su cuenta antes de llamar a la función, vamos a
+modificar la función para que tome la altura y el peso y lo calcule por
+nosotros.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">bmiTell</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">bmiTell</span> <span class="n">weight</span> <span class="n">height</span>
-    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¡Eres un emo!&quot;</span>
-    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal. Ptsss, espero que seas feo.&quot;</span>
+    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¿Eres emo?&quot;</span>
+    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal... Espero que seas feo.&quot;</span>
     <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">30.0</span> <span class="ow">=</span> <span class="s">&quot;¡Estás gordo! Pierde algo de peso gordito.&quot;</span>
     <span class="o">|</span> <span class="n">otherwise</span>                   <span class="ow">=</span> <span class="s">&quot;¡Enhorabuena, eres una ballena!&quot;</span>
 </pre></div>
 </div>
 <p>Vamos a ver si estoy gordo...</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; bmiTell 85 1.90</span>
-<span class="go">&quot;Supuestamente eres normal. Ptsss, espero que seas feo.&quot;</span>
+<span class="go">&quot;Supuestamente eres normal... Espero que seas feo.&quot;</span>
 </pre></div>
 </div>
 <p>¡Sí! No estoy gordo, pero Haskell me acaba de llamar feo...</p>
 <p>Fíjate que no hay un <tt class="docutils literal"><span class="pre">=</span></tt> después del nombre de la función y sus parámetros,
-antes de la primera guarda. Muchos novatos generan un error sintáctico por
+antes de la primera guarda. Muchos novatos obtienen un error sintáctico por
 poner un <tt class="docutils literal"><span class="pre">=</span></tt> ahí, y tú también lo harás.</p>
 <p>Otro ejemplo muy simple: vamos a implementar nuestra función <tt class="docutils literal"><span class="pre">max</span></tt>. Si
-recuerdas, puede tomar dos cosas que puedan ser comparadas y devuelve la mayor.</p>
+recuerdas, puede tomar dos cosas que puedan ser comparadas y devuelve la
+mayor.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">max&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">max&#39;</span> <span class="n">a</span> <span class="n">b</span>
     <span class="o">|</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span>     <span class="ow">=</span> <span class="n">a</span>
@@ -383,9 +388,9 @@ propio <tt class="docutils literal"><span class="pre">compare</span></tt> usando
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Nota</p>
-<p class="last">No solo podemos llamar a funciones de forma infija usando las comillas, sino
-que también podemos definirlas de esta forma. A veces es más fácil leerlo
-de esta forma.</p>
+<p class="last">No solo podemos llamar a funciones de forma infija usando las comillas,
+sino que también podemos definirlas de esta forma. A veces es más fácil
+leerlo así.</p>
 </div>
 </div>
 <div class="section" id="donde">
@@ -393,40 +398,39 @@ de esta forma.</p>
 <p>En la sección anterior definimos la función que calculaba el IMC así:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">bmiTell</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">bmiTell</span> <span class="n">weight</span> <span class="n">height</span>
-    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¡Eres un emo!&quot;</span>
-    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal. Ptsss, espero que seas feo.&quot;</span>
+    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¿Eres emo?&quot;</span>
+    <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal... Espero que seas feo.&quot;</span>
     <span class="o">|</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="mf">30.0</span> <span class="ow">=</span> <span class="s">&quot;¡Estás gordo! Pierde algo de peso gordito.&quot;</span>
     <span class="o">|</span> <span class="n">otherwise</span>                   <span class="ow">=</span> <span class="s">&quot;¡Enhorabuena, eres una ballena!&quot;</span>
 </pre></div>
 </div>
 <p>Si te fijas notarás que nos repetimos tres veces. Nos repetimos tres veces.
 Repetirse (tres veces) mientras estas programando es tan deseable como que te
-den una patada donde más te duela. Ya que estamos repitiendo la misma expresión
-tres veces sería ideal si pudiésemos calcularla una sola vez, ligarla a un
-nombre y utilizarlo en lugar de la expresión. Bien, podemos modificar nuestra
-función de esta forma:</p>
+den una patada donde más te duela. Ya que estamos repitiendo la misma
+expresión tres veces sería ideal si pudiésemos calcularla una sola vez,
+ligarla a una variable y utilizarla en lugar de la expresión. Bien, podemos
+modificar nuestra función de esta forma:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">bmiTell</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">bmiTell</span> <span class="n">weight</span> <span class="n">height</span>
-    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¡Eres un emo!&quot;</span>
-    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal. Ptsss, espero que seas feo.&quot;</span>
+    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">18.5</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¿Eres emo?&quot;</span>
+    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">25.0</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal... Espero que seas feo.&quot;</span>
     <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="mf">30.0</span> <span class="ow">=</span> <span class="s">&quot;¡Estás gordo! Pierde algo de peso gordito.&quot;</span>
     <span class="o">|</span> <span class="n">otherwise</span>   <span class="ow">=</span> <span class="s">&quot;¡Enhorabuena, eres una ballena!&quot;</span>
     <span class="kr">where</span> <span class="n">bmi</span> <span class="ow">=</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span>
 </pre></div>
 </div>
 <p>Hemos puesto la palabra reservada <tt class="docutils literal"><span class="pre">where</span></tt> después de las guardas
-(Normalmente es mejor alinearla con el resto de las barras verticales) y luego
-definimos varios nombres o funciones. Estos nombres son visibles en las
-guardas y nos dan la ventaja de no tener que repetirnos. Si decidimos que
-tenemos que calcular el IMC de otra forma solo tenemos que modificarlo en un
-lugar. También mejora la legibilidad ya que da nombre a las cosas y hace que
-nuestros programas sean más rápidos ya que cosas como <tt class="docutils literal"><span class="pre">bmi</span></tt> solo
-deben calcularse una vez. Podríamos pasarnos un poco y presentar una función
-como esta:</p>
+(normalmente es mejor alinearla con el resto de las barras verticales) y luego
+definimos varias variables. Estas variables son visibles en las guardas y nos
+dan la ventaja de no tener que repetirnos. Si decidimos que tenemos que
+calcular el IMC de otra forma solo tenemos que modificarlo en un lugar.
+También mejora la legibilidad ya que da nombre a las cosas y hace que nuestros
+programas sean más rápidos ya que cosas como <tt class="docutils literal"><span class="pre">bmi</span></tt> solo deben calcularse una
+vez. Podríamos pasarnos un poco y presentar una función como esta:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">bmiTell</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">bmiTell</span> <span class="n">weight</span> <span class="n">height</span>
-    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="n">skinny</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¡Eres un emo!&quot;</span>
-    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="n">normal</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal. Ptsss, espero que seas feo.&quot;</span>
+    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="n">skinny</span> <span class="ow">=</span> <span class="s">&quot;Tienes infrapeso ¿Eres emo?&quot;</span>
+    <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="n">normal</span> <span class="ow">=</span> <span class="s">&quot;Supuestamente eres normal... Espero que seas feo.&quot;</span>
     <span class="o">|</span> <span class="n">bmi</span> <span class="o">&lt;=</span> <span class="n">fat</span>    <span class="ow">=</span> <span class="s">&quot;¡Estás gordo! Pierde algo de peso gordito.&quot;</span>
     <span class="o">|</span> <span class="n">otherwise</span>     <span class="ow">=</span> <span class="s">&quot;¡Enhorabuena, eres una ballena!&quot;</span>
     <span class="kr">where</span> <span class="n">bmi</span> <span class="ow">=</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span>
@@ -435,22 +439,22 @@ como esta:</p>
           <span class="n">fat</span> <span class="ow">=</span> <span class="mf">30.0</span>
 </pre></div>
 </div>
-<p>Los nombres que definamos en la sección <tt class="docutils literal"><span class="pre">where</span></tt> de una función son solo
-visibles desde esa función, así que no nos tenemos que preocupar de ellos a la
-hora de crear más nombres en otras funciones. Si no alineamos la sección
-<tt class="docutils literal"><span class="pre">where</span></tt> bien y de forma correcta, Haskell se confundirá porque no sabrá a que
-grupo pertenece.</p>
-<p>Los nombres definidos con <tt class="docutils literal"><span class="pre">where</span></tt> no se comparten entre los cuerpos de
-diferentes patrones de una función. Si quieres que varios patrones accedan al
-mismo nombre compartido debes definirlo de forma global.</p>
-<p>También puedes usar el ajuste de patrones con las secciones <tt class="docutils literal"><span class="pre">where</span></tt>. Podríamos
-reescribir la sección <tt class="docutils literal"><span class="pre">where</span></tt> de nuestra función anterior como:</p>
+<p>Las variables que definamos en la sección <tt class="docutils literal"><span class="pre">where</span></tt> de una función son solo
+visibles desde esa función, así que no nos tenemos que preocupar de ellas a la
+hora de crear más variables en otras funciones. Si no alineamos la sección
+<tt class="docutils literal"><span class="pre">where</span></tt> bien y de forma correcta, Haskell se confundirá porque no sabrá a
+que grupo pertenece.</p>
+<p>Las variables definidas con <tt class="docutils literal"><span class="pre">where</span></tt> no se comparten entre los cuerpos de
+diferentes patrones de una función. Si queremos que varios patrones accedan a
+la misma variable debemos definirla de forma global.</p>
+<p>También podemos usar el ajuste de patrones con las secciones <tt class="docutils literal"><span class="pre">where</span></tt>.
+Podríamos reescribir la sección <tt class="docutils literal"><span class="pre">where</span></tt> de nuestra función anterior como:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="o">...</span>
 <span class="kr">where</span> <span class="n">bmi</span> <span class="ow">=</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span>
       <span class="p">(</span><span class="n">skinny</span><span class="p">,</span> <span class="n">normal</span><span class="p">,</span> <span class="n">fat</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="mf">18.5</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Vamos a crear otra función trivial en el que dado un nombre y su apellido
+<p>Vamos a crear otra función trivial en el que dado un nombre y un apellido
 devuelva sus iniciales.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">initials</span> <span class="ow">::</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">String</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">initials</span> <span class="n">firstname</span> <span class="n">lastname</span> <span class="ow">=</span> <span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">++</span> <span class="s">&quot;. &quot;</span> <span class="o">++</span> <span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">++</span> <span class="s">&quot;.&quot;</span>
@@ -459,12 +463,12 @@ devuelva sus iniciales.</p>
 </pre></div>
 </div>
 <p>Podríamos haber realizado el ajuste de patrones directamente en los parámetros
-de la función (En realidad hubiese sido más corto y elegante) pero así puedes
+de la función (en realidad hubiese sido más corto y elegante) pero así podemos
 ver lo que es posible hacer con las secciones <tt class="docutils literal"><span class="pre">where</span></tt>.</p>
-<p>De la misma forma que hemos definido constantes en los bloques <tt class="docutils literal"><span class="pre">where</span></tt> también
-puedes definir funciones. Manteniendonos fieles a nuestro programa de salud
-vamos a hacer una función que tome una lista de duplas de pesos y estaturas
-y devuelva una lista de IMCs.</p>
+<p>De la misma forma que hemos definido constantes en los bloques <tt class="docutils literal"><span class="pre">where</span></tt>
+también podemos definir funciones. Manteniéndonos fieles a nuestro programa de
+salud vamos a hacer una función que tome una lista de duplas de pesos y
+estaturas y devuelva una lista de IMCs.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">calcBmis</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
 <span class="nf">calcBmis</span> <span class="n">xs</span> <span class="ow">=</span> <span class="p">[</span><span class="n">bmi</span> <span class="n">w</span> <span class="n">h</span> <span class="o">|</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">]</span>
     <span class="kr">where</span> <span class="n">bmi</span> <span class="n">weight</span> <span class="n">height</span> <span class="ow">=</span> <span class="n">weight</span> <span class="o">/</span> <span class="n">height</span> <span class="o">^</span> <span class="mi">2</span>
@@ -472,23 +476,24 @@ y devuelva una lista de IMCs.</p>
 </div>
 <p>¡Ahí lo tienes! La razón por la que hemos creado la función <tt class="docutils literal"><span class="pre">bmi</span></tt> en este
 ejemplo es que no podemos calcular simplemente un IMC desde los parámetros de
-nuestra función. Tenemos que examinar todos los elementos de la lista y calcular
-su IMC para cada dupla.</p>
+nuestra función. Tenemos que examinar todos los elementos de la lista y
+calcular su IMC para cada dupla.</p>
 <p>Las secciones <tt class="docutils literal"><span class="pre">where</span></tt> también pueden estar anidadas. Es muy común crear una
 función y definir algunas funciones auxiliares en la sección <tt class="docutils literal"><span class="pre">where</span></tt> y luego
 definir otras funciones auxiliares dentro de cada uno de ellas.</p>
 </div>
 <div class="section" id="let-it-be">
 <span id="leitbe"></span><h2>Let it be<a class="headerlink" href="#let-it-be" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>Muy similar a las secciones <tt class="docutils literal"><span class="pre">where</span></tt> son las secciones <tt class="docutils literal"><span class="pre">let</span></tt>. Las secciones
-<tt class="docutils literal"><span class="pre">where</span></tt> son una construcción sintáctica que te dejan ligar variables al final
-de una función de forma que toda la función pueda acceder a ella, incluyendo
-las guardas.  Las secciones <tt class="docutils literal"><span class="pre">let</span></tt> te dejan ligar variables en cualquier lugar
-y son expresiones ellas mismas, pero son muy locales, así que no pueden
-extenderse entre las guardas. Tal y como todas las construcciones de Haskell
-que te permiten ligar valores a nombres, las secciones <tt class="docutils literal"><span class="pre">let</span></tt> permiten usar
-ajuste de patrones ¡Vamos a verlo en acción! Así es como podríamos definir una
-función que nos diera el área de un cilindro basado en su altura y su radio.</p>
+<p>Muy similar a las secciones <tt class="docutils literal"><span class="pre">where</span></tt> son las expresiones <tt class="docutils literal"><span class="pre">let</span></tt>. Las
+secciones <tt class="docutils literal"><span class="pre">where</span></tt> son una construcción sintáctica que te dejan ligar
+variables al final de una función de forma que toda la función pueda acceder a
+ella, incluyendo todas las guardas. Las expresiones <tt class="docutils literal"><span class="pre">let</span></tt> sirven para ligar
+variables en cualquier lugar y son expresiones en si mismas, pero son muy
+locales, así que no pueden extenderse entre las guardas. Tal y como todas las
+construcciones de Haskell que te permiten ligar valores a variables, las
+expresiones <tt class="docutils literal"><span class="pre">let</span></tt> permiten usar el ajuste de patrones. ¡Vamos a verlo en
+acción! Así es como podríamos definir una función que nos diera el área de un
+cilindro basándose en su altura y su radio.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">cylinder</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span> <span class="ow">-&gt;</span> <span class="n">a</span>
 <span class="nf">cylinder</span> <span class="n">r</span> <span class="n">h</span> <span class="ow">=</span>
     <span class="kr">let</span> <span class="n">sideArea</span> <span class="ow">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">h</span>
@@ -497,23 +502,24 @@ función que nos diera el área de un cilindro basado en su altura y su radio.</
 </pre></div>
 </div>
 <img alt="Let it be" class="align-right" src="../_images/letitbe.png" />
-<p>Su forma es <tt class="docutils literal"><span class="pre">let</span> <span class="pre">&lt;`definiciones`&gt;</span> <span class="pre">in</span> <span class="pre">&lt;expresión&gt;</span></tt>. Los nombres que definas es
-la sección <tt class="docutils literal"><span class="pre">let</span></tt> son accesibles en la parte <tt class="docutils literal"><span class="pre">in</span></tt>. Como puedes ver, también
-podríamos haber definido esto con una sección <tt class="docutils literal"><span class="pre">where</span></tt>. Fíjate también que los
-nombres están alineados en la misma columna. Así que ¿Cuál es la diferencia
-entre ellos? Por ahora parece que <tt class="docutils literal"><span class="pre">let</span></tt> pone las definiciones primero y luego
-la expresión que las utiliza mientras que <tt class="docutils literal"><span class="pre">where</span></tt> lo hace en el orden inverso.</p>
-<p>La diferencia es que las secciones <tt class="docutils literal"><span class="pre">let</span></tt> son expresiones por si mismas. Las
-secciones <tt class="docutils literal"><span class="pre">where</span></tt> son simplemente construcciones sintácticas. ¿Recuerdas
-cuando explicamos las sentencias <tt class="docutils literal"><span class="pre">if</span></tt> y se explicó que como son una expresión
-pueden ser usadas en casi cualquier lugar?</p>
+<p>Su forma es <tt class="docutils literal"><span class="pre">let</span> <span class="pre">&lt;definición&gt;</span> <span class="pre">in</span> <span class="pre">&lt;expresión&gt;</span></tt>. Las variables que
+definamos en la expresión <tt class="docutils literal"><span class="pre">let</span></tt> son accesibles en la parte <tt class="docutils literal"><span class="pre">in</span></tt>. Como
+podemos ver, también podríamos haber definido esto con una sección <tt class="docutils literal"><span class="pre">where</span></tt>.
+Fíjate también que los nombres están alineados en la misma columna. Así que,
+¿cuál es la diferencia entre ellos? Por ahora parece que <tt class="docutils literal"><span class="pre">let</span></tt> pone las
+definiciones primero y luego la expresión que las utiliza mientras que
+<tt class="docutils literal"><span class="pre">where</span></tt> lo hace en el orden inverso.</p>
+<p>La diferencia es que las expresiones <tt class="docutils literal"><span class="pre">let</span></tt> son expresiones por si mismas.
+Las secciones <tt class="docutils literal"><span class="pre">where</span></tt> son simplemente construcciones sintácticas. ¿Recuerdas
+cuando explicamos las sentencias <tt class="docutils literal"><span class="pre">if</span></tt> y se explicó que como son una
+expresión pueden ser usadas en casi cualquier lugar?</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; [if 5 &gt; 3 then &quot;Woo&quot; else &quot;Boo&quot;, if &#39;a&#39; &gt; &#39;b&#39; then &quot;Foo&quot; else &quot;Bar&quot;]</span>
 <span class="go">[&quot;Woo&quot;, &quot;Bar&quot;]</span>
 <span class="go">ghci&gt; 4 * (if 10 &gt; 5 then 10 else 0) + 2</span>
 <span class="go">42</span>
 </pre></div>
 </div>
-<p>También puedes hacer lo mismo con las secciones <tt class="docutils literal"><span class="pre">let</span></tt>.</p>
+<p>También puedes hacer lo mismo con las expresiones <tt class="docutils literal"><span class="pre">let</span></tt>.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; 4 * (let a = 9 in a + 1) + 2</span>
 <span class="go">42</span>
 </pre></div>
@@ -524,47 +530,47 @@ pueden ser usadas en casi cualquier lugar?</p>
 </pre></div>
 </div>
 <p>Si queremos ligar varias variables en una solo línea, obviamente no podemos
-alinear las definiciones en la misma columna. Por este motivo podemos separarlas
-con puntos y comas.</p>
+alinear las definiciones en la misma columna. Por este motivo podemos
+separarlas con puntos y comas.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; (let a = 100; b = 200; c = 300 in a*b*c, let foo=&quot;Hey &quot;; bar = &quot;there!&quot; in foo ++ bar)</span>
 <span class="go">(6000000,&quot;Hey there!&quot;)</span>
 </pre></div>
 </div>
-<p>No tienes que porque poner el último punto y coma pero puedes hacerlo si
-quieres. Como ya hemos dicho, puedes utilizar ajustes de patrones con las
-secciones <tt class="docutils literal"><span class="pre">let</span></tt>. Son muy útiles para desmantelar tuplas en sus componentes y
-ligarlos a varios nombres y demás.</p>
+<p>No tenemos porque poner el último punto y coma pero podemos hacerlo si
+queremos. Como ya hemos dicho, podemos utilizar ajustes de patrones con las
+expresiones <tt class="docutils literal"><span class="pre">let</span></tt>. Son muy útiles para desmantelar tuplas en sus componentes
+y ligarlos a varias variables.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; (let (a,b,c) = (1,2,3) in a+b+c) * 100</span>
 <span class="go">600</span>
 </pre></div>
 </div>
-<p>También puedes usar las secciones <tt class="docutils literal"><span class="pre">let</span></tt> dentro de las listas por comprensión.
-Vamos a reescribir nuestro anterior ejemplo que calculaba una lista de duplas de
-de alturas y pesos para que use un <tt class="docutils literal"><span class="pre">let</span></tt> dentro de una lista por comprensión
+<p>También podemos usar las secciones <tt class="docutils literal"><span class="pre">let</span></tt> dentro de las listas intensionales.
+Vamos a reescribir nuestro ejemplo anterior que calculaba una lista de duplas
+de alturas y pesos para que use un <tt class="docutils literal"><span class="pre">let</span></tt> dentro de una lista intensional
 en lugar de definir una función auxiliar con un <tt class="docutils literal"><span class="pre">where</span></tt>.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">calcBmis</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
 <span class="nf">calcBmis</span> <span class="n">xs</span> <span class="ow">=</span> <span class="p">[</span><span class="n">bmi</span> <span class="o">|</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="kr">let</span> <span class="n">bmi</span> <span class="ow">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">h</span> <span class="o">^</span> <span class="mi">2</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Incluimos un <tt class="docutils literal"><span class="pre">let</span></tt> dentro de una lista por comprensión como si fuera un
-predicado, solo que no filtra elementos, únicamente liga nombres. Los nombres
-definidos en la sección <tt class="docutils literal"><span class="pre">let</span></tt> de dentro de la lista son visibles desde la
-función de salida (la parte anterior a <tt class="docutils literal"><span class="pre">|</span></tt>) y todos los predicados y secciones
-que vienen después de la ligadura. Podríamos hacer que nuestra función
-devolviera el IMC solo para la gente obesa:</p>
+<p>Incluimos un <tt class="docutils literal"><span class="pre">let</span></tt> dentro de la lista intensional como si fuera un
+predicado, solo que no filtra los elementos, únicamente liga variables. Las
+variables definidas en una expresión <tt class="docutils literal"><span class="pre">let</span></tt> dentro de una lista intensional
+son visibles desde la función de salida (la parte anterior a <tt class="docutils literal"><span class="pre">|</span></tt>) y todos
+los predicados y secciones que vienen después de su definición. Podríamos
+hacer que nuestra función devolviera el IMC solo para la gente obesa así:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">calcBmis</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">RealFloat</span> <span class="n">a</span><span class="p">)</span> <span class="ow">=&gt;</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
 <span class="nf">calcBmis</span> <span class="n">xs</span> <span class="ow">=</span> <span class="p">[</span><span class="n">bmi</span> <span class="o">|</span> <span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="kr">let</span> <span class="n">bmi</span> <span class="ow">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">h</span> <span class="o">^</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bmi</span> <span class="o">&gt;=</span> <span class="mf">25.0</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>No podemos usar el nombre <tt class="docutils literal"><span class="pre">bmi</span></tt> dentro de la parte <tt class="docutils literal"><span class="pre">(w,</span> <span class="pre">h)</span> <span class="pre">&lt;-</span> <span class="pre">xs</span></tt> ya que
-está definida antes de la sección <tt class="docutils literal"><span class="pre">let</span></tt>.</p>
-<p>Omitimos la parte <tt class="docutils literal"><span class="pre">in</span></tt> de las secciones <tt class="docutils literal"><span class="pre">let</span></tt> dentro de las lista por
-comprensión porque la visibilidad de los nombres está predefinida en estos
-casos. Sin embargo, podemos usar una sección <tt class="docutils literal"><span class="pre">let</span> <span class="pre">in</span></tt> en un predicado y los
-nombres definidos solo serán visibles en este predicado. La parte <tt class="docutils literal"><span class="pre">in</span></tt> también
-puede ser omitida cuando definimos funciones y constantes dentro del intérprete
-<tt class="docutils literal"><span class="pre">GHCi</span></tt>. Si lo hacemos, los nombres serán visibles durante toda la sesión
-interactiva.</p>
+está definida antes que la expresión <tt class="docutils literal"><span class="pre">let</span></tt>.</p>
+<p>Omitimos la parte <tt class="docutils literal"><span class="pre">in</span></tt> de las secciones <tt class="docutils literal"><span class="pre">let</span></tt> dentro de las lista
+intensionales porque la visibilidad de los nombres está predefinida en estos
+casos. Sin embargo, podemos usar una sección <tt class="docutils literal"><span class="pre">let</span> <span class="pre">in</span></tt> en un predicado y las
+variables definidas solo serán visibles en este predicado. La parte <tt class="docutils literal"><span class="pre">in</span></tt>
+también puede ser omitida cuando definimos funciones y constantes dentro del
+intérprete <tt class="docutils literal"><span class="pre">GHCi</span></tt>. Si lo hacemos, las variables serán visibles durante toda
+la sesión.</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="go">ghci&gt; let zoot x y z = x * y + z</span>
 <span class="go">ghci&gt; zoot 3 9 2</span>
 <span class="go">29</span>
@@ -574,10 +580,10 @@ interactiva.</p>
 <span class="go">&lt;interactive&gt;:1:0: Not in scope: `boot&#39;</span>
 </pre></div>
 </div>
-<p>Si las secciones <tt class="docutils literal"><span class="pre">let</span></tt> son tan interesantes ¿Por qué no usarlas siempre en
-lugar de las secciones <tt class="docutils literal"><span class="pre">where</span></tt>? Bueno, como las secciones <tt class="docutils literal"><span class="pre">let</span></tt> son
+<p>Si las expresiones <tt class="docutils literal"><span class="pre">let</span></tt> son tan interesantes, ¿por qué no usarlas siempre
+en lugar de las secciones <tt class="docutils literal"><span class="pre">where</span></tt>? Bueno, como las expresiones <tt class="docutils literal"><span class="pre">let</span></tt> son
 expresiones y son bastante locales en su ámbito, no pueden ser usadas entre
-guardas. Hay gente que prefiere las secciones <tt class="docutils literal"><span class="pre">where</span></tt> porque los nombres
+guardas. Hay gente que prefiere las secciones <tt class="docutils literal"><span class="pre">where</span></tt> porque las variables
 vienen después de la función que los utiliza. De esta forma, el cuerpo de la
 función esta más cerca de su nombre y declaración de tipo y algunos piensan
 que es más legible.</p>
@@ -585,28 +591,28 @@ que es más legible.</p>
 <div class="section" id="expresiones-case">
 <h2>Expresiones case<a class="headerlink" href="#expresiones-case" title="Enlazar permanentemente con este título">¶</a></h2>
 <img alt="Expresiones case" class="align-right" src="../_images/case.png" />
-<p>Muchos lenguajes imperativos (Como C, C++, Java, etc.) tienen sintaxis <tt class="docutils literal"><span class="pre">case</span></tt>
-y si alguna vez has programado en ellos, probablemente sepas acerca de que va
-esto. Se trata de tomar una variable y luego ejecutar bloques de código para
-ciertos valores específicos de esa variable y luego incluir quizá algún bloque
-siempre se ejecute en caso de que la variable tenga algún valor que no se ajuste
-con ninguno de los anteriores.</p>
+<p>Muchos lenguajes imperativos (como C, C++, Java, etc.) tienen construcciones
+sintácticas <tt class="docutils literal"><span class="pre">case</span></tt> y si alguna vez has programado en ellos, probablemente
+sepas acerca de que va esto. Se trata de tomar una variable y luego ejecutar
+bloques de código para ciertos valores específicos de esa variable y luego
+incluir quizá algún bloque que siempre se ejecute en caso de que la variable
+tenga algún valor que no se ajuste con ninguno de los anteriores.</p>
 <p>Haskell toma este concepto y lo lleva un paso más allá. Como su nombre indica
 las expresiones <tt class="docutils literal"><span class="pre">case</span></tt> son, bueno, expresiones, como las expresiones
-<tt class="docutils literal"><span class="pre">if</span> <span class="pre">else</span></tt> o las secciones <tt class="docutils literal"><span class="pre">let</span></tt>. No solo podemos evaluar expresiones
-basandonos en los posibles valores de un variable sino que podemos realizar un
-ajuste de patrones. Mmmm... tomar un valor, realizar un ajuste de patrones sobre
-él, evaluar trozos de código basados en su valor ¿Dónde hemos oído esto antes?
-Oh sí, en los ajuste de patrones de los parámetros de una función. Bueno, en
-realidad es simplemente una decoración sintáctica para las expresiones <tt class="docutils literal"><span class="pre">case</span></tt>. Estos
-dos trozos de código hacen lo mismo y son intercambiables:</p>
+<tt class="docutils literal"><span class="pre">if</span> <span class="pre">else</span></tt> o las expresiones <tt class="docutils literal"><span class="pre">let</span></tt>. No solo podemos evaluar expresiones
+basándonos en los posibles valores de un variable sino que podemos realizar un
+ajuste de patrones. Mmmm... tomar un valor, realizar un ajuste de patrones
+sobre él, evaluar trozos de código basados en su valor, ¿dónde hemos oído esto
+antes? Oh sí, en los ajuste de patrones de los parámetros de una función.
+Bueno, en realidad es una alternativa sintáctica para las expresiones
+<tt class="docutils literal"><span class="pre">case</span></tt>. Estos dos trozos de código hacen lo mismo y son intercambiables:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">head&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-<span class="nf">head&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;No head for empty lists!&quot;</span>
+<span class="nf">head&#39;</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="ne">error</span> <span class="s">&quot;¡head no funciona con listas vacías!&quot;</span>
 <span class="nf">head&#39;</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span>
 </pre></div>
 </div>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">head&#39;</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="n">a</span>
-<span class="nf">head&#39;</span> <span class="n">xs</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">xs</span> <span class="kr">of</span> <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="ne">error</span> <span class="s">&quot;No head for empty lists!&quot;</span>
+<span class="nf">head&#39;</span> <span class="n">xs</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">xs</span> <span class="kr">of</span> <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="ne">error</span> <span class="s">&quot;¡head no funciona con listas vacías!&quot;</span>
                       <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="kr">_</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="n">x</span>
 </pre></div>
 </div>
@@ -618,21 +624,22 @@ dos trozos de código hacen lo mismo y son intercambiables:</p>
 </pre></div>
 </div>
 <p>La expresión es ajustada contra los patrones. La acción de ajuste de patrones
-se comporta como se espera: el primer patrón que se ajuste es el que se utiliza.
-Si no se puede ajustar a ningún patrón de la expresión <tt class="docutils literal"><span class="pre">case</span></tt> se lanzará un
-error de ejecución.</p>
+se comporta como se espera: el primer patrón que se ajuste es el que se
+utiliza. Si no se puede ajustar a ningún patrón de la expresión <tt class="docutils literal"><span class="pre">case</span></tt> se
+lanzará un error de ejecución.</p>
 <p>Mientras que el ajuste de patrones de los parámetros de una función puede ser
 realizado únicamente al definir una función, las expresiones <tt class="docutils literal"><span class="pre">case</span></tt> pueden
 ser utilizadas casi en cualquier lugar. Por ejemplo:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">describeList</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
-<span class="nf">describeList</span> <span class="n">xs</span> <span class="ow">=</span> <span class="s">&quot;The list is &quot;</span> <span class="o">++</span> <span class="kr">case</span> <span class="n">xs</span> <span class="kr">of</span> <span class="kt">[]</span> <span class="ow">-&gt;</span> <span class="s">&quot;empty.&quot;</span>
-                                               <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="s">&quot;a singleton list.&quot;</span>
-                                               <span class="n">xs</span> <span class="ow">-&gt;</span> <span class="s">&quot;a longer list.&quot;</span>
+<span class="nf">describeList</span> <span class="n">xs</span> <span class="ow">=</span> <span class="s">&quot;La lista es&quot;</span> <span class="o">++</span> <span class="kr">case</span> <span class="n">xs</span> <span class="kr">of</span> <span class="kt">[]</span>  <span class="ow">-&gt;</span> <span class="s">&quot;una lista vacía.&quot;</span>
+                                              <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="s">&quot;una lista unitaria.&quot;</span>
+                                              <span class="n">xs</span>  <span class="ow">-&gt;</span> <span class="s">&quot;una lista larga.&quot;</span>
 </pre></div>
 </div>
 <p>Son útiles para realizar un ajuste de patrones en medio de una expresión. Como
-el ajuste de patrones es una decoración sintáctica para las expresiones <tt class="docutils literal"><span class="pre">case</span></tt>,
-podríamos tener definido algo como esto:</p>
+el ajuste de patrones que se realiza en la definición de una función es una
+alternativa sintáctica a las expresiones <tt class="docutils literal"><span class="pre">case</span></tt>, también podríamos utilizar
+algo como esto:</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">describeList</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">String</span>
 <span class="nf">describeList</span> <span class="n">xs</span> <span class="ow">=</span> <span class="s">&quot;The list is &quot;</span> <span class="o">++</span> <span class="n">what</span> <span class="n">xs</span>
     <span class="kr">where</span> <span class="n">what</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="s">&quot;empty.&quot;</span>

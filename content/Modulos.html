@@ -256,7 +256,7 @@ elemento <tt class="xref docutils literal"><span class="pre">True</span></tt> en
 <li><p class="first"><tt class="docutils literal"><span class="pre">any</span></tt> y <tt class="docutils literal"><span class="pre">all</span></tt> toman un predicado y una lista y comprueban si el
 predicado se satisface para algún o para todos los elementos
 respectivamente. Normalmente usamos estas funciones en lugar de tener que
-mapear un lista y luego usar <tt class="docutils literal"><span class="pre">all</span></tt> o <tt class="docutils literal"><span class="pre">or</span></tt>.</p>
+mapear un lista y luego usar <tt class="docutils literal"><span class="pre">and</span></tt> o <tt class="docutils literal"><span class="pre">or</span></tt>.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">any</span> <span class="p">(</span><span class="o">==</span><span class="mi">4</span><span class="p">)</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
 <span class="kt">True</span>
 <span class="nf">ghci</span><span class="o">&gt;</span> <span class="n">all</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">4</span><span class="p">)</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
@@ -414,7 +414,7 @@ de la lista.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">isPrefixOf</span></tt> y <tt class="docutils literal"><span class="pre">isInfixOf</span></tt> buscan una sublista desde el principio o
+<li><p class="first"><tt class="docutils literal"><span class="pre">isPrefixOf</span></tt> y <tt class="docutils literal"><span class="pre">isSuffixOf</span></tt> buscan una sublista desde el principio o
 des el final de una lista, respectivamente.</p>
 <div class="highlight-haskell"><div class="highlight"><pre><span class="nf">ghci</span><span class="o">&gt;</span> <span class="s">&quot;hey&quot;</span> <span class="p">`</span><span class="n">isPrefixOf</span><span class="p">`</span> <span class="s">&quot;hey there!&quot;</span>
 <span class="kt">True</span>
@@ -534,7 +534,7 @@ suficiente como para explicarlo aquí.</p>
 </pre></div>
 </div>
 <p>Como las otras funciones, la listas resultantes son tan largas como la
-la lista más corta.</p>
+lista más corta.</p>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">lines</span></tt> es una función muy útil cuando tratamos con algún tipo de
 entrada, como ficheros. Toma una cadena y devuelve cada línea de esa cadena
