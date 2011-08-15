@@ -221,7 +221,7 @@ conocido.
  * ``any`` y ``all`` toman un predicado y una lista y comprueban si el
    predicado se satisface para algún o para todos los elementos
    respectivamente. Normalmente usamos estas funciones en lugar de tener que
-   mapear un lista y luego usar ``all`` o ``or``. ::
+   mapear un lista y luego usar ``and`` o ``or``. ::
    
        ghci> any (==4) [2,3,5,6,1,4]  
        True  
@@ -371,7 +371,7 @@ conocido.
        ghci> "cats" `isInfixOf` "im a cat burglar"  
        False
    
- * ``isPrefixOf`` y ``isInfixOf`` buscan una sublista desde el principio o
+ * ``isPrefixOf`` y ``isSuffixOf`` buscan una sublista desde el principio o
    des el final de una lista, respectivamente. ::
    
        ghci> "hey" `isPrefixOf` "hey there!"  
@@ -488,7 +488,7 @@ conocido.
        [(2,2,5,2),(3,2,5,2),(3,2,3,2)]
    
    Como las otras funciones, la listas resultantes son tan largas como la
-   la lista más corta.
+   lista más corta.
    
  * ``lines`` es una función muy útil cuando tratamos con algún tipo de
    entrada, como ficheros. Toma una cadena y devuelve cada línea de esa cadena

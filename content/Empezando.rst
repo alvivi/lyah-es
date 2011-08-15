@@ -17,14 +17,14 @@ Abre una terminal y escribe ``ghci``. Serás recibido con un saludo como éste:
 
 .. code-block:: console
 
-    GHCi, version 7.0.4: http://www.haskell.org/ghc/  :? for help
+    GHCi, version 7.2.1: http://www.haskell.org/ghc/  :? for help
     Loading package ghc-prim ... linking ... done.
     Loading package integer-gmp ... linking ... done.
     Loading package base ... linking ... done.
     Loading package ffi-1.0 ... linking ... done.
-    ghci>
+    Prelude>
 
-¡Enhorabuena, entraste de GHCi! Aquí el apuntador (o *prompt*) es ``ghci>``
+¡Enhorabuena, entraste de GHCi! Aquí el apuntador (o *prompt*) es ``Prelude>``
 pero como éste se hace más largo a medida que cargamos módulos durante una
 sesión, vamos a utilizar ``ghci>``. Si quieres tener el mismo apuntador
 ejecuta ``:set prompt "ghci> "``.

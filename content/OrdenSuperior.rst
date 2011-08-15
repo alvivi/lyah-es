@@ -55,12 +55,11 @@ una función que toma un ``a`` y devuelve un ``a``. Ese es el porqué el tipo
 devuelto y los parámetros de la función están separados solamente por flechas.
 
 ¿Y cómo nos beneficia esto? En pocas palabras, si llamamos a una función con
-demasiados pocos parámetros obtenemos una función **parcialmente aplicada**,
-es decir una función que toma tantos parámetros como le falte. Utilizar la
-aplicación parcial de funciones (o llamar a las funciones con menos
-parámetros) es una forma sencilla de crear funciones al vuelo de forma que
-podamos pasarlas como parámetros a otras funciones o dotarlas con algunos
-datos.
+parámetros de menos obtenemos una función **parcialmente aplicada**, es decir
+una función que toma tantos parámetros como le falte. Utilizar la aplicación
+parcial de funciones (o llamar a las funciones con menos parámetros) es una
+forma sencilla de crear funciones al vuelo de forma que podamos pasarlas como
+parámetros a otras funciones o dotarlas con algunos datos.
 
 Échale un vistazo a esta función ofensivamente simple. ::
 
@@ -218,7 +217,7 @@ parámetro y luego pasarla.
 Ahora vamos a usar la programación de orden superior para implementar una útil
 función que está en la librería estándar. Se llama ``zipWith``. Toma una
 función y dos listas y las une aplicando la función entre los correspondientes
-parámetros. Aquí tienes como la implementaríamos:
+parámetros. Aquí tienes como la implementaríamos: ::
 
     zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]  
     zipWith' _ [] _ = []  
@@ -687,15 +686,15 @@ de nuevo (mmm... creo que ya lo hice). Vamos a implementarla. ::
     elem' y ys = foldl (\acc x -> if x == y then True else acc) False ys
 
 Bueno, bueno, bueno... ¿Qué estamos haciendo aquí? El valor de inicio y el
-acumulador son ambos del tipo booleano. Cuando hablamos de pliegues tanto e tipo
-del acumulador y el tipo del resultado final son el mismo. Empezamos con el
-valor inicial ``False``. Tiene sentido ya que asumimos que el elemento no está 
-en la lista. También porque si llamamos a un pliegue con una lista vacía el
-resultado será simplemente el valor inicial. Luego comprobamos si el elemento
-actual es el que estamos buscando. Si lo es, ponemos el acumulador a ``True``.
-Si no lo es, dejamos el acumulador como estaba. Si ya estaba a ``False``,
-permanece en ese estado ya que el elemento actual no es el que buscamos. Si era
-``True``, se queda como estaba también.
+acumulador son ambos del tipo booleano. Cuando hablamos de pliegues tanto el
+tipo del acumulador como el tipo del resultado final son el mismo. Empezamos
+con el valor inicial ``False``. Tiene sentido ya que asumimos que el elemento
+no está en la lista. También porque si llamamos a un pliegue con una lista
+vacía el resultado será simplemente el valor inicial. Luego comprobamos si el
+elemento actual es el que estamos buscando. Si lo es, ponemos el acumulador a
+``True``. Si no lo es, dejamos el acumulador como estaba. Si ya estaba a
+``False``, permanece en ese estado ya que el elemento actual no es el que
+buscamos. Si era ``True``, se queda como estaba también.
 
 Ahora los pliegues por la derecha funcionan igual que los pliegues por la
 izquierda, solo que el acumulador consume elemento por la derecha. La función

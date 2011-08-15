@@ -111,11 +111,10 @@ expandirla en detalle.
 Para sorpresa de nadie, ``Maybe`` es una mónada, así que vamos a explorarlo un
 poco más a ver si podemos combinar lo que ya sabemos con las mónadas.
 
-.. note:: Llegados a este punto, asegurate de que entiendes los
-          :ref:`funtores aplicativos <aplicativos>`. Será más fácil si sabes
-          como funcionan varias instancias de ``Applicative`` y que tipo
-          de cómputos representan, ya que las mónadas no son más que una
-          expasión de los funtores aplicativos. 
+.. note:: Llegados a este punto, asegúrate de que entiendes los :ref:`funtores aplicativos <aplicativos>`.
+          Será más fácil si sabes como funcionan varias instancias de
+          ``Applicative`` y que tipo de cómputos representan, ya que las
+          mónadas no son más que una expansión de los funtores aplicativos. 
           
 Un valor de tipo ``Maybe a`` representa un valor del tipo ``a`` dentro del
 contexto de que ocurra un posible fallo. Un valor ``Just "dharma"`` representa

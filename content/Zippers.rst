@@ -522,8 +522,8 @@ de líneas de texto nuevas en cualquier parte del texto o barrar líneas
 existentes.
 
 
-Un sistema de fichero simple
-----------------------------
+Un sistema de ficheros simple
+-----------------------------
 
 Ahora que sabemos como funcionan los *zippers*, vamos utilizar un árbol para
 representar un sistema de ficheros y luego crearemos un *zipper* para ese 

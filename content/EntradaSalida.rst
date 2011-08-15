@@ -118,8 +118,8 @@ de valor resultado, así que se utiliza el valor ficticio ``()``.
           ``()``. Algo como ``data Nada = Nada``.
           
 Y ¿Cuándo se ejecuta una acción ``IO``? Bueno, aquí es donde entra en juego
-``main``. Una acción ``IO`` se ejecuta cuando cuando le damos el nombre`
-``main`` y ejecutamos nuestro programa.
+``main``. Una acción ``IO`` se ejecuta cuando le damos el nombre` ``main`` y
+ejecutamos nuestro programa.
 
 Tener todo tu programa en una sola acción ``IO`` puede parecer un poco
 restringido. Por este motivo podemos usar la sintaxis ``do`` para juntar
