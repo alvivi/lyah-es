@@ -173,10 +173,11 @@ ahora <tt class="docutils literal"><span class="pre">Circle</span></tt> tiene do
 tipo <tt class="docutils literal"><span class="pre">Float</span></tt>. De esta forma es más fácil entender que es cada cosa. Lo mismo
 sucede para el rectángulo. Tenemos que modificar nuestra función <tt class="docutils literal"><span class="pre">surface</span></tt>
 para que refleje estos cambios.</p>
-<blockquote>
-<div>surface :: Shape -&gt; Float
-surface (Circle _ r) = pi * r ^ 2
-surface (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1)</div></blockquote>
+<div class="highlight-haskell"><div class="highlight"><pre><span class="nf">surface</span> <span class="ow">::</span> <span class="kt">Shape</span> <span class="ow">-&gt;</span> <span class="kt">Float</span>
+<span class="nf">surface</span> <span class="p">(</span><span class="kt">Circle</span> <span class="kr">_</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r</span> <span class="o">^</span> <span class="mi">2</span>
+<span class="nf">surface</span> <span class="p">(</span><span class="kt">Rectangle</span> <span class="p">(</span><span class="kt">Point</span> <span class="n">x1</span> <span class="n">y1</span><span class="p">)</span> <span class="p">(</span><span class="kt">Point</span> <span class="n">x2</span> <span class="n">y2</span><span class="p">))</span> <span class="ow">=</span> <span class="p">(</span><span class="n">abs</span> <span class="o">$</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">abs</span> <span class="o">$</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Lo único que hemos cambiado han sido los patrones. Hemos descartado
 completamente el punto en el patrón del círculo. Por otra parte, en  el patrón
 del rectángulo, simplemente hemos usado un ajuste de patrones anidado para
