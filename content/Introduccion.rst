@@ -34,7 +34,7 @@ si te sientes estancado y sabes inglés. La gente es bastante amable, paciente
 y comprensible con los que empiezan.
 
 Intenté aprender Haskell, dos veces, antes de conseguir entenderlo. Al
-principio todo parecía extraño. Pero una vez que se iluminó camino y tras
+principio todo parecía extraño. Pero una vez que se iluminó el camino y tras
 saltar el primer obstáculo, fue un cómodo paseo. Creo que lo que trato de
 decir es que Haskell es genial y si estás interesado en la programación
 deberías aprenderlo incluso aunque te sea totalmente extraño. Aprender Haskell

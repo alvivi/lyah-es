@@ -137,7 +137,7 @@ mismo nombre que el del tipo si solo hay un constructor de datos. Así que
 ahora ``Circle`` tiene dos campos, uno es el del tipo ``Point`` y el otro del
 tipo ``Float``. De esta forma es más fácil entender que es cada cosa. Lo mismo
 sucede para el rectángulo. Tenemos que modificar nuestra función ``surface``
-para que refleje estos cambios.
+para que refleje estos cambios. ::
 
     surface :: Shape -> Float  
     surface (Circle _ r) = pi * r ^ 2  
