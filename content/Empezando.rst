@@ -305,7 +305,7 @@ empezar con una letra en mayúsculas. Veremos el porqué un poco más tarde. La
 segunda es que esta función no toma ningún parámetro, normalmente lo llamamos
 una definición (o un nombre). Como no podemos cambiar las definiciones (y las
 funciones) después de que las hayamos definido, ``conanO'Brien`` y la cadena
-``"It's a-me, Conan O'Brien!"`` se pueden utilizar indistintamente.
+``"¡Soy yo, Conan O'Brien!"`` se pueden utilizar indistintamente.
 
 Una introducción a las listas
 -----------------------------
