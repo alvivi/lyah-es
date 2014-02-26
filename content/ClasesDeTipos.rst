@@ -1,5 +1,4 @@
 
-
 Creando nuestros propios tipos y clases de tipos
 ================================================
 
@@ -2003,7 +2002,7 @@ de tipos que voy a utilizar: ::
         tofu :: j a -> t a j
 
 Parece complicado ¿Cómo podríamos crear un tipo que tuviera una instancia para
-esta clase de tipos estraña? Bueno, vamos a ver que familia tiene que tener.
+esta clase de tipos extraña? Bueno, vamos a ver que familia tiene que tener.
 Como ``j a`` es utilizado como el tipo del valor que la función ``tofu`` toma
 como parámetro, ``j a`` debe tener la familia ``*``. Asumimos ``*`` para ``a``
 de forma que podemos inferir que ``j`` pertenece a la familia ``* -> *``. 
