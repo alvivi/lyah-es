@@ -1,5 +1,3 @@
-
-
 Creando nuestros propios tipos y clases de tipos
 ================================================
 
@@ -1732,7 +1730,7 @@ tipos que toma un tipo como parámetro. Un ejemplo rápido para recordar:
 ``Maybe Int`` es un tipo concreto, pero ``Maybe`` es un constructor de tipos
 que toma un tipo como parámetro. De cualquier modo, hemo visto que ``fmap``
 toma una función de un tipo a otro y un funtor aplicado a un tipo y devuelve
-otro funtor aplicado con el otor tipo.
+otro funtor aplicado con el otro tipo.
 
 Si esto te suena un poco confuso, no te preocupes. Lo verás todo más claro
 ahora cuando mostremos un cuantos ejemplos. Mmm... esta declaración de tipo
@@ -1749,7 +1747,7 @@ tienes como las listas tienen una instancia para la clase ``Functor``. ::
 
 ¡Eso es! Fíjate que no hemos escrito ``instance Functor [a] where``, ya que
 a partir de ``fmap :: (a -> b) -> f a -> f b`` vemos que ``f`` tiene que ser
-un cosntructor de tipos que toma un parámetro. ``[a]`` ya es un tipo concreto
+un constructor de tipos que toma un parámetro. ``[a]`` ya es un tipo concreto
 (un lista con cualquier tipo dentro), mientras que ``[]`` es un constructor
 de tipos que toma un parámetro y produce cosas como ``[Int]``, ``[String]`` o
 incluso ``[[String]]``.
@@ -2003,7 +2001,7 @@ de tipos que voy a utilizar: ::
         tofu :: j a -> t a j
 
 Parece complicado ¿Cómo podríamos crear un tipo que tuviera una instancia para
-esta clase de tipos estraña? Bueno, vamos a ver que familia tiene que tener.
+esta clase de tipos extraña? Bueno, vamos a ver que familia tiene que tener.
 Como ``j a`` es utilizado como el tipo del valor que la función ``tofu`` toma
 como parámetro, ``j a`` debe tener la familia ``*``. Asumimos ``*`` para ``a``
 de forma que podemos inferir que ``j`` pertenece a la familia ``* -> *``. 
