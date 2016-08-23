@@ -138,7 +138,7 @@ usuario, aunque invertida. Así sería como escribiríamos lo mismo utilizando
    :align: left
    :alt: w00ooOoooOO
 
-De la misma forma que que cuando usamos ``fmap reverse`` sobre ``Just "blah"``
+De la misma forma que cuando usamos ``fmap reverse`` sobre ``Just "blah"``
 obtenemos ``Just "halb"``, podemos utilizar ``fmap reverse`` sobre
 ``getLine``. ``getLine`` es una acción de E/S que tiene el tipo ``IO String``
 y al mapear ``reverse`` sobre ella nos devuelve una acción que viajará al
@@ -833,7 +833,7 @@ Antes de que veamos qué sucede aquí, compara lo anterior con esto:
     "johntravolta"
 
 ¡Bien! Para usar una función normal con funtores aplicativos, simplemente
-tenemos que que esparcir unos cuantos ``<$>`` y ``<*>`` y la función
+tenemos que esparcir unos cuantos ``<$>`` y ``<*>`` y la función
 operará sobre funtores aplicativos ¿No es genial?
 
 De cualquier modo, cuando hacemos
