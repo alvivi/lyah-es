@@ -26,7 +26,7 @@ Funciones currificadas
 Oficialmente cada función de Haskell solo puede tomar un parámetro. Así que
 ¿Como es posible que hayamos definido y usado varias funciones que toman mas
 de un parámetro? Bueno ¡Es un buen truco! Todas las funciones que hemos usado
-hasta el momento y aceptaban más de un parámetro han sido funciones
+hasta el momento que aceptaban más de un parámetro han sido funciones
 currificadas ¿Qué significa esto? Lo entenderás mejor con un ejemplo. Vamos a
 usar a nuestro buen amigo, la función ``max``. Parece que toma dos parámetro y
 devuelve aquél que es mayor. Al aplicar ``max 4 5`` primero se crea una
