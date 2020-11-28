@@ -12,7 +12,7 @@ adecuado, pero primero vamos a hablar un poco sobre esta guía.
 Decidí escribir esta guía porque quería arraigar mi propio conocimiento de
 Haskell y porque pensé que podía ayudar a la gente que empezaba con Haskell.
 Existen bastantes manuales y guías sobre Haskell por la red. Cuando empecé con
-Haskell no lo leí un único documento. La forma en la que aprendí Haskell fue
+Haskell, no utilicé ningún recurso. La forma en la que aprendí Haskell fue
 leyendo varios artículos y guías, porque explicaban el mismo concepto de
 diferentes formas. Así, yendo a través de varios documentos, fui capaz de
 juntar todas las piezas y entonces todo encajó. De modo que, esto es un
