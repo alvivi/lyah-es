@@ -59,7 +59,7 @@ veces (``for``, ``while``...). Con la programación puramente funcional no
 decimos al computador lo que tiene que hacer, sino más bien, decimos como son
 las cosas. El factorial de un número es el producto de todos los números desde
 el 1 hasta ese número, la suma de una lista de números es el primer número más
-la suma del resto de la lista, etc. Expresamos la forma de las funciones.
+la suma del resto de la lista, etc. Expresamos eso en forma de funciones.
 Además no podemos establecer una variable a algo y luego establecerla a otra
 cosa. Si decimos que ``a`` es 5, luego no podemos decir que es otra cosa
 porque acabamos de decir que es 5 ¿Acaso somos unos mentirosos? De este modo,
