@@ -66,8 +66,8 @@ porque acabamos de decir que es 5 ¿Acaso somos unos mentirosos? De este modo,
 en los lenguajes puramente funcionales, una función no tiene efectos
 secundarios. Lo único que puede hacer una función es calcular y devolver algo
 como resultado. Al principio esto puede parecer una limitación pero en
-realidad tiene algunas buenas consecuencias: si una función es llamada dos
-veces con los mismos parámetros, obtendremos siempre el mismo resultado. A
+realidad tiene algunas buenas consecuencias: si se llama a una función dos
+veces con los mismos parámetros, se garantiza que devolverá el mismo resultado. A
 esto lo llamamos *transparencia referencial* y no solo permite al compilador
 razonar acerca de el comportamiento de un programa, sino que también nos
 permite deducir fácilmente (e incluso demostrar) que una función es correcta y
