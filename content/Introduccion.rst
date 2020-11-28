@@ -16,7 +16,7 @@ Haskell no lo leí un único documento. La forma en la que aprendí Haskell fue
 leyendo varios artículos y guías, porque explicaban el mismo concepto de
 diferentes formas. Así, yendo a través de varios documentos, fui capaz de
 juntar todas las piezas y entonces todo encajó. De modo que, esto es un
-intento más de añadir otro útil documento para aprender Haskell de forma que
+intento más de añadir otro documento útil para aprender Haskell de forma que
 tengas más oportunidades de encontrar uno que te guste.
 
 .. image:: /images/bird.png
