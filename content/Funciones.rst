@@ -278,7 +278,7 @@ las listas no podemos hacer esto.
 
 Mientras que los patrones son una forma de asegurarnos que un valor tiene una
 determinada forma y deconstruirlo, las guardas son una forma de comprobar si
-alguna propiedad de una valor (o varios de ellos) es cierta o falsa. Suena muy
+alguna propiedad de un valor (o varios de ellos) es cierta o falsa. Suena muy
 parecido a una sentencia ``if`` y de hecho es muy similar. La cuestión es que
 las guardas son mucho más legibles cuando tienes varias condiciones y encajan
 muy bien con los patrones.
