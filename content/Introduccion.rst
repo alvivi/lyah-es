@@ -56,7 +56,7 @@ estado. Por ejemplo, establecemos la variable ``a`` a 5, realizamos algunas
 tareas y luego cambiamos el valor de la variable anterior. Estos lenguajes
 poseen estructuras de control de flujo para realizar ciertas acciones varias
 veces (``for``, ``while``...). Con la programación puramente funcional no
-decimos al computador lo que tiene que hacer, sino más bien, decimos como son
+decimos al computador lo que tiene que hacer, sino más bien, decimos cómo son
 las cosas. El factorial de un número es el producto de todos los números desde
 el 1 hasta ese número, la suma de una lista de números es el primer número más
 la suma del resto de la lista, etc. Expresamos la forma de las funciones.
