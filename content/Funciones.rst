@@ -660,7 +660,7 @@ realizado únicamente al definir una función, las expresiones ``case`` pueden
 ser utilizadas casi en cualquier lugar. Por ejemplo: ::
 
     describeList :: [a] -> String
-    describeList xs = "La lista es" ++ case xs of []  -> "una lista vacía."
+    describeList xs = "La lista es " ++ case xs of []  -> "una lista vacía."
                                                   [x] -> "una lista unitaria."
                                                   xs  -> "una lista larga."
 
@@ -670,7 +670,7 @@ alternativa sintáctica a las expresiones ``case``, también podríamos utilizar
 algo como esto: ::
 
     describeList :: [a] -> String
-    describeList xs = "The list is " ++ what xs
-        where what [] = "empty."
-              what [x] = "a singleton list."
-              what xs = "a longer list."
+    describeList xs = "La lista es " ++ what xs
+        where what [] = "una lista vacía."
+              what [x] = "una lista unitaria."
+              what xs = "una lista larga."
