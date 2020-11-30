@@ -278,7 +278,7 @@ las listas no podemos hacer esto.
 
 Mientras que los patrones son una forma de asegurarnos que un valor tiene una
 determinada forma y de deconstruirlo, las guardas son una forma de comprobar si
-alguna propiedad de una valor (o varios de ellos) es cierta o falsa. Suena muy
+alguna propiedad de un valor (o varios de ellos) es cierta o falsa. Suena muy
 parecido a una sentencia ``if`` y de hecho es muy similar. La cuestión es que
 las guardas son mucho más legibles cuando tienes varias condiciones y encajan
 muy bien con los patrones.
@@ -660,7 +660,7 @@ realizado únicamente al definir una función, las expresiones ``case`` pueden
 ser utilizadas casi en cualquier lugar. Por ejemplo: ::
 
     describeList :: [a] -> String
-    describeList xs = "La lista es" ++ case xs of []  -> "una lista vacía."
+    describeList xs = "La lista es " ++ case xs of []  -> "una lista vacía."
                                                   [x] -> "una lista unitaria."
                                                   xs  -> "una lista larga."
 
@@ -670,7 +670,7 @@ alternativa sintáctica a las expresiones ``case``, también podríamos utilizar
 algo como esto: ::
 
     describeList :: [a] -> String
-    describeList xs = "The list is " ++ what xs
-        where what [] = "empty."
-              what [x] = "a singleton list."
-              what xs = "a longer list."
+    describeList xs = "La lista es " ++ what xs
+        where what [] = "una lista vacía."
+              what [x] = "una lista unitaria."
+              what xs = "una lista larga."
