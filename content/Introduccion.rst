@@ -113,7 +113,7 @@ cadena de texto, el compilador nos regañará. Haskell usa un fantástico sistem
 de tipos que posee inferencia de tipos. Esto significa que no tenemos que
 etiquetar cada trozo de código explícitamente con un tipo porque el sistema de
 tipos lo puede deducir de forma inteligente. La inferencia de tipos también
-permite que nuestro código sea más general, si hemos creado una función que
+permite que nuestro código sea más genérico, si hemos creado una función que
 toma dos números y los suma y no establecemos explícitamente sus tipos, la
 función aceptará cualquier par de parámetros que actúen como números.
 
