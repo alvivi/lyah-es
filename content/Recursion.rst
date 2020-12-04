@@ -107,7 +107,7 @@ función utilizando ``max``: ::
     maximum' :: (Ord a) => [a] -> a
     maximum' []     = error "maximum of empty list"
     maximum' [x]    = x
-    maximum' (x:xs) = x `max` (maximum' xs)
+    maximum' (x:xs) = max x (maximum' xs)
 
 ¿A que es elegante? Resumiendo, el máximo de una lista es el máximo entre su
 primer elemento y el máximo del resto de sus elementos.
