@@ -105,7 +105,7 @@ ordenadas y devuelve la mayor de ellas. Así es como podríamos reescribir la
 función utilizando ``max``: ::
 
     maximum' :: (Ord a) => [a] -> a
-    maximum' []     = error "maximum of empty list"
+    maximum' []     = error "Máximo de una lista vacía"
     maximum' [x]    = x
     maximum' (x:xs) = x `max` (maximum' xs)
 
