@@ -16,7 +16,7 @@ Haskell no lo leí un único documento. La forma en la que aprendí Haskell fue
 leyendo varios artículos y guías, porque explicaban el mismo concepto de
 diferentes formas. Así, yendo a través de varios documentos, fui capaz de
 juntar todas las piezas y entonces todo encajó. De modo que, esto es un
-intento más de añadir otro útil documento para aprender Haskell de forma que
+intento más de añadir otro documento útil para aprender Haskell de forma que
 tengas más oportunidades de encontrar uno que te guste.
 
 .. image:: /images/bird.png
@@ -56,7 +56,7 @@ estado. Por ejemplo, establecemos la variable ``a`` a 5, realizamos algunas
 tareas y luego cambiamos el valor de la variable anterior. Estos lenguajes
 poseen estructuras de control de flujo para realizar ciertas acciones varias
 veces (``for``, ``while``...). Con la programación puramente funcional no
-decimos al computador lo que tiene que hacer, sino más bien, decimos como son
+decimos al computador lo que tiene que hacer, sino más bien, decimos cómo son
 las cosas. El factorial de un número es el producto de todos los números desde
 el 1 hasta ese número, la suma de una lista de números es el primer número más
 la suma del resto de la lista, etc. Expresamos la forma de las funciones.
@@ -66,8 +66,8 @@ porque acabamos de decir que es 5 ¿Acaso somos unos mentirosos? De este modo,
 en los lenguajes puramente funcionales, una función no tiene efectos
 secundarios. Lo único que puede hacer una función es calcular y devolver algo
 como resultado. Al principio esto puede parecer una limitación pero en
-realidad tiene algunas buenas consecuencias: si se llama a una función dos
-veces con los mismos parámetros, se garantiza que devolverá el mismo resultado. A
+realidad tiene algunas consecuencias buenas: si una función es llamada dos
+veces con los mismos parámetros, obtendremos siempre el mismo resultado. A
 esto lo llamamos *transparencia referencial* y no solo permite al compilador
 razonar acerca de el comportamiento de un programa, sino que también nos
 permite deducir fácilmente (e incluso demostrar) que una función es correcta y
@@ -113,7 +113,7 @@ cadena de texto, el compilador nos regañará. Haskell usa un fantástico sistem
 de tipos que posee inferencia de tipos. Esto significa que no tenemos que
 etiquetar cada trozo de código explícitamente con un tipo porque el sistema de
 tipos lo puede deducir de forma inteligente. La inferencia de tipos también
-permite que nuestro código sea más general, si hemos creado una función que
+permite que nuestro código sea más genérico, si hemos creado una función que
 toma dos números y los suma y no establecemos explícitamente sus tipos, la
 función aceptará cualquier par de parámetros que actúen como números.
 
