@@ -12,9 +12,9 @@ Recursión
    :alt: Rusia sovietica
 
 
-En el capítulo anterior ya mencionamos la recursión. En este capítulo veremos
-más detenidamente este tema, el porqué es importante en Haskell y como podemos
-crear soluciones a problemas de forma elegante y concisa.
+En el capítulo anterior ya mencionamos la recursión. En este capítulo, veremos
+más detenidamente este tema, el por qué es importante en Haskell y cómo podemos
+crear soluciones muy concisas y elegantes a problemas pensando de forma recursiva.
 
 Si aún no sabes que es la recursión, lee esta frase: La recursión es en
 realidad una forma de definir funciones en la que dicha función es utiliza en
