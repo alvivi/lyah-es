@@ -657,7 +657,7 @@ También podemos utilizar los rangos para crear listas infinitas simplemente no
 indicando un límite superior. Más tarde nos centraremos más en las listas
 infinitas. Por ahora, vamos a examinar como obtendríamos los primeros 24
 múltiplos de 13. Sí, podemos utilizar ``[13,26..24*13]``. Pero hay una forma
-mejor: ``take 13 [13,26..]``. Como Haskell es perezoso, no intentará evaluar
+mejor: ``take 24 [13,26..]``. Como Haskell es perezoso, no intentará evaluar
 la lista infinita inmediatamente porque no terminaría nunca. Esperará a ver
 que es lo que quieres obtener de la lista infinita. En este caso ve que solo
 queremos los primeros 24 elementos y los evalúa con mucho gusto.
